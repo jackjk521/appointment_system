@@ -46,7 +46,7 @@ const Navbar = ({setUser, onNavItemClick}) => {
                     <i class="d-flex justify-content-center fa fa-users"></i>
                     <a class="nav-link" aria-current="page" href="#">Customers</a>
                 </li>
-                <li class="nav-item hover-item p-2 pt-3" id="inventory-tab">
+                <li class="nav-item hover-item p-2 px-4 pt-3" id="inventory-tab">
                     <i class="d-flex justify-content-center fa fa-tasks"></i>
                     <a class="nav-link" aria-current="page" href="#">Items</a>
                 </li>
