@@ -8,21 +8,8 @@ import Purchases from "./Purchases"
 import Appointments from "./Appointments"
 
 
-import AddModal from "../includes/customers/add"
-
 const Dashboard = ({ user, setUser}) => {
     
-    // Modals
-    const [showModal, setShowModal] = useState(false);
-
-    const handleOpenModal = () => {
-      setShowModal(true);
-    };
-  
-    const handleCloseModal = () => {
-      setShowModal(false);
-    };
-
     // NAV TAB SELECTION START
     const [selectedNavItem, setSelectedNavItem] = useState('patients');
 
@@ -35,14 +22,11 @@ const Dashboard = ({ user, setUser}) => {
         <>
             <Navbar setUser={setUser} onNavItemClick={handleNavItemClick}/>
             <div className="container">
-                {/* <button onClick={handleOpenModal}>Open Modal</button>
-                    <AddModal user={user} isOpen={showModal} onClose={handleCloseModal} /> */}
                  
                  {selectedNavItem == 'patients' && <Patients user={user}/>}
                  {selectedNavItem == 'inventory' && <Inventory user={user}/>}
                  {selectedNavItem == 'appointments' && <Appointments user={user}/>}
                  {selectedNavItem == 'purchases' && <Purchases user={user}/>}
-
 
             </div>
         </>

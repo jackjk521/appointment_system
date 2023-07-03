@@ -7,26 +7,11 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
+                'resources/css/app.css',
                 'resources/js/app.jsx',
             ],
             refresh: true,
         }),
         react(),
     ],
-    server: { 
-        hmr: {
-            host: 'localhost',
-        },
-    }, 
-    commonjsOptions: {
-        esmExternals: true 
-     },
-    // build: {
-    //     rollupOptions: {
-    //       input: {
-    //         main: './resources/js/app.js', // Adjust the path to your entry file
-    //         custom: './resources/js/custom.js', // Add this line to include your custom JavaScript file
-    //       },
-    //     },
-    // },
 });

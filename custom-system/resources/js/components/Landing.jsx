@@ -13,7 +13,7 @@ function Landing() {
     return (
         <BrowserRouter>
             <Routes> 
-                <Route path='/login' element={
+                <Route path='/' element={
                     <Login setUser={setUser}/>
                     }>
                 </Route>
@@ -25,16 +25,6 @@ function Landing() {
                 }>
                 </Route>
 
-                <Route path='/customers' element={
-                    <PrivateRoute user={user}>
-                        <Dashboard user={user}/>
-                    </PrivateRoute>
-                }>
-                </Route>
-
-                {/* <Route exact path='/' element={<PrivateRoute path="/dashboard" component={Dashboard}/>}>
-                </Route> */}
-                {/* <PrivateRoute path="/dashboard" element={<Dashboard />} /> */}
             </Routes>
         </BrowserRouter>
     );

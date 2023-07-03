@@ -5,6 +5,10 @@
     width: 100vw; /* Set width to 100% of the viewport width */
 }
 
+/* Add button  */
+
+
+/* Nav bar  */
 .tab-active{
     background-color: lightgray;
 }
@@ -15,3 +19,5 @@
     background-color: lightgray;
     /* Add any other styles you want for the hover effect */
   }
+
+  /* Items  */

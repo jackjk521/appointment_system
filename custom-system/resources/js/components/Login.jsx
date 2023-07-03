@@ -50,6 +50,8 @@ const Login = ({setUser}) => {
                 userData
             });
 
+            userData.user_id = response.data.user_id;
+
             if(response.data.success){
                 setUser(userData);
                 nav('/dashboard');
@@ -70,8 +72,7 @@ const Login = ({setUser}) => {
           }
     }
 
-        
-
+    
     return (
         <div className="container pt-5">
             <div class="row justify-content-center pt-5">

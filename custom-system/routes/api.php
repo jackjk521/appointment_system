@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Login;
+use App\Http\Controllers\Inventory;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,10 +17,14 @@ use App\Http\Controllers\Login;
 */
 
 // Login Route 
-
-
 Route::post('/signUp', [Login::class, 'insert_user']);
 Route::post('/login', [Login::class, 'login_user']);
+
+// Inventory Routes
+Route::get('/items', [Inventory::class, 'get_all_items']);
+Route::get('/gen_prod_number', [Inventory::class, 'generate_product_number']);
+Route::post('/add_item', [Inventory::class, 'insert_item']);
+
 
 
 // Route::post('/signUp', [LoginController::class, 'register']); // route for registration form
