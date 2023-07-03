@@ -13,6 +13,7 @@ const Navbar = ({setUser, onNavItemClick}) => {
     $("#customers-tab").click(function(e){
       $("#inventory-tab").removeClass('tab-active')
       $("#appointments-tab").removeClass('tab-active')
+      $("#purchases-tab").removeClass('tab-active')
       $("#customers-tab").addClass('tab-active')
 
       onNavItemClick('customers')
@@ -21,6 +22,7 @@ const Navbar = ({setUser, onNavItemClick}) => {
     $("#inventory-tab").click(function(e){
       $("#customers-tab").removeClass('tab-active')
       $("#appointments-tab").removeClass('tab-active')
+      $("#purchases-tab").removeClass('tab-active')
       $("#inventory-tab").addClass('tab-active')
 
       onNavItemClick('inventory')
@@ -29,9 +31,19 @@ const Navbar = ({setUser, onNavItemClick}) => {
     $("#appointments-tab").click(function(e){
       $("#customers-tab").removeClass('tab-active')
       $("#inventory-tab").removeClass('tab-active')
+      $("#purchases-tab").removeClass('tab-active')
       $("#appointments-tab").addClass('tab-active')
 
       onNavItemClick('appointments')
+    })
+
+    $("#purchases-tab").click(function(e){
+      $("#customers-tab").removeClass('tab-active')
+      $("#inventory-tab").removeClass('tab-active')
+      $("#appointments-tab").removeClass('tab-active')
+      $("#purchases-tab").addClass('tab-active')
+
+      onNavItemClick('purchases')
     })
     
     return (
@@ -46,9 +58,13 @@ const Navbar = ({setUser, onNavItemClick}) => {
                     <i class="d-flex justify-content-center fa fa-users"></i>
                     <a class="nav-link" aria-current="page" href="#">Customers</a>
                 </li>
+                <li class="nav-item hover-item p-2 px-4 pt-3" id="purchases-tab">
+                    <i class="d-flex justify-content-center fa fa-tasks"></i>
+                    <a class="nav-link" aria-current="page" href="#">Purchases</a>
+                </li>
                 <li class="nav-item hover-item p-2 px-4 pt-3" id="inventory-tab">
                     <i class="d-flex justify-content-center fa fa-tasks"></i>
-                    <a class="nav-link" aria-current="page" href="#">Items</a>
+                    <a class="nav-link" aria-current="page" href="#">Inventory</a>
                 </li>
                 <li class="nav-item hover-item p-2 pt-3" id="appointments-tab">
                     <i class="d-flex justify-content-center fa fa-calendar"></i>

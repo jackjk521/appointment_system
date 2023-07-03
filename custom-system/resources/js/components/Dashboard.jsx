@@ -4,7 +4,10 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Customers from "./Customers"
 import Inventory from "./Inventory"
+import Purchases from "./Purchases"
 import Appointments from "./Appointments"
+
+
 
 
 import AddModal from "../includes/customers/add"
@@ -40,6 +43,8 @@ const Dashboard = ({ user, setUser}) => {
                  {selectedNavItem == 'customers' && <Customers user={user}/>}
                  {selectedNavItem == 'inventory' && <Inventory user={user}/>}
                  {selectedNavItem == 'appointments' && <Appointments user={user}/>}
+                 {selectedNavItem == 'purchases' && <Purchases user={user}/>}
+
 
             </div>
         </>
