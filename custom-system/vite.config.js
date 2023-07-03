@@ -18,6 +18,9 @@ export default defineConfig({
             host: 'localhost',
         },
     }, 
+    commonjsOptions: {
+        esmExternals: true 
+     },
     // build: {
     //     rollupOptions: {
     //       input: {

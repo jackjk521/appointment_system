@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "start": "concurrently \"npm run dev\" \"php artisan serve\""
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
@@ -17,6 +18,11 @@
         "vite": "^4.0.0"
     },
     "dependencies": {
-        "react-router-dom": "^6.14.1"
+        "concurrently": "^8.2.0",
+        "moment": "^2.29.4",
+        "react-bootstrap": "^2.8.0",
+        "react-datepicker": "^4.15.0",
+        "react-router-dom": "^6.14.1",
+        "sweetalert2": "^11.7.12"
     }
 }
