@@ -2,11 +2,11 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
-const Customers = ({ user }) => {
+const Patients = ({ user }) => {
     return (
         <>
             <div className="container">
-                <h1>Customers</h1>
+                <h1>Patients</h1>
                 <h5>{user.username}</h5>
 
                 <table
@@ -54,4 +54,4 @@ const Customers = ({ user }) => {
     );
 };
 
-export default Customers;
+export default Patients;

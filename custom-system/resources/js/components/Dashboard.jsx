@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Navbar from "./Navbar";
-import Customers from "./Customers"
+import Patients from "./Patients"
 import Inventory from "./Inventory"
 import Purchases from "./Purchases"
 import Appointments from "./Appointments"
@@ -26,7 +26,7 @@ const Dashboard = ({ user, setUser}) => {
     };
 
     // NAV TAB SELECTION START
-    const [selectedNavItem, setSelectedNavItem] = useState('customers');
+    const [selectedNavItem, setSelectedNavItem] = useState('patients');
 
     const handleNavItemClick = (navItem) => {
         setSelectedNavItem(navItem);
@@ -40,7 +40,7 @@ const Dashboard = ({ user, setUser}) => {
                 {/* <button onClick={handleOpenModal}>Open Modal</button>
                     <AddModal user={user} isOpen={showModal} onClose={handleCloseModal} /> */}
                  
-                 {selectedNavItem == 'customers' && <Customers user={user}/>}
+                 {selectedNavItem == 'patients' && <Patients user={user}/>}
                  {selectedNavItem == 'inventory' && <Inventory user={user}/>}
                  {selectedNavItem == 'appointments' && <Appointments user={user}/>}
                  {selectedNavItem == 'purchases' && <Purchases user={user}/>}

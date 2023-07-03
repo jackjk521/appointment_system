@@ -10,17 +10,17 @@ const Navbar = ({setUser, onNavItemClick}) => {
     }
 
     // Tabs Switch active class
-    $("#customers-tab").click(function(e){
+    $("#patients-tab").click(function(e){
       $("#inventory-tab").removeClass('tab-active')
       $("#appointments-tab").removeClass('tab-active')
       $("#purchases-tab").removeClass('tab-active')
-      $("#customers-tab").addClass('tab-active')
+      $("#patients-tab").addClass('tab-active')
 
-      onNavItemClick('customers')
+      onNavItemClick('patients')
     })
 
     $("#inventory-tab").click(function(e){
-      $("#customers-tab").removeClass('tab-active')
+      $("#patients-tab").removeClass('tab-active')
       $("#appointments-tab").removeClass('tab-active')
       $("#purchases-tab").removeClass('tab-active')
       $("#inventory-tab").addClass('tab-active')
@@ -29,7 +29,7 @@ const Navbar = ({setUser, onNavItemClick}) => {
     })
 
     $("#appointments-tab").click(function(e){
-      $("#customers-tab").removeClass('tab-active')
+      $("#patients-tab").removeClass('tab-active')
       $("#inventory-tab").removeClass('tab-active')
       $("#purchases-tab").removeClass('tab-active')
       $("#appointments-tab").addClass('tab-active')
@@ -38,7 +38,7 @@ const Navbar = ({setUser, onNavItemClick}) => {
     })
 
     $("#purchases-tab").click(function(e){
-      $("#customers-tab").removeClass('tab-active')
+      $("#patients-tab").removeClass('tab-active')
       $("#inventory-tab").removeClass('tab-active')
       $("#appointments-tab").removeClass('tab-active')
       $("#purchases-tab").addClass('tab-active')
@@ -54,9 +54,9 @@ const Navbar = ({setUser, onNavItemClick}) => {
             
             <ul class="navbar-nav ms-auto">
                 
-                <li class="nav-item hover-item p-2 pt-3 tab-active" id="customers-tab">
+                <li class="nav-item hover-item p-2 pt-3 tab-active" id="patients-tab">
                     <i class="d-flex justify-content-center fa fa-users"></i>
-                    <a class="nav-link" aria-current="page" href="#">Customers</a>
+                    <a class="nav-link" aria-current="page" href="#">Patients</a>
                 </li>
                 <li class="nav-item hover-item p-2 px-4 pt-3" id="purchases-tab">
                     <i class="d-flex justify-content-center fa fa-tasks"></i>
