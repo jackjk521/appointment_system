@@ -9,42 +9,46 @@ const Navbar = ({setUser, onNavItemClick}) => {
       setUser(null)
     }
 
-    // Tabs Switch active class
-    $("#patients-tab").click(function(e){
-      $("#inventory-tab").removeClass('tab-active')
-      $("#appointments-tab").removeClass('tab-active')
-      $("#purchases-tab").removeClass('tab-active')
-      $("#patients-tab").addClass('tab-active')
+    // $(document).ready(function() {
+    //   console.log('jQuery is working!');
+    // });
 
-      onNavItemClick('patients')
-    })
+    $(document).ready(function() {
+        // Tabs Switch active class
+        $(document).on('click', '#patients-tab', function() {
+          $("#inventory-tab").removeClass('tab-active')
+          $("#appointments-tab").removeClass('tab-active')
+          $("#purchases-tab").removeClass('tab-active')
+          $("#patients-tab").addClass('tab-active')
 
-    $("#inventory-tab").click(function(e){
-      $("#patients-tab").removeClass('tab-active')
-      $("#appointments-tab").removeClass('tab-active')
-      $("#purchases-tab").removeClass('tab-active')
-      $("#inventory-tab").addClass('tab-active')
+          onNavItemClick('patients')
+        });
+        $(document).on('click', '#inventory-tab', function() {
+          $("#patients-tab").removeClass('tab-active')
+          $("#appointments-tab").removeClass('tab-active')
+          $("#purchases-tab").removeClass('tab-active')
+          $("#inventory-tab").addClass('tab-active')
 
-      onNavItemClick('inventory')
-    })
+          onNavItemClick('inventory')
+        });
+        $(document).on('click', '#appointments-tab', function() {
+          $("#patients-tab").removeClass('tab-active')
+          $("#inventory-tab").removeClass('tab-active')
+          $("#purchases-tab").removeClass('tab-active')
+          $("#appointments-tab").addClass('tab-active')
 
-    $("#appointments-tab").click(function(e){
-      $("#patients-tab").removeClass('tab-active')
-      $("#inventory-tab").removeClass('tab-active')
-      $("#purchases-tab").removeClass('tab-active')
-      $("#appointments-tab").addClass('tab-active')
+          onNavItemClick('appointments')
+        });
+        $(document).on('click', '#purchases-tab', function() {
+          $("#patients-tab").removeClass('tab-active')
+          $("#inventory-tab").removeClass('tab-active')
+          $("#appointments-tab").removeClass('tab-active')
+          $("#purchases-tab").addClass('tab-active')
 
-      onNavItemClick('appointments')
-    })
-
-    $("#purchases-tab").click(function(e){
-      $("#patients-tab").removeClass('tab-active')
-      $("#inventory-tab").removeClass('tab-active')
-      $("#appointments-tab").removeClass('tab-active')
-      $("#purchases-tab").addClass('tab-active')
-
-      onNavItemClick('purchases')
-    })
+          onNavItemClick('purchases')
+        });
+  
+    });
     
     return (
         <nav class="navbar navbar-expand-lg bg-white p-0">

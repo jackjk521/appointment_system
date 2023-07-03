@@ -8,8 +8,6 @@ import Purchases from "./Purchases"
 import Appointments from "./Appointments"
 
 
-
-
 import AddModal from "../includes/customers/add"
 
 const Dashboard = ({ user, setUser}) => {
