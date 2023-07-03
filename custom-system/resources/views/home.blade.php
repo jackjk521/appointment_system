@@ -12,6 +12,9 @@
         <!-- CSS  -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
 
+        <!-- Font Awesome Icons  -->
+        <link rel="stylesheet" type="text/css"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" />
+
         <!-- Styles -->
         <style>
             /* body {
@@ -20,15 +23,20 @@
         </style>
 
         @viteReactRefresh
+        @vite(['resources/css/app.css'])
+
         <!-- Attaching the app.jsx for component rendering  -->
         @vite(['resources/js/app.jsx'])
         
+        
     </head>
     <body>       
-        <div class="container" id="app"> </div>
+        <div id="app" class="full-screen bg-light"> </div>
+ 
 
     <!-- Scripts  -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.22.0/bootstrap-table.min.js" integrity="sha512-q5l3LRc+pRoX5HTV9TZcXAfwF0YY536lLwEnWZtAhbmfhFnwJKZtrxBM+wRg2TZSyRCw16PUIbYqCnDk/tbC9A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     </body>
 </html>

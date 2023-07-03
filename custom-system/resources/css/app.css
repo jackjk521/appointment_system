@@ -1,0 +1,17 @@
+
+/* Full screen DIV  */
+.full-screen {
+    height: 100vh; /* Set height to 100% of the viewport height */
+    width: 100vw; /* Set width to 100% of the viewport width */
+}
+
+.tab-active{
+    background-color: lightgray;
+}
+
+/* Hover effect on Navbar */
+.hover-item:hover {
+    /* Define your hover effect styles here */
+    background-color: lightgray;
+    /* Add any other styles you want for the hover effect */
+  }

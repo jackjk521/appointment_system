@@ -1,27 +1,44 @@
-import React from "react";
+import {React, useState} from "react";
 import ReactDOM from "react-dom/client";   
 import {BrowserRouter, Routes, Route, Link} from 'react-router-dom'
-import Example from './Example'
+import PrivateRoute from './PrivateRoute'
+import Login from './Login'
+import Dashboard from './Dashboard'
 
-function Main() {
+
+function Landing() {
+
+    const [user, setUser] = useState(true)
 
     return (
-    <BrowserRouter>
-    <div className="container">
+        <BrowserRouter>
             <Routes> 
-                <Route path="/sample" element = {<Example />}/> 
+                <Route path='/login' element={
+                    <Login setUser={setUser}/>
+                    }>
+                </Route>
+    
+                <Route path='/dashboard' element={
+                    <PrivateRoute user={user}>
+                        <Dashboard user={user} setUser={setUser}/>
+                    </PrivateRoute>
+                }>
+                </Route>
+
+                <Route path='/customers' element={
+                    <PrivateRoute user={user}>
+                        <Dashboard user={user}/>
+                    </PrivateRoute>
+                }>
+                </Route>
+
+                {/* <Route exact path='/' element={<PrivateRoute path="/dashboard" component={Dashboard}/>}>
+                </Route> */}
+                {/* <PrivateRoute path="/dashboard" element={<Dashboard />} /> */}
             </Routes>
-            <a href="/sample">Home</a> // works
-    </div>
-    </BrowserRouter>
+        </BrowserRouter>
     );
 }
 
-export default Main;
-
-// if (document.getElementById("main")) {
-//     ReactDOM.createRoot(document.getElementById('main')).render(     
-//         <Main />        
-//     );
-// }
+export default Landing;
 
