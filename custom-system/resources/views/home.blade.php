@@ -31,7 +31,7 @@
         
     </head>
     <body>       
-        <div id="app" class="full-screen bg-light"> </div>
+        <div id="app" className="full-screen bg-light"> </div>
  
 
     <!-- Scripts  -->
