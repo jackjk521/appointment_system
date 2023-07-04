@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Inventory;
+use App\Http\Controllers\Patients;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +28,13 @@ Route::get('/gen_prod_number', [Inventory::class, 'generate_product_number']);
 Route::post('/add_item', [Inventory::class, 'insert_item']);
 Route::post('/update_item', [Inventory::class, 'update_item']);
 Route::post('/remove_item', [Inventory::class, 'remove_item']);
+
+// Patients Routes
+Route::get('/patients', [Patients::class, 'get_all_patients']);
+Route::post('/add_patient', [Patients::class, 'insert_patient']);
+Route::post('/update_patient', [Patients::class, 'update_patient']);
+Route::post('/remove_patient', [Patients::class, 'remove_patient']);
+
 
 
 

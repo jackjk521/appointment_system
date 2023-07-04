@@ -9,8 +9,8 @@ import Dashboard from './Dashboard'
 function Landing() {
 
     const [user, setUser] = useState({
-        user_id: '',
-        username: '',
+        user_id: 3,
+        username: 'admin',
         password: ''
     })
 
