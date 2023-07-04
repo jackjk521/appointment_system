@@ -439,8 +439,8 @@ const Inventory = ({ user }) => {
                 <div className="container bg-white p-4">
                     {/* Search Bar  */}
                     <div className="row">
-                        <div className="col-8"></div>
-                        <div className="col-4 d-flex align-items-end justify-content-end ">
+                        <div className="col-9"></div>
+                        <div className="col-3 d-flex align-items-end justify-content-end ">
                             <input
                                 type="text"
                                 value={searchText}
