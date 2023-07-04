@@ -19,7 +19,7 @@ class Inventory extends Controller
 
     public function get_all_items(Request $request){
 
-        $items = Items_model::all();
+        $items = Items_model::where('removed', 0)->get();
 
         return response()->json($items);
     }
@@ -47,13 +47,55 @@ class Inventory extends Controller
         // Log
         if($item->save()){
             $log = new Logs_model;
-                $log->user_id = $request->input('itemData')['user_id'];
+                $log->user_id = ($request->input('itemData')['user_id'] != '') ? $request->input('itemData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message = $request->input('itemData')['username'] . "has added item: " . $request->input('itemData')['item_name'] . "successfully.";
+                $log->message =($request->input('itemData')['username'] != '') ? $request->input('itemData')['username'] : 'admin' . " has added item: " . $request->input('itemData')['item_name'] . " successfully.";
                 $log->save();
         }
 
         return response()->json(['success' => true , 'message' => 'Item created successfully']);
     }
+
+    public function update_item(Request $request)
+    {
+        // var_dump($request->input('itemData'));
+        $item = Items_model::find($request->input('itemData')['product_id']);
+        $item->item_name = $request->input('itemData')['item_name'];
+        $item->unit = $request->input('itemData')['unit'];
+        $item->unit_price = $request->input('itemData')['unit_price'];
+        $item->total_quantity= $request->input('itemData')['total_quantity'];
+
+        $item->save();
+
+        // Log
+        if($item->save()){
+            $log = new Logs_model;
+                $log->user_id = ($request->input('itemData')['user_id'] != '') ? $request->input('itemData')['user_id'] : 3 ; // Change to default admin value
+                $log->date = now()->toDateTimeString();
+                $log->message =($request->input('itemData')['username'] != '') ? $request->input('itemData')['username'] : 'admin' . " has update item with product number: " . $request->input('itemData')['product_number'] . " successfully.";
+                $log->save();
+        }
+
+        return response()->json(['success' => true , 'message' => 'Item created successfully']);
+    }
+
+    public function remove_item(Request $request)
+    {
+        $item = Items_model::find(($request->input('itemData')['product_id']));
+        $item->removed = 1;
+        $item->save();
+
+        // Log
+        if($item->save()){
+            $log = new Logs_model;
+                $log->user_id = ($request->input('itemData')['user_id'] != '') ? $request->input('itemData')['user_id'] : 3 ; // Change to default admin value
+                $log->date = now()->toDateTimeString();
+                $log->message =($request->input('itemData')['username'] != '') ? $request->input('itemData')['username'] : 'admin' . " has removed an item with product number: " . $request->input('itemData')['product_number'];
+                $log->save();
+        }
+
+        return response()->json(['success' => true , 'message' => 'Item created successfully']);
+    }
+
 
 }

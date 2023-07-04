@@ -8,7 +8,11 @@ import Dashboard from './Dashboard'
 
 function Landing() {
 
-    const [user, setUser] = useState(true)
+    const [user, setUser] = useState({
+        user_id: '',
+        username: '',
+        password: ''
+    })
 
     return (
         <BrowserRouter>

@@ -24,6 +24,10 @@ Route::post('/login', [Login::class, 'login_user']);
 Route::get('/items', [Inventory::class, 'get_all_items']);
 Route::get('/gen_prod_number', [Inventory::class, 'generate_product_number']);
 Route::post('/add_item', [Inventory::class, 'insert_item']);
+Route::post('/update_item', [Inventory::class, 'update_item']);
+Route::post('/remove_item', [Inventory::class, 'remove_item']);
+
+
 
 
 
