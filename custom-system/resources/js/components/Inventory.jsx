@@ -65,8 +65,7 @@ const Inventory = ({ user }) => {
         product_number: "",
     });
 
-    let genProdNum = "";
-
+   
     // Populate Table Data
     const fetchData = async () => {
         try {
@@ -79,24 +78,6 @@ const Inventory = ({ user }) => {
 
     useEffect(() => {
         fetchData();
-
-        // Generating Product Number in Add Modal
-        genProdNum = async () => {
-            try {
-                await axios
-                    .get("/api/gen_prod_number")
-                    .then((response) => {
-                        $("#addItem #txtProductNumber").val(response.data);
-                        $("#addItem #txtProductNumber").prop("disabled", true);
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        };
     }, []);
 
     $(document).ready(function () {

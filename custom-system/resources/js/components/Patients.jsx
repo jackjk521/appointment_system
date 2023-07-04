@@ -419,6 +419,7 @@ const Patients = ({ user }) => {
                         pagination={paginationFactory()}
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
+                        noDataIndication={() => <div class="text-center">No records found.</div>}
                     />
                 </div>
             </div>

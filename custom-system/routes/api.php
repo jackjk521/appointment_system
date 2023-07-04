@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Login;
 use App\Http\Controllers\Inventory;
 use App\Http\Controllers\Patients;
+use App\Http\Controllers\Purchases;
+
+
 
 
 /*
@@ -35,6 +38,12 @@ Route::post('/add_patient', [Patients::class, 'insert_patient']);
 Route::post('/update_patient', [Patients::class, 'update_patient']);
 Route::post('/remove_patient', [Patients::class, 'remove_patient']);
 
+// Purchases
+Route::get('/purchases', [Purchases::class, 'get_all_purchase_header']);
+Route::get('/gen_purchase_number', [Purchases::class, 'generate_purchase_number']);
+Route::post('/add_purchase', [Purchases::class, 'insert_purchase']);
+// Route::post('/update_purchase', [purchases::class, 'update_purchase']);
+// Route::post('/remove_purchase', [purchases::class, 'remove_purchase']);
 
 
 

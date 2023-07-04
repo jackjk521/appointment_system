@@ -12,7 +12,7 @@ class Patients_model extends Model
      /**
      * The attributes that are mass assignable.
      *
-     * @var array<string, string, integer, float, integer, string>
+     * @var array<string, string, integer, integer,  float, float>
      */
     protected $fillable = [     
         'first_name',
