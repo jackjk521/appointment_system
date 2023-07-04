@@ -1,109 +1,132 @@
 import React from "react";
-import ReactDOM from "react-dom/client";   
-import {BrowserRouter, Routes, Route, Link, useNavigate} from 'react-router-dom'
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import ReactDOM from "react-dom/client";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Link,
+    useNavigate,
+} from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
 
+const Login = ({ setUser }) => {
+    const nav = useNavigate();
 
-const Login = ({setUser}) => {
-    const nav = useNavigate()
-
-    // Login and Sign Up Functions 
-    const signup = async (e) =>{
-
+    // Login and Sign Up Functions
+    const signup = async (e) => {
         e.preventDefault();
 
         try {
             let userData = {
-                username : $("#inputUsername").val(),
+                username: $("#inputUsername").val(),
                 password: $("#inputPassword").val(),
                 role: "Administrator",
-                user_status: "ACTIVE"
-            }
+                user_status: "ACTIVE",
+            };
 
-            const response = await axios.post('/api/signUp', {
-                userData
+            const response = await axios.post("/api/signUp", {
+                userData,
             });
 
             // console.log(response.data)
-            if(response.data.success){
+            if (response.data.success) {
                 setUser(userData);
-                nav('/dashboard');
+                nav("/dashboard");
             }
-      
-            console.log(response.data); // Log the response data (optional)
-          } catch (error) {
-            console.error(error);
-          }
 
-    }
-    const login = async (e) =>{
+            console.log(response.data); // Log the response data (optional)
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    const login = async (e) => {
         e.preventDefault();
 
         try {
             let userData = {
-                username : $("#inputUsername").val(),
+                username: $("#inputUsername").val(),
                 password: $("#inputPassword").val(),
-            }
+            };
 
-            const response = await axios.post('/api/login', {
-                userData
+            const response = await axios.post("/api/login", {
+                userData,
             });
 
-            if(response.data.success){
-                setUser(userData);
-                nav('/dashboard');
-            }
-            else{
+            userData.user_id = response.data.user_id;
 
+            if (response.data.success) {
+                setUser(userData);
+                nav("/dashboard");
+            } else {
                 new Swal({
-                    title: 'Error',
-                    text: 'Invalid User Credentials',
-                    icon: 'error',
+                    title: "Error",
+                    text: "Invalid User Credentials",
+                    icon: "error",
                     timer: 1500, // Set the timer duration in milliseconds
                     buttons: false, // Hide the close button
-                  });
+                });
             }
-      
-          } catch (error) {
+        } catch (error) {
             console.error(error);
-          }
-    }
-
-        
+        }
+    };
 
     return (
         <div className="container pt-5">
-            <div class="row justify-content-center pt-5">
-                <div class="col-md-6 pt-5 bg-white">
-
+            <div className="row justify-content-center pt-5">
+                <div className="col-md-6 pt-5 bg-white">
                     {/* Add Logo Image here  */}
                     <img src="" alt=""></img>
 
-                    <h1 class="text-center">LOGIN</h1>
+                    <h1 className="text-center">LOGIN</h1>
 
                     {/* LOGIN START  */}
-                    <form class="row g-3 p-5">
-                        
-                        <div class="col-md-6">
-                            <label for="inputUsername" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="inputUsername" required/>
+                    <form className="row g-3 p-5">
+                        <div className="col-md-6">
+                            <label
+                                htmlFor="inputUsername"
+                                className="form-label"
+                            >
+                                Username
+                            </label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                id="inputUsername"
+                                required
+                            />
                         </div>
-                        <div class="col-md-6">
-                            <label for="inputPassword" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="inputPassword" required/>
+                        <div className="col-md-6">
+                            <label
+                                htmlFor="inputPassword"
+                                className="form-label"
+                            >
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                className="form-control"
+                                id="inputPassword"
+                                required
+                            />
                         </div>
-                     
-                        <div class="col-12 d-flex justify-content-center">
-                            <button type="submit" onClick={login} class="btn btn-primary">Log In</button>
+
+                        <div className="col-12 d-flex justify-content-center">
+                            <button
+                                type="submit"
+                                onClick={login}
+                                className="btn btn-primary"
+                            >
+                                Log In
+                            </button>
                         </div>
                     </form>
                     {/* LOGIN END */}
-
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Login;

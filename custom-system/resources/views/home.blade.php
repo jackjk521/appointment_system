@@ -31,12 +31,11 @@
         
     </head>
     <body>       
-        <div id="app" class="full-screen bg-light"> </div>
+        <div id="app" className="full-screen bg-light"> </div>
  
 
     <!-- Scripts  -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.22.0/bootstrap-table.min.js" integrity="sha512-q5l3LRc+pRoX5HTV9TZcXAfwF0YY536lLwEnWZtAhbmfhFnwJKZtrxBM+wRg2TZSyRCw16PUIbYqCnDk/tbC9A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     </body>
 </html>

@@ -10,7 +10,7 @@ const Appointments = ({ user }) => {
                 <h5>{user.username}</h5>
                 <table
                     id="tblTrailer"
-                    class="table table-condensed table-hover"
+                    className="table table-condensed table-hover"
                     data-toolbar="#toolbar"
                     data-search="true"
                     data-show-refresh="true"

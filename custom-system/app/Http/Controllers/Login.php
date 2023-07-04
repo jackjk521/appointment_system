@@ -42,7 +42,7 @@ class Login extends Controller
             
             if ($user && Hash::check($request->input('userData')['password'], $user->password)) {
                 
-                return response()->json(['success' => true , 'message' => 'User successfully authenticated']);
+                return response()->json(['success' => true , 'user_id' => $user->id, 'message' => 'User successfully authenticated']);
 
             } else {
                 return response()->json(['error' => true , 'message' => 'User credentials invalid']);
