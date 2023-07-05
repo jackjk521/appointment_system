@@ -21,9 +21,15 @@ import RemoveModal from "../includes/patients/remove";
 import PurchaseLine_table from "./jsGrid/PurchaseLine_table";
 
 const Purchases = ({ user }) => {
-
     // Table Data
     const [data, setData] = useState([]);
+    const [purchLineData, setPurchLineData] = useState([]);
+
+    const [addModalData, setAddModalData] = useState({
+        purchase_number: "",
+        totalAmount: 0.0,
+    });
+    const [totalAmount, setTotalAmount] = useState(0.0);
 
     // Modals
     const [addModal, setAddModal] = useState(false);
@@ -56,216 +62,212 @@ const Purchases = ({ user }) => {
 
     // Edit Item Fields
     const [editPatient, setEditPatient] = useState({
-        patient_id: '',
-        first_name: '',
-        last_name: '',
-        age: '',
-        weight: '',
-        height: '',
+        patient_id: "",
+        first_name: "",
+        last_name: "",
+        age: "",
+        weight: "",
+        height: "",
     });
 
     // Remove Item Fields
     const [removePatient, setRemovePatient] = useState({
-        patient_id: '',
+        patient_id: "",
     });
-
-
 
     // Populate Table Data
     const fetchData = async () => {
         try {
-            const response = await axios.get("/api/patients", {}); // works
+            const response = await axios.get("/api/purchases", {}); // works
             setData(response.data);
         } catch (error) {
             console.error(error);
         }
     };
 
+    // const generatePurchaseNumber = async () => {
+
+    // }
+
     useEffect(() => {
         fetchData();
     }, []);
 
-    $(document).ready(function () {
-        // // Cleave JS Formatting and Validation
-        // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
-        //     numeral: true,
-        //     numeralPositiveOnly: true,
-        //     numeralThousandsGroupStyle: "thousand",
-        //     numeralDecimalMark: ".",
-        // });
+    // // Cleave JS Formatting and Validation
+    // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
+    //     numeral: true,
+    //     numeralPositiveOnly: true,
+    //     numeralThousandsGroupStyle: "thousand",
+    //     numeralDecimalMark: ".",
+    // });
 
-        // const addItemTotalQuantity = new Cleave("#addItem #txtTotalQty", {
-        //     numeral: true,
-        //     numeralPositiveOnly: true,
-        //     numeralThousandsGroupStyle: "thousand",
-        //     numeralDecimalMark: ".",
-        // });
+    // const addItemTotalQuantity = new Cleave("#addItem #txtTotalQty", {
+    //     numeral: true,
+    //     numeralPositiveOnly: true,
+    //     numeralThousandsGroupStyle: "thousand",
+    //     numeralDecimalMark: ".",
+    // });
 
+    // ADD PATIENT FUNCTIONS START
+    const generatePurchaseNumber = async () => {
+        
+    };
 
-        // Create Purchase jsGrid
-   
-        // Create Purchase jsGrid END
-
-        // Get all Items
-
+    $("#addPurchaseBtn").on("click", async function () {
+        try {
+            const response = await axios.get("/api/gen_purchase_number");
+            const purchaseNumber = response.data;
+            
+            if (purchaseNumber) {
+                setAddModalData((prevAddModalData) => ({
+                    ...prevAddModalData,
+                    purchase_number: purchaseNumber,
+                }));
     
-
-        // ADD PATIENT FUNCTIONS START
-        $("#addPurchaseBtn").on("click", async function () {
-            try {
-                await axios
-                    .get("/api/gen_purchase_number")
-                    .then((response) => {
-                        $("#addPurchase #txtPurchaseNumber").val(response.data);
-                        $("#addPurchase #txtPurchaseNumber").prop("disabled", true);
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
+                handleOpenAddModal();
             }
-            handleOpenAddModal();
-        });
-
-        $("#btnAddPurchase").on("click", async function () {
-            // console.log( $("#addPurchase").attr('data-patient-id')) // works
-
-            let purchaseData = {
-                purchase_number: $("#addPPurchase #txtPurchaseNumber").val(),
-                patient_id: $("#addPurchase").attr('data-patient-id'),
-                total_amount: $("#addPPurchase #txtTotalAmount").val(),
-                // purchase_line: $("#addPatient #txtAge").val(), // jsGrid data here
-                // $("#selectItemsGrid").jsGrid("option", "data")
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-
-            // try {
-            //     await axios
-            //         .post("/api/add_patient", { patientData })
-            //         .then((response) => {
-            //             handleCloseAddModal();
-            //             new Swal({
-            //                 title: "Success",
-            //                 text: "Successfully added a new patient!",
-            //                 icon: "success",
-            //                 timer: 1500, // Set the timer duration in milliseconds
-            //                 showCancelButton: false,
-            //                 showConfirmButton: false,
-            //             });
-            //             fetchData();
-            //         })
-            //         .catch((error) => {
-            //             // Handle the error
-            //             new Swal({
-            //                 title: "Error",
-            //                 text: error,
-            //                 icon: "error",
-            //                 timer: 1500, // Set the timer duration in milliseconds
-            //                 showCancelButton: false,
-            //                 showConfirmButton: false,
-            //             });
-            //             console.error(error);
-            //         });
-            // } catch (error) {
-            //     console.error(error);
-            // }
-        });
-        // ADD PATIENT FUNCTIONS END
-
-        // EDIT PATIENT FUNCTIONS START
-        $("#btnEditPatient").on("click", async function () {
-            let patientData = {
-                patient_id: $("#editPatient #txtPatientId").val(),
-                first_name: $("#editPatient #txtFirstName").val(),
-                last_name: $("#editPatient #txtLastName").val(),
-                age: $("#editPatient #txtAge").val(),
-                weight: $("#editPatient #txtWeight").val(),
-                height: $("#editPatient #txtHeight").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-
-            try {
-                await axios
-                    .post("/api/update_patient", { patientData })
-                    .then((response) => {
-                        handleCloseEditModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully update an patient!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // EDIT PATIENT FUNCTIONS END
-
-        // REMOVE ITEM FUNCTIONS START
-        $("#btnRemovePatient").on("click", async function () {
-            let patientData = {
-                patient_id: $("#removePatient #txtPatientId").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-            try {
-                await axios
-                    .post("/api/remove_patient", { patientData })
-                    .then((response) => {
-                        handleCloseRemoveModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully removed an patient!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // REMOVE ITEM FUNCTIONS END
+        } catch (error) {
+            console.error(error);
+        }
     });
+
+    $("#btnAddPurchase").off("click").on("click", async function (event) {
+        event.stopPropagation();
+        // console.log( $("#addPurchase").attr('data-patient-id')) // works
+
+        let purchaseData = {
+            purchase_number: addModalData.purchase_number,
+            patient_id: $("#addPurchase").attr("data-patient-id"),
+            total_amount: addModalData.totalAmount,
+            purchase_line: purchLineData,
+            //To get the User ID for Logs
+            user_id: user.user_id,
+            username: user.username,
+        };
+
+        // console.log(purchaseData)
+        try {
+            await axios
+                .post("/api/add_purchase", { purchaseData })
+                .then((response) => {
+                        handleCloseAddModal();
+                        new Swal({
+                            title: "Success",
+                            text: "Successfully added a new purchase!",
+                            icon: "success",
+                            timer: 1500, // Set the timer duration in milliseconds
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                        });
+                        fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    });
+    // ADD PATIENT FUNCTIONS END
+
+    // EDIT PATIENT FUNCTIONS START
+    $("#btnEditPatient").on("click", async function () {
+        let patientData = {
+            patient_id: $("#editPatient #txtPatientId").val(),
+            first_name: $("#editPatient #txtFirstName").val(),
+            last_name: $("#editPatient #txtLastName").val(),
+            age: $("#editPatient #txtAge").val(),
+            weight: $("#editPatient #txtWeight").val(),
+            height: $("#editPatient #txtHeight").val(),
+            //To get the User ID for Logs
+            user_id: user.user_id,
+            username: user.username,
+        };
+
+        try {
+            await axios
+                .post("/api/update_patient", { patientData })
+                .then((response) => {
+                    handleCloseEditModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully update an patient!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    });
+    // EDIT PATIENT FUNCTIONS END
+
+    // REMOVE ITEM FUNCTIONS START
+    $("#btnRemovePatient").on("click", async function () {
+        let patientData = {
+            patient_id: $("#removePatient #txtPatientId").val(),
+            //To get the User ID for Logs
+            user_id: user.user_id,
+            username: user.username,
+        };
+        try {
+            await axios
+                .post("/api/remove_patient", { patientData })
+                .then((response) => {
+                    handleCloseRemoveModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully removed an patient!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    });
+    // REMOVE ITEM FUNCTIONS END
 
     // Filter Text and Numbers (Exact)
     const [searchText, setSearchText] = useState("");
@@ -274,48 +276,40 @@ const Purchases = ({ user }) => {
     };
 
     const filteredData = data.filter((patient) => {
-        const { first_name, last_name, age, height, weight} = patient;
+        const { purchase_number, patient_name, total_amount } = patient;
         const searchValue = searchText.toLowerCase();
         return (
-            first_name.toLowerCase().includes(searchValue) ||
-            last_name.toLowerCase().includes(searchValue) ||
-            parseFloat(age).toString().includes(searchValue) ||
-            parseFloat(height).toString().includes(searchValue) ||
-            parseFloat(weight).toString().includes(searchValue)
+            purchase_number.toLowerCase().includes(searchValue) ||
+            patient_name.toLowerCase().includes(searchValue) ||
+            parseFloat(total_amount).toString().includes(searchValue)
         );
     });
 
     // BOOTSTRAP TABLE INITIALIZATION
     const columns = [
         {
-            dataField: "first_name",
-            text: "First Name",
+            dataField: "purchase_number",
+            text: "Purchase Number",
             headerAlign: "center", // Center-align the column header
             align: "center",
         },
         {
-            dataField: "last_name",
-            text: "Last Name",
+            dataField: "patient_name",
+            text: "Patient's Name",
             headerAlign: "center", // Center-align the column header
             align: "center",
         },
         {
-            dataField: "age",
-            text: "Age",
+            dataField: "total_amount",
+            text: "Total Amount",
             headerAlign: "center", // Center-align the column header
             align: "center",
-        },
-        {
-            dataField: "height",
-            text: "Height (in CM)",
-            headerAlign: "center", // Center-align the column header
-            align: "center",
-        },
-        {
-            dataField: "weight",
-            text: "Weight (in KG)",
-            headerAlign: "center", // Center-align the column header
-            align: "center",
+            formatter: (cell, row) => {
+                return new Intl.NumberFormat("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }).format(cell);
+            },
         },
         {
             dataField: "actions",
@@ -401,9 +395,7 @@ const Purchases = ({ user }) => {
                             className="btn btn-success my-3"
                             id="addPurchaseBtn"
                         >
-                            <i className="fa fa-plus p-1"></i>
-                            {" "}
-                            Create Purchase{" "}
+                            <i className="fa fa-plus p-1"></i> Create Purchase{" "}
                         </button>
                     </div>
                 </div>
@@ -413,6 +405,11 @@ const Purchases = ({ user }) => {
                     user={user}
                     isOpen={addModal}
                     onClose={handleCloseAddModal}
+                    purchLineData={purchLineData}
+                    setPurchLineData={setPurchLineData}
+                    addModalData={addModalData}
+                    purchaseNumber={addModalData.purchase_number}
+                    setAddModalData={setAddModalData}
                 />
                 <EditModal
                     user={user}
@@ -442,7 +439,7 @@ const Purchases = ({ user }) => {
                         </div>
                     </div>
 
-                    <PurchaseLine_table/>
+                    {/* <PurchaseLine_table/> */}
 
                     <BootstrapTable
                         keyField="id"
@@ -453,10 +450,10 @@ const Purchases = ({ user }) => {
                         pagination={paginationFactory()}
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
-                        noDataIndication={() => <div class="text-center">No records found.</div>}
+                        noDataIndication={() => (
+                            <div class="text-center">No records found.</div>
+                        )}
                     />
-
- 
                 </div>
             </div>
         </>

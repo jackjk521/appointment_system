@@ -19,7 +19,7 @@ class Patients extends Controller
 
     public function get_all_patients(Request $request){
 
-        $patients = Patients_model::selectRaw("CONCAT(first_name, ' ', last_name) AS full_name,  patients.* ")->where('removed', 0)->get();
+        $patients = Patients_model::selectRaw("CONCAT(first_name, ' ', last_name) AS full_name,  patients.* ")->where('removed', 0)->orderByDesc('id')->get();
 
         return response()->json($patients);
     }

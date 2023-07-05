@@ -22,7 +22,12 @@ class Purchases extends Controller
 
     public function get_all_purchase_header(Request $request){
 
-        $purchases = Purchase_header_model::where('removed', 0)->get();
+        // $purchases = Purchase_header_model::where('removed', 0)->orderByDesc('id')->get();
+        // join with patient table to get their name
+
+        $purchases= Purchase_header_model::join('patients', 'purchase_header.patient_id', '=', 'patients.id')
+            ->selectRaw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_name, purchase_header.* ")
+            ->where('purchase_header.removed', 0)->orderByDesc('purchase_header.id')->get();
 
         return response()->json($purchases);
     }
@@ -46,15 +51,22 @@ class Purchases extends Controller
 
             $purchase->save();
 
-            var_dump($request->input('purchaseData')['purchase_line']);
-        // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
+            // Get Purchase Header Id
+            $purch_header_id = $purchase->id;
 
-        // $purchase_line = $request->input('purchaseData')['purchase_line'];
-      
-        // foreach ($data as $row) {
-        //     YourModel::create($row);
-        // }
-    
+            // Save the purchase line items
+            $purchase_line = $request->input('purchaseData')['purchase_line'];
+        // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
+            foreach ($purchase_line as $data){
+                $purch_line = new Purchase_line_model;
+                $purch_line->purchase_header_id = $purch_header_id;
+                $purch_line->item_id = $data['item_id'];
+                $purch_line->item_price = $data['item_price'];
+                $purch_line->purchased_quantity = $data['purchased_quantity'];
+                $purch_line->purchase_sub_total = floatval($data['purchase_sub_total']);
+                $purch_line->save();
+            }
+
 
         // Log
         if($purchase->save()){
@@ -65,7 +77,7 @@ class Purchases extends Controller
                 $log->save();
         }
 
-        return response()->json(['success' => true , 'message' => 'Patient created successfully']);
+        return response()->json(['success' => true , 'message' => 'Purchase created successfully']);
     }
 
     public function update_patient(Request $request)

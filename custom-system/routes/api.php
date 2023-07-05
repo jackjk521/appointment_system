@@ -31,6 +31,7 @@ Route::get('/gen_prod_number', [Inventory::class, 'generate_product_number']);
 Route::post('/add_item', [Inventory::class, 'insert_item']);
 Route::post('/update_item', [Inventory::class, 'update_item']);
 Route::post('/remove_item', [Inventory::class, 'remove_item']);
+Route::get('/get_item', [Inventory::class, 'get_item_by_id']);
 
 // Patients Routes
 Route::get('/patients', [Patients::class, 'get_all_patients']);

@@ -81,13 +81,13 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                         <div className="col-4">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Weight (in kg)
+                                    Height (in cm)
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtWeight"
-                                    id="txtWeight"
-                                    defaultValue={editPatient["weight"]}
+                                    name="txtHeight"
+                                    id="txtHeight"
+                                    defaultValue={editPatient["height"]}
                                     className="form-control"
                                     onChange={handleChange}
                                 />
@@ -96,13 +96,13 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                         <div className="col-4">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Height (in cm)
+                                    Weight (in kg)
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtHeight"
-                                    id="txtHeight"
-                                    defaultValue={editPatient["height"]}
+                                    name="txtWeight"
+                                    id="txtWeight"
+                                    defaultValue={editPatient["weight"]}
                                     className="form-control"
                                     onChange={handleChange}
                                 />

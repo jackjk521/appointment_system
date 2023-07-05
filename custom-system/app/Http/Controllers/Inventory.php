@@ -24,6 +24,14 @@ class Inventory extends Controller
         return response()->json($items);
     }
 
+    public function get_item_by_id(Request $request){
+
+        $itemId = intval($request->input('itemId'));
+        $item = Items_model::find($itemId);
+
+        return response()->json($item);
+    }
+
     public static function generate_product_number()
     {
         $uniqueId = Items_model::generateUniqueProdNo();
