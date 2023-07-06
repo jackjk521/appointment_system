@@ -12,29 +12,42 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import { Button } from "react-bootstrap";
 
-import ViewModal from "../includes/patients/view";
+import ViewModal from "../includes/purchases/view";
 import AddModal from "../includes/purchases/add";
 import EditModal from "../includes/patients/edit";
-import RemoveModal from "../includes/patients/remove";
+import RemoveModal from "../includes/purchases/remove";
 
 // jsGRid
-import PurchaseLine_table from "./jsGrid/PurchaseLine_table";
+// import PurchaseLine_table from "./jsGrid/PurchaseLine_table";
 
 const Purchases = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
+
+    // Add Modal Data
     const [purchLineData, setPurchLineData] = useState([]);
+
+    // View Modal Data 
+    const [purchaseList, setPurchaseList] = useState([]);
 
     const [addModalData, setAddModalData] = useState({
         purchase_number: "",
         totalAmount: 0.0,
     });
-    const [totalAmount, setTotalAmount] = useState(0.0);
 
     // Modals
+    const [viewModal, setViewModal] = useState(false);
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [removeModal, setRemoveModal] = useState(false);
+
+    // Add Modal
+    const handleOpenViewModal = () => {
+        setViewModal(true);
+    };
+    const handleCloseViewModal = () => {
+        setViewModal(false);
+    };
 
     // Add Modal
     const handleOpenAddModal = () => {
@@ -60,6 +73,14 @@ const Purchases = ({ user }) => {
         setRemoveModal(false);
     };
 
+    // View Purchase Fields
+    const [viewPurchase, setViewPurchase] = useState({
+        purchase_number: "",
+        patient_name: "",
+        total_amount: "",
+        created_by: "",
+    });
+
     // Edit Item Fields
     const [editPatient, setEditPatient] = useState({
         patient_id: "",
@@ -71,8 +92,8 @@ const Purchases = ({ user }) => {
     });
 
     // Remove Item Fields
-    const [removePatient, setRemovePatient] = useState({
-        patient_id: "",
+    const [removePurchase, setRemovePurchase] = useState({
+        purch_header_id: "",
     });
 
     // Populate Table Data
@@ -85,14 +106,12 @@ const Purchases = ({ user }) => {
         }
     };
 
-    // const generatePurchaseNumber = async () => {
-
-    // }
 
     useEffect(() => {
         fetchData();
     }, []);
 
+    $(document).ready(function () {
     // // Cleave JS Formatting and Validation
     // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
     //     numeral: true,
@@ -108,7 +127,7 @@ const Purchases = ({ user }) => {
     //     numeralDecimalMark: ".",
     // });
 
-    // ADD PATIENT FUNCTIONS START
+    // ADD PURCHASE FUNCTIONS START
     const generatePurchaseNumber = async () => {
         
     };
@@ -177,7 +196,32 @@ const Purchases = ({ user }) => {
             console.error(error);
         }
     });
-    // ADD PATIENT FUNCTIONS END
+    // ADD PURCHASE FUNCTIONS END
+
+    // VIEW PURCHASE FUNCTIONS START
+
+    // const viewPurchaseFunction = async (id) => {
+    //     try {
+    //         const response = await axios.get("/api/get_purchase", {
+    //             purch_header_id: id
+    //         });
+    //         const purchaseHeader = response.data;
+    //         console.log(purchaseHeader)
+    //         // if (purchaseNumber) {
+    //         //     $("#viewPurchase #txtPurchaseNumber").val(purchaseHeader)
+    //         //     setAddModalData((prevAddModalData) => ({
+    //         //         ...prevAddModalData,
+    //         //         purchase_number: purchaseNumber,
+    //         //     }));
+    
+    //         //     handleOpenAddModal();
+    //         // }
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
+
+    // VIEW PURCHASE FUNCTIONS END
 
     // EDIT PATIENT FUNCTIONS START
     $("#btnEditPatient").on("click", async function () {
@@ -228,21 +272,22 @@ const Purchases = ({ user }) => {
     // EDIT PATIENT FUNCTIONS END
 
     // REMOVE ITEM FUNCTIONS START
-    $("#btnRemovePatient").on("click", async function () {
-        let patientData = {
-            patient_id: $("#removePatient #txtPatientId").val(),
+    $("#removePurchase #btnRemovePurchase").on("click", async function () {
+        console.log('removeingg')
+        let purchaseData = {
+           purch_header_id: $("#removePurchase #txtPurchHeaderId").val(),
             //To get the User ID for Logs
             user_id: user.user_id,
             username: user.username,
         };
         try {
             await axios
-                .post("/api/remove_patient", { patientData })
+                .post("/api/remove_purchase", { purchaseData })
                 .then((response) => {
                     handleCloseRemoveModal();
                     new Swal({
                         title: "Success",
-                        text: "Successfully removed an patient!",
+                        text: "Successfully removed an purchase!",
                         icon: "success",
                         timer: 1500, // Set the timer duration in milliseconds
                         showCancelButton: false,
@@ -268,6 +313,7 @@ const Purchases = ({ user }) => {
         }
     });
     // REMOVE ITEM FUNCTIONS END
+});
 
     // Filter Text and Numbers (Exact)
     const [searchText, setSearchText] = useState("");
@@ -319,7 +365,7 @@ const Purchases = ({ user }) => {
             formatter: (cell, row) => (
                 <div>
                     <Button
-                        variant="info"
+                        variant="primary"
                         size="md"
                         onClick={() => handleView(row)}
                     >
@@ -345,9 +391,50 @@ const Purchases = ({ user }) => {
     ];
 
     // View , Edit and Remove Functions
-    const handleView = (row) => {
-        console.log("View", row);
+    const handleView = async (row) => {
+        console.log("View", row.id);
         // Add your view logic here
+        // viewPurchaseFunction(row.id)
+        let purch_header_id = row.id
+        try {
+            const response = await axios.get("/api/get_purchase", {
+                params: {
+                    purch_header_id: purch_header_id
+                }
+            });
+            const purchaseHeader = response.data;
+            console.log(purchaseHeader[0])
+            if (purchaseHeader) {
+
+                setViewPurchase({
+                    purchase_number: purchaseHeader[0].purchase_number,
+                    patient_name: purchaseHeader[0].patient_name,
+                    total_amount: purchaseHeader[0].total_amount,
+                    created_by: purchaseHeader[0].username
+                })
+
+                    try {
+                        const res = await axios.get("/api/get_purchase_line", {
+                            params: {
+                                purch_header_id: purch_header_id
+                            }
+                        });
+                        const purchase_lines = res.data.map((val) => ({
+                            item_name: val.item_name,
+                            item_price: val.item_price,
+                            purchased_quantity: val.purchased_quantity,
+                            purchase_sub_total: val.purchase_sub_total
+                        }));
+                        setPurchaseList(purchase_lines)
+                        handleOpenViewModal();
+                    } catch (error) {
+                        console.error(error);
+                    }
+    
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleEdit = (row) => {
@@ -370,10 +457,10 @@ const Purchases = ({ user }) => {
     };
 
     const handleRemove = (row) => {
-        console.log("Remove", row);
+        console.log("Remove", row.id);
         // Add your remove logic here
-        setRemovePatient({
-            patient_id: row["id"],
+        setRemovePurchase({
+            purch_header_id: row.id,
         });
         handleOpenRemoveModal();
     };
@@ -401,6 +488,13 @@ const Purchases = ({ user }) => {
                 </div>
 
                 {/* MODALS  */}
+                <ViewModal
+                    user={user}
+                    isOpen={viewModal}
+                    onClose={handleCloseViewModal}
+                    viewPurchase={viewPurchase}
+                    purchaseList={purchaseList}
+                />
                 <AddModal
                     user={user}
                     isOpen={addModal}
@@ -421,7 +515,7 @@ const Purchases = ({ user }) => {
                     user={user}
                     isOpen={removeModal}
                     onClose={handleCloseRemoveModal}
-                    removePatient={removePatient}
+                    removePurchase={removePurchase}
                 />
 
                 <div className="container bg-white p-4">

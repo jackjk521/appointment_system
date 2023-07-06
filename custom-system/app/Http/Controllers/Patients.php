@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patients_model;
+use App\Models\Purchase_line_model;
 use App\Models\Logs_model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,37 @@ class Patients extends Controller
         $patients = Patients_model::selectRaw("CONCAT(first_name, ' ', last_name) AS full_name,  patients.* ")->where('removed', 0)->orderByDesc('id')->get();
 
         return response()->json($patients);
+    }
+
+    public function get_patient(Request $request){
+
+        $id = $request->input('patient_id');
+        $patient = Patients_model::selectRaw("CONCAT(first_name, ' ', last_name) AS full_name,  patients.* ")->where('removed', 0)->where('id', $id)->get();
+
+        return response()->json($patient);
+    }
+
+    public function get_patient_purchase_history(Request $request){
+
+        $id = $request->input('patient_id');
+        // $history = Patients_model::join('purchase_header', 'purchase_header.patient_id', '=', 'patients.id')
+        //         ->join('purchase_line', 'purchase_line.purchase_header_id', '=', 'purchase_header.id')
+        //         // ->select('patients.*', 'purchase_header.*', 'purchase_line.*')
+        //         // ->where('patients.id', $id)
+        //         // ->where('patients.removed', 0)
+        //         ->orderByDesc('purchase_line.id')
+        //         ->get();
+
+        $history = Purchase_line_model::join('purchase_header', 'purchase_header.id', '=', 'purchase_line.purchase_header_id')
+            ->join('patients', 'patients.id', '=', 'purchase_header.patient_id')
+            ->join('items', 'items.id', '=', 'purchase_line.item_id')
+            ->select('purchase_header.date_created', 'purchase_line.*', 'items.item_name', 'items.id as item_id')
+            ->where('patients.removed', 0)
+            ->where('patients.id', $id)
+            ->orderByDesc('purchase_line.id')
+            ->get();
+
+        return response()->json($history);
     }
 
     public function insert_patient(Request $request)

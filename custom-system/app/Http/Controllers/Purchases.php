@@ -38,6 +38,32 @@ class Purchases extends Controller
         return $uniqueId;
     }
 
+    public function get_purchase_header_by_id(Request $request){
+        
+
+        $id = $request->input('purch_header_id');
+        $purchases = Purchase_header_model::join('patients', 'purchase_header.patient_id', '=', 'patients.id')
+                                        ->join('users', 'purchase_header.user_id', '=', 'users.id')
+                                        ->selectRaw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_name, purchase_header.*, users.username ")
+                                        ->where('purchase_header.removed', 0)
+                                        ->where('purchase_header.id', $id)->get();
+        // join with patient table to get their name
+
+        return response()->json($purchases);
+    }
+
+    public function get_purchase_line_by_id(Request $request){
+        $id = $request->input('purch_header_id');
+        $purchases = Purchase_line_model::join('purchase_header', 'purchase_line.purchase_header_id', '=', 'purchase_header.id')
+                                        ->join('items', 'purchase_line.item_id', '=', 'items.id')
+                                        ->select('purchase_line.*', 'items.item_name')
+                                        ->where('purchase_header.removed', 0)
+                                        ->where('purchase_header.id', $id)->get();
+        // join with patient table to get their name
+
+        return response()->json($purchases);
+    }
+
     public function insert_purchase(Request $request)
     {
         // Insert Purchase Header > return the inserted Id
@@ -104,18 +130,18 @@ class Purchases extends Controller
         return response()->json(['success' => true , 'message' => 'Item created successfully']);
     }
 
-    public function remove_patient(Request $request)
+    public function remove_purchase(Request $request)
     {
-        $patient = Patients_model::find(($request->input('patientData')['patient_id']));
-        $patient->removed = 1;
-        $patient->save();
+        $purchase = Purchase_header_model::find(($request->input('purchaseData')['purch_header_id']));
+        $purchase->removed = 1;
+        $purchase->save();
 
         // Log
-        if($patient->save()){
+        if($purchase->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('patientData')['user_id'] != '') ? $request->input('patientData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('purchaseData')['user_id'] != '') ? $request->input('purchaseData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('patientData')['username'] != '') ? $request->input('patientData')['username'] : 'admin' . " has removed an patient with id : " . $request->input('patientData')['patient_id'];
+                $log->message =($request->input('purchaseData')['username'] != '') ? $request->input('purchaseData')['username'] : 'admin' . " has removed an purchase header with id : " . $request->input('purchaseData')['purch_header_id'];
                 $log->save();
         }
 

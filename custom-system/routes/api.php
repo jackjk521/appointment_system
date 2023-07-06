@@ -35,16 +35,20 @@ Route::get('/get_item', [Inventory::class, 'get_item_by_id']);
 
 // Patients Routes
 Route::get('/patients', [Patients::class, 'get_all_patients']);
+Route::get('/get_patient', [Patients::class, 'get_patient']);
+Route::get('/get_patient_history', [Patients::class, 'get_patient_purchase_history']);
 Route::post('/add_patient', [Patients::class, 'insert_patient']);
 Route::post('/update_patient', [Patients::class, 'update_patient']);
 Route::post('/remove_patient', [Patients::class, 'remove_patient']);
 
 // Purchases
 Route::get('/purchases', [Purchases::class, 'get_all_purchase_header']);
+Route::get('/get_purchase', [Purchases::class, 'get_purchase_header_by_id']);
+Route::get('/get_purchase_line', [Purchases::class, 'get_purchase_line_by_id']);
 Route::get('/gen_purchase_number', [Purchases::class, 'generate_purchase_number']);
 Route::post('/add_purchase', [Purchases::class, 'insert_purchase']);
 // Route::post('/update_purchase', [purchases::class, 'update_purchase']);
-// Route::post('/remove_purchase', [purchases::class, 'remove_purchase']);
+Route::post('/remove_purchase', [Purchases::class, 'remove_purchase']);
 
 
 

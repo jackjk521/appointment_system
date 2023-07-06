@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cleave from "cleave.js";
 import Swal from "sweetalert2";
+import moment from 'moment'
 
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -12,6 +13,7 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import { Button } from "react-bootstrap";
 
+import ViewModal from "../includes/patients/view";
 import AddModal from "../includes/patients/add";
 import EditModal from "../includes/patients/edit";
 import RemoveModal from "../includes/patients/remove";
@@ -20,10 +22,22 @@ const Patients = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
 
+    // View 
+    const [purchaseHistory, setPurchaseHistory] = useState([]);
+    
     // Modals
+    const [viewModal, setViewModal] = useState(false);
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [removeModal, setRemoveModal] = useState(false);
+
+     // View Modal
+     const handleOpenViewModal = () => {
+        setViewModal(true);
+    };
+    const handleCloseViewModal = () => {
+        setViewModal(false);
+    };
 
     // Add Modal
     const handleOpenAddModal = () => {
@@ -49,7 +63,17 @@ const Patients = ({ user }) => {
         setRemoveModal(false);
     };
 
-    // Edit Item Fields
+    //VIew Patient Fields
+    const [viewPatient, setViewPatient] = useState({
+        patient_id: '',
+        first_name: '',
+        last_name: '',
+        age: '',
+        weight: '',
+        height: '',
+    });
+
+    // Edit Patient Fields
     const [editPatient, setEditPatient] = useState({
         patient_id: '',
         first_name: '',
@@ -79,7 +103,7 @@ const Patients = ({ user }) => {
     }, []);
 
     $(document).ready(function () {
-        // // Cleave JS Formatting and Validation
+    // // Cleave JS Formatting and Validation
         // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
         //     numeral: true,
         //     numeralPositiveOnly: true,
@@ -93,6 +117,7 @@ const Patients = ({ user }) => {
         //     numeralThousandsGroupStyle: "thousand",
         //     numeralDecimalMark: ".",
         // });
+
 
         // ADD PATIENT FUNCTIONS START
         $("#addPatientBtn").on("click", async function () {
@@ -235,6 +260,8 @@ const Patients = ({ user }) => {
         // REMOVE ITEM FUNCTIONS END
     });
 
+ 
+
     // Filter Text and Numbers (Exact)
     const [searchText, setSearchText] = useState("");
     const handleSearch = (event) => {
@@ -293,7 +320,7 @@ const Patients = ({ user }) => {
             formatter: (cell, row) => (
                 <div>
                     <Button
-                        variant="info"
+                        variant="primary"
                         size="md"
                         onClick={() => handleView(row)}
                     >
@@ -319,9 +346,57 @@ const Patients = ({ user }) => {
     ];
 
     // View , Edit and Remove Functions
-    const handleView = (row) => {
+    const handleView = async (row) => {
         console.log("View", row);
         // Add your view logic here
+        let patient_id = row.id
+        try {
+            const response = await axios.get("/api/get_patient", {
+                params: {
+                    patient_id: patient_id
+                }
+            });
+            const patientData = response.data;
+
+            if (patientData) {
+
+                setViewPatient({
+                    patient_id: patientData[0].patient_id,
+                    first_name: patientData[0].first_name,
+                    last_name: patientData[0].last_name,
+                    age: patientData[0].age,
+                    weight: patientData[0].weight,
+                    height: patientData[0].height,
+                })
+                
+                    try {
+                        const res = await axios.get("/api/get_patient_history", {
+                            params: {
+                                  patient_id: patient_id
+                            }
+                        });
+
+                        // console.log(res.data)
+                        const purchase_lines = res.data.map((val) => ({
+                           item_id: val.item_id,
+                            date_created: moment(val.date_created).format("YYYY-MM-DD"),
+                            item_name: val.item_name,
+                            item_price: val.item_price,
+                            purchased_quantity: val.purchased_quantity,
+                            purchase_sub_total: val.purchase_sub_total
+                        }));
+
+                        setPurchaseHistory(purchase_lines)
+                        // console.log(purchaseHistory)
+                        handleOpenViewModal();
+                    } catch (error) {
+                        console.error(error);
+                    }
+        
+                }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleEdit = (row) => {
@@ -377,6 +452,13 @@ const Patients = ({ user }) => {
                 </div>
 
                 {/* MODALS  */}
+                <ViewModal
+                    user={user}
+                    isOpen={viewModal}
+                    onClose={handleCloseViewModal}
+                    viewPatient={viewPatient}
+                    purchaseHistory={purchaseHistory}
+                />
                 <AddModal
                     user={user}
                     isOpen={addModal}

@@ -1,85 +1,148 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+import BootstrapTable from "react-bootstrap-table-next";
+import cellEditFactory from "react-bootstrap-table2-editor";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import filterFactory, {
+    textFilter,
+    defaultFilter,
+} from "react-bootstrap-table2-filter";
 
-const AddModal = ({ user, isOpen, onClose }) => {
+
+const ViewModal = ({ user, isOpen, onClose, viewPurchase, purchaseList}) => {
+
+    console.log(purchaseList)
+        // BOOTSTRAP TABLE INITIALIZATION
+        const columns = [
+            { dataField: "item_id", text: "Item ID", hidden: true }, //works
+
+            {
+                dataField: "item_name",
+                text: "Item Name",
+                headerAlign: "center", // Center-align the column header
+                align: "center",
+                editable: false,
+            },
+            {
+                dataField: "item_price",
+                text: "Unit Price",
+                headerAlign: "center", // Center-align the column header
+                align: "center",
+                editable: false,
+                formatter: (cell, row) => {
+                    return new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }).format(cell);
+                },
+            },
+            {
+                dataField: "purchased_quantity",
+                text: "Quantity",
+                headerAlign: "center", // Center-align the column header
+                align: "center",
+                editable: false,
+                formatter: (cell, row) => {
+                    return new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }).format(cell);
+                },
+            },
+            {
+                dataField: "purchase_sub_total",
+                text: "Sub Total",
+                headerAlign: "center", // Center-align the column header
+                align: "center",
+                editable: false,
+                formatter: (cell, row) => {
+                    const formattedSubTotal = parseFloat(cell).toFixed(2);
+                    return new Intl.NumberFormat("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }).format(formattedSubTotal);
+                },
+            },
+        ];
+
+        
     return (
         <>
             <Modal
-                id="addItem"
+                id="viewPurchase"
                 size="lg"
                 show={isOpen}
                 onHide={onClose}
                 centered
             >
-                <Modal.Header className="bg-success text-white" closeButton>
-                    <Modal.Title>View Item</Modal.Title>
+                <Modal.Header className="bg-primary text-white" closeButton>
+                    <Modal.Title>View Purchase</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {/* TO EDIT  */}
-                    <div className="row">
-                        <div className="col-6">
+                    <div className="row mb-4">
+                        <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">Product Number</label>
+                                <label className="py-3">Purchase Number</label>
                                 <span
                                     type="text"
-                                    name="txtProductNumber"
-                                    id="txtProductNumber"
-                                    placeholder="Product Number"
+                                    name="txtPurchaseNumber"
+                                    id="txtPurchaseNumber"
+                                    placeholder="Purchase Number"
                                     className="form-control"
-                                />
+                                >{viewPurchase.purchase_number}</span>
                             </div>
                         </div>
-                        <div className="col-6">
+                        <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">Item Name</label>
+                                <label className="py-3">Patient's Name</label>
                                 <span
                                     type="text"
-                                    name="txtItemName"
-                                    id="txtItemName"
-                                    placeholder="Item Name"
+                                    name="txtPatientName"
+                                    id="txtPatientName"
+                                    placeholder="Patient's Name"
                                     className="form-control"
-                                />
+                                >{viewPurchase.patient_name}</span>
+                            </div>
+                        </div>
+                        <div className="col-3">
+                            <div className="form-group">
+                                <label className="py-3">Total Amount</label>
+                                <span
+                                    type="text"
+                                    name="txtTotalAmount"
+                                    id="txtTotalAmount"
+                                    placeholder="Total Amount"
+                                    className="form-control"
+                                >{viewPurchase.total_amount}</span>
+                            </div>
+                        </div>
+                        <div className="col-3">
+                            <div className="form-group">
+                                <label className="py-3">Created By</label>
+                                <span
+                                    type="text"
+                                    name="txtCreatedBy"
+                                    id="txtCreatedBy"
+                                    placeholder="Created By"
+                                    className="form-control"
+                                >{viewPurchase.created_by}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="row">
-                        <div className="col-4">
-                            <div className="form-group">
-                                {/* Selectpicker  */}
-                                <label className="py-3">Unit</label>
-                                <span
-                                    type="text"
-                                    name="txtUnit"
-                                    id="txtUnit"
-                                    placeholder="PC, BOX"
-                                    className="form-control"
-                                />
-                            </div>
-                        </div>
-                        <div className="col-4">
-                            <div className="form-group">
-                                <label className="py-3">Unit Price</label>
-                                <span
-                                    type="number"
-                                    name="txtUnitPrice"
-                                    id="txtUnitPrice"
-                                    className="form-control"
-                                />
-                            </div>
-                        </div>
-                        <div className="col-4">
-                            <div className="form-group">
-                                <label className="py-3">Total Quantity</label>
-                                <span
-                                    type="number"
-                                    name="txtTotalQty"
-                                    id="txtTotalQty"
-                                    className="form-control"
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    {/* Display all purchases under that purchase header */}
+                    <BootstrapTable
+                        keyField="item_id"
+                        data={purchaseList}
+                        columns={columns}
+                        // filter={filterFactory()}
+                        // pagination={paginationFactory()}
+                        noDataIndication={() => (
+                            <div class="text-center">No records found.</div>
+                        )}
+                    />
+
                 </Modal.Body>
                 <Modal.Footer></Modal.Footer>
             </Modal>
@@ -87,4 +150,4 @@ const AddModal = ({ user, isOpen, onClose }) => {
     );
 };
 
-export default AddModal;
+export default ViewModal;
