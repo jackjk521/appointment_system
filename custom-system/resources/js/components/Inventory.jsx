@@ -12,9 +12,9 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 import { Button } from "react-bootstrap";
 
-import AddModal from "../includes/patients/add";
-import EditModal from "../includes/patients/edit";
-import RemoveModal from "../includes/patients/remove";
+import AddModal from "../includes/inventory/add";
+import EditModal from "../includes/inventory/edit";
+import RemoveModal from "../includes/inventory/remove";
 
 const Inventory = ({ user }) => {
     // Table Data
@@ -65,8 +65,7 @@ const Inventory = ({ user }) => {
         product_number: "",
     });
 
-    let genProdNum = "";
-
+   
     // Populate Table Data
     const fetchData = async () => {
         try {
@@ -79,24 +78,6 @@ const Inventory = ({ user }) => {
 
     useEffect(() => {
         fetchData();
-
-        // Generating Product Number in Add Modal
-        genProdNum = async () => {
-            try {
-                await axios
-                    .get("/api/gen_prod_number")
-                    .then((response) => {
-                        $("#addItem #txtProductNumber").val(response.data);
-                        $("#addItem #txtProductNumber").prop("disabled", true);
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        };
     }, []);
 
     $(document).ready(function () {
@@ -156,7 +137,8 @@ const Inventory = ({ user }) => {
                             text: "Successfully added a new item!",
                             icon: "success",
                             timer: 1500, // Set the timer duration in milliseconds
-                            button: false, // Hide the close button
+                            showCancelButton: false,
+                            showConfirmButton: false,
                         });
                         fetchData();
                     })
@@ -167,7 +149,8 @@ const Inventory = ({ user }) => {
                             text: error,
                             icon: "error",
                             timer: 1500, // Set the timer duration in milliseconds
-                            button: false, // Hide the close button
+                            showCancelButton: false,
+                            showConfirmButton: false,
                         });
                         console.error(error);
                     });
@@ -412,6 +395,7 @@ const Inventory = ({ user }) => {
                     <div className="col-3 d-flex align-items-end justify-content-end ">
                         <button className="btn btn-success my-3" id="addItemBtn">
                             {" "}
+                             <i className="fa fa-plus p-1"></i>
                             Add Item{" "}
                         </button>
                     </div>

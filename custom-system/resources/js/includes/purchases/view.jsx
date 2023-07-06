@@ -1,43 +1,21 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
-import filterFactory, { textFilter, dateFilter, Comparator } from 'react-bootstrap-table2-filter';
-import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+import cellEditFactory from "react-bootstrap-table2-editor";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import filterFactory, {
+    textFilter,
+    defaultFilter,
+} from "react-bootstrap-table2-filter";
 
-const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
-    // console.log(viewPatient)
-    console.log(purchaseHistory)
+
+const ViewModal = ({ user, isOpen, onClose, viewPurchase, purchaseList}) => {
+
+    console.log(purchaseList)
         // BOOTSTRAP TABLE INITIALIZATION
         const columns = [
             { dataField: "item_id", text: "Item ID", hidden: true }, //works
-            {
-                dataField: "date_created",
-                text: "Date",
-                headerAlign: "center", // Center-align the column header
-                align: "center",
-                editable: false,
-                filter: dateFilter({
-                    comparatorClassName: 'form-select form-select-sm',
-                    comparatorStyle: { width: '60px', marginRight: '5px' },
-                    dateClassName: 'form-control form-control-sm',
-                    dateStyle: { width: '150px', marginRight: '5px' },
-                    defaultValue: { date_created: new Date(), comparator: Comparator.GE },
-                    withoutEmptyComparatorOption: true,
-                    onFilter: (filterValue, data) => {
-                      // Implement your custom filter logic here
-                      const filteredData = data.filter((row) => {
-                        const rowDate = new Date(row.date_created);
-                        return rowDate >= filterValue.date;
-                      });
-                      return filteredData;
-                    },
-                  }),
-                  formatter: (cell) => {
-                    // Format the date display
-                    const formattedDate = new Date(cell).toLocaleDateString();
-                    return formattedDate;
-                  }
-            },
+
             {
                 dataField: "item_name",
                 text: "Item Name",
@@ -91,71 +69,64 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
     return (
         <>
             <Modal
-                id="viewPatient"
+                id="viewPurchase"
                 size="lg"
                 show={isOpen}
                 onHide={onClose}
                 centered
             >
                 <Modal.Header className="bg-primary text-white" closeButton>
-                    <Modal.Title>View Patient</Modal.Title>
+                    <Modal.Title>View Purchase</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {/* TO EDIT   */}
+                    {/* TO EDIT  */}
                     <div className="row mb-4">
                         <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">First Name</label>
+                                <label className="py-3">Purchase Number</label>
                                 <span
                                     type="text"
-                                    name="txtFirstName"
-                                    id="txtFirstName"
+                                    name="txtPurchaseNumber"
+                                    id="txtPurchaseNumber"
+                                    placeholder="Purchase Number"
                                     className="form-control"
-                                >{viewPatient.first_name}</span>
+                                >{viewPurchase.purchase_number}</span>
                             </div>
                         </div>
                         <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">Last Name</label>
+                                <label className="py-3">Patient's Name</label>
                                 <span
                                     type="text"
-                                    name="txtLastName"
-                                    id="txtLastName"
+                                    name="txtPatientName"
+                                    id="txtPatientName"
+                                    placeholder="Patient's Name"
                                     className="form-control"
-                                >{viewPatient.last_name}</span>
+                                >{viewPurchase.patient_name}</span>
                             </div>
                         </div>
-                        <div className="col-2">
+                        <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">Age</label>
+                                <label className="py-3">Total Amount</label>
                                 <span
                                     type="text"
-                                    name="txtAge"
-                                    id="txtAge"
+                                    name="txtTotalAmount"
+                                    id="txtTotalAmount"
+                                    placeholder="Total Amount"
                                     className="form-control"
-                                >{viewPatient.age}</span>
+                                >{viewPurchase.total_amount}</span>
                             </div>
                         </div>
-                        <div className="col-2">
+                        <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">Height</label>
+                                <label className="py-3">Created By</label>
                                 <span
                                     type="text"
-                                    name="txtHeight"
-                                    id="txtHeight"
+                                    name="txtCreatedBy"
+                                    id="txtCreatedBy"
+                                    placeholder="Created By"
                                     className="form-control"
-                                >{viewPatient.height}</span>
-                            </div>
-                        </div>
-                        <div className="col-2">
-                            <div className="form-group">
-                                <label className="py-3">Weight</label>
-                                <span
-                                    type="text"
-                                    name="txtWeight"
-                                    id="txtWeight"
-                                    className="form-control"
-                                >{viewPatient.weight}</span>
+                                >{viewPurchase.created_by}</span>
                             </div>
                         </div>
                     </div>
@@ -163,9 +134,9 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
                     {/* Display all purchases under that purchase header */}
                     <BootstrapTable
                         keyField="item_id"
-                        data={purchaseHistory}
+                        data={purchaseList}
                         columns={columns}
-                        filter={filterFactory()}
+                        // filter={filterFactory()}
                         // pagination={paginationFactory()}
                         noDataIndication={() => (
                             <div class="text-center">No records found.</div>

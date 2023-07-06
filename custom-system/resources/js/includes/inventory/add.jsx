@@ -5,27 +5,27 @@ const AddModal = ({ user, isOpen, onClose }) => {
     return (
         <>
             <Modal
-                id="addPatient"
+                id="addItem"
                 size="md"
                 show={isOpen}
                 onHide={onClose}
                 centered
             >
                 <Modal.Header className="bg-success text-white" closeButton>
-                    <Modal.Title>Add Patient</Modal.Title>
+                    <Modal.Title>Add Item</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <div className="row p-2">
                         <div className="col-6">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    First Name
+                                    Product Number
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtFirstName"
-                                    id="txtFirstName"
-                                    placeholder="John"
+                                    name="txtProductNumber"
+                                    id="txtProductNumber"
+                                    placeholder="Product Number"
                                     className="form-control"
                                 />
                             </div>
@@ -33,13 +33,13 @@ const AddModal = ({ user, isOpen, onClose }) => {
                         <div className="col-6">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Last Name
+                                    Item Name
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtLastName"
-                                    id="txtLastName"
-                                    placeholder="Doe"
+                                    name="txtItemName"
+                                    id="txtItemName"
+                                    placeholder="Item Name"
                                     className="form-control"
                                 />
                             </div>
@@ -49,11 +49,13 @@ const AddModal = ({ user, isOpen, onClose }) => {
                     <div className="row p-2">
                         <div className="col-4">
                             <div className="form-group">
-                                <label className="fw-bold py-3">Age</label>
+                                {/* Selectpicker  */}
+                                <label className="fw-bold py-3">Unit</label>
                                 <input
-                                    type="number"
-                                    name="txtAge"
-                                    id="txtAge"
+                                    type="text"
+                                    name="txtUnit"
+                                    id="txtUnit"
+                                    placeholder="PC, BOX"
                                     className="form-control"
                                 />
                             </div>
@@ -61,12 +63,12 @@ const AddModal = ({ user, isOpen, onClose }) => {
                         <div className="col-4">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Weight (in kg)
+                                    Unit Price
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtWeight"
-                                    id="txtWeight"
+                                    name="txtUnitPrice"
+                                    id="txtUnitPrice"
                                     className="form-control"
                                 />
                             </div>
@@ -74,12 +76,12 @@ const AddModal = ({ user, isOpen, onClose }) => {
                         <div className="col-4">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Height (in cm)
+                                    Total Quantity
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtHeight"
-                                    id="txtHeight"
+                                    name="txtTotalQty"
+                                    id="txtTotalQty"
                                     className="form-control"
                                 />
                             </div>
@@ -90,7 +92,7 @@ const AddModal = ({ user, isOpen, onClose }) => {
                     {/* <Button variant="secondary" onClick={onClose}>
                     Close
                     </Button> */}
-                    <Button variant="secondary" id="btnAddPatient">
+                    <Button variant="secondary" id="btnAddItem">
                         Add
                     </Button>
                 </Modal.Footer>

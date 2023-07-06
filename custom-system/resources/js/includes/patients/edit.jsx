@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const EditModal = ({ user, isOpen, onClose, editItem }) => {
+const EditModal = ({ user, isOpen, onClose, editPatient }) => {
     const [value, setValue] = useState("");
 
     const handleChange = (event) => {
@@ -11,21 +11,21 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
     return (
         <>
             <Modal
-                id="editItem"
+                id="editPatient"
                 size="md"
                 show={isOpen}
                 onHide={onClose}
                 centered
             >
                 <Modal.Header className="bg-warning text-white" closeButton>
-                    <Modal.Title>Edit Item</Modal.Title>
+                    <Modal.Title>Edit Patient</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <input
                         type="hidden"
-                        name="txtProductId"
-                        id="txtProductId"
-                        value={editItem["product_id"]}
+                        name="txtPatientId"
+                        id="txtPatientId"
+                        value={editPatient["patient_id"]}
                         className="form-control"
                     />
 
@@ -33,28 +33,30 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                         <div className="col-6">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Product Number
+                                    First Name
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtProductNumber"
-                                    id="txtProductNumber"
-                                    value={editItem["product_number"]}
+                                    name="txtFirstName"
+                                    id="txtFirstName"
+                                    placeholder="John"
+                                    defaultValue={editPatient["first_name"]}
                                     className="form-control"
-                                    disabled
+                                    onChange={handleChange}
                                 />
                             </div>
                         </div>
                         <div className="col-6">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Item Name
+                                    Last Name
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtItemName"
-                                    id="txtItemName"
-                                    defaultValue={editItem["item_name"]}
+                                    name="txtLastName"
+                                    id="txtLastName"
+                                    placeholder="Doe"
+                                    defaultValue={editPatient["last_name"]}
                                     className="form-control"
                                     onChange={handleChange}
                                 />
@@ -65,13 +67,12 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                     <div className="row p-2">
                         <div className="col-4">
                             <div className="form-group">
-                                {/* Selectpicker  */}
-                                <label className="fw-bold py-3">Unit</label>
+                                <label className="fw-bold py-3">Age</label>
                                 <input
-                                    type="text"
-                                    name="txtUnit"
-                                    id="txtUnit"
-                                    defaultValue={editItem["unit"]}
+                                    type="number"
+                                    name="txtAge"
+                                    id="txtAge"
+                                    defaultValue={editPatient["age"]}
                                     className="form-control"
                                     onChange={handleChange}
                                 />
@@ -80,37 +81,37 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                         <div className="col-4">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Unit Price
+                                    Height (in cm)
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtUnitPrice"
-                                    id="txtUnitPrice"
+                                    name="txtHeight"
+                                    id="txtHeight"
+                                    defaultValue={editPatient["height"]}
                                     className="form-control"
                                     onChange={handleChange}
-                                    defaultValue={editItem["unit_price"]}
                                 />
                             </div>
                         </div>
                         <div className="col-4">
                             <div className="form-group">
                                 <label className="fw-bold py-3">
-                                    Total Quantity
+                                    Weight (in kg)
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtTotalQty"
-                                    id="txtTotalQty"
+                                    name="txtWeight"
+                                    id="txtWeight"
+                                    defaultValue={editPatient["weight"]}
                                     className="form-control"
                                     onChange={handleChange}
-                                    defaultValue={editItem["total_quantity"]}
                                 />
                             </div>
                         </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" id="btnEditItem">
+                    <Button variant="secondary" id="btnEditPatient">
                         Update
                     </Button>
                     {/* <Button variant="secondary" onClick={onClose}>
