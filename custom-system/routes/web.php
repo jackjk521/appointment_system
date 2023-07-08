@@ -21,6 +21,10 @@ Route::get('/dashboard', function () {
     return view('home');
 });
 
+Route::get('/appointments', function () {
+    return view('home');
+});
+
 Route::get('/sample', function () {
     return view('home');
 });

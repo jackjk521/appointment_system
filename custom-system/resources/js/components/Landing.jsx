@@ -1,10 +1,10 @@
 import {React, useState} from "react";
-import ReactDOM from "react-dom/client";   
+import ReactDOM from "react-dom";   
 import {BrowserRouter, Routes, Route, Link} from 'react-router-dom'
 import PrivateRoute from './PrivateRoute'
 import Login from './Login'
 import Dashboard from './Dashboard'
-
+import Appointments from "./Appointments";
 
 function Landing() {
 
@@ -28,6 +28,8 @@ function Landing() {
                     </PrivateRoute>
                 }>
                 </Route>
+
+                <Route path="/appointments" element={<Appointments />} />
 
             </Routes>
         </BrowserRouter>

@@ -14,10 +14,8 @@ import './bootstrap';
 
 import './components/Example';
 
-import ReactDOM from 'react-dom/client';        
+import ReactDOM from 'react-dom';        
 
 import Landing from './components/Landing';
 
-ReactDOM.createRoot(document.getElementById('app')).render(     
-    <Landing />        
-);
+ReactDOM.render(<Landing /> ,document.getElementById('app'));

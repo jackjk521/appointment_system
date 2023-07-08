@@ -19,6 +19,7 @@ const AddModal = ({
 }) => {
     // Get table reference
     const tableRef = useRef(null);
+    
     // Selectpicker for Patients
     const [selectedOption, setSelectedOption] = useState(null);
     const [options, setOptions] = useState([]);
