@@ -6,8 +6,7 @@ use App\Http\Controllers\Login;
 use App\Http\Controllers\Inventory;
 use App\Http\Controllers\Patients;
 use App\Http\Controllers\Purchases;
-
-
+use App\Http\Controllers\Appointments;
 
 
 /*
@@ -50,7 +49,13 @@ Route::post('/add_purchase', [Purchases::class, 'insert_purchase']);
 // Route::post('/update_purchase', [purchases::class, 'update_purchase']);
 Route::post('/remove_purchase', [Purchases::class, 'remove_purchase']);
 
-
+// Appointments
+Route::get('/appointments', [Appointments::class, 'get_all_appointments']);
+// Route::get('/get_purchase', [Appointments::class, 'get_purchase_header_by_id']);
+// Route::get('/get_purchase_line', [Appointments::class, 'get_purchase_line_by_id']);
+Route::post('/add_appointment', [Appointments::class, 'insert_appointment']);
+Route::post('/update_appointment', [Appointments::class, 'update_appointment']);
+Route::post('/remove_appointment', [Appointments::class, 'remove_appointment']);
 
 
 
