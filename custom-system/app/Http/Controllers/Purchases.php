@@ -44,7 +44,7 @@ class Purchases extends Controller
         $id = $request->input('purch_header_id');
         $purchases = Purchase_header_model::join('patients', 'purchase_header.patient_id', '=', 'patients.id')
                                         ->join('users', 'purchase_header.user_id', '=', 'users.id')
-                                        ->selectRaw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_name, purchase_header.*, users.username ")
+                                        ->selectRaw("CONCAT(patients.first_name, ' ', patients.last_name) AS patient_name, purchase_header.*, users.username, patients.id as patient_id ")
                                         ->where('purchase_header.removed', 0)
                                         ->where('purchase_header.id', $id)->get();
         // join with patient table to get their name
@@ -68,21 +68,21 @@ class Purchases extends Controller
     {
         // Insert Purchase Header > return the inserted Id
             $purchase = new Purchase_header_model;
-            $purchase->purchase_number = $request->input('purchaseData')['purchase_number'];
-            $purchase->user_id= $request->input('purchaseData')['user_id'];
-            $purchase->patient_id = $request->input('purchaseData')['patient_id'];
-            $purchase->total_amount = $request->input('purchaseData')['total_amount'];
+            $purchase->purchase_number = $request->input('addData')['purchase_number'];
+            $purchase->user_id= $request->input('addData')['user_id'];
+            $purchase->patient_id = $request->input('addData')['patient_id'];
+            $purchase->total_amount = $request->input('addData')['total_amount'];
             $purchase->date_created = now()->toDateTimeString();
             $purchase->removed = 0;
 
             $purchase->save();
 
-            // Get Purchase Header Id
+        //     // Get Purchase Header Id
             $purch_header_id = $purchase->id;
 
-            // Save the purchase line items
-            $purchase_line = $request->input('purchaseData')['purchase_line'];
-        // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
+        //     // Save the purchase line items
+            $purchase_line = $request->input('addData')['purchLineData'];
+        // // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
             foreach ($purchase_line as $data){
                 $purch_line = new Purchase_line_model;
                 $purch_line->purchase_header_id = $purch_header_id;
@@ -94,54 +94,74 @@ class Purchases extends Controller
             }
 
 
-        // Log
+        // // Log
         if($purchase->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('purchaseData')['user_id'] != '') ? $request->input('purchaseData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('addData')['user_id'] != '') ? $request->input('addData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('purchaseData')['username'] != '') ? $request->input('purchaseData')['username'] : 'admin' . " has create a new purchase header with ID : " . $request->input('purchaseData')['purchase_number'] . " successfully.";
+                $log->message =($request->input('addData')['username'] != '') ? $request->input('addData')['username'] : 'admin' . " has create a new purchase header with ID : " . $request->input('addData')['purchase_number'] . " successfully.";
                 $log->save();
         }
 
         return response()->json(['success' => true , 'message' => 'Purchase created successfully']);
     }
 
-    public function update_patient(Request $request)
+    // TO EDIT 
+    public function update_purchase(Request $request)
     {
         // var_dump($request->input('itemData'));
-        $patient = Patients_model::find($request->input('patientData')['patient_id']);
-        $patient->first_name = $request->input('patientData')['first_name'];
-        $patient->last_name = $request->input('patientData')['last_name'];
-        $patient->age = $request->input('patientData')['age'];
-        $patient->weight = $request->input('patientData')['weight'];
-        $patient->height= $request->input('patientData')['height'];
+            // Insert Purchase Header > return the inserted Id
+            $purchase = new Purchase_header_model;
+            $purchase->purchase_number = $request->input('addData')['purchase_number'];
+            $purchase->user_id= $request->input('addData')['user_id'];
+            $purchase->patient_id = $request->input('addData')['patient_id'];
+            $purchase->total_amount = $request->input('addData')['total_amount'];
+            $purchase->date_created = now()->toDateTimeString();
+            $purchase->removed = 0;
 
-        $patient->save();
+            $purchase->save();
 
-        // Log
-        if($patient->save()){
+        //     // Get Purchase Header Id
+            $purch_header_id = $purchase->id;
+
+        //     // Save the purchase line items
+            $purchase_line = $request->input('addData')['purchLineData'];
+        // // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
+            foreach ($purchase_line as $data){
+                $purch_line = new Purchase_line_model;
+                $purch_line->purchase_header_id = $purch_header_id;
+                $purch_line->item_id = $data['item_id'];
+                $purch_line->item_price = $data['item_price'];
+                $purch_line->purchased_quantity = $data['purchased_quantity'];
+                $purch_line->purchase_sub_total = floatval($data['purchase_sub_total']);
+                $purch_line->save();
+            }
+
+
+        // // Log
+        if($purchase->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('patientData')['user_id'] != '') ? $request->input('patientData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('addData')['user_id'] != '') ? $request->input('addData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('patientData')['username'] != '') ? $request->input('patientData')['username'] : 'admin' . " has updated an patient with id : " . $request->input('patientData')['patient_id']. " successfully.";
+                $log->message =($request->input('addData')['username'] != '') ? $request->input('addData')['username'] : 'admin' . " has create a new purchase header with ID : " . $request->input('addData')['purchase_number'] . " successfully.";
                 $log->save();
         }
 
-        return response()->json(['success' => true , 'message' => 'Item created successfully']);
+        return response()->json(['success' => true , 'message' => 'Purchase created successfully']);
     }
 
     public function remove_purchase(Request $request)
     {
-        $purchase = Purchase_header_model::find(($request->input('purchaseData')['purch_header_id']));
+        $purchase = Purchase_header_model::find(($request->input('removeData')['purch_header_id']));
         $purchase->removed = 1;
         $purchase->save();
 
         // Log
         if($purchase->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('purchaseData')['user_id'] != '') ? $request->input('purchaseData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('removeData')['user_id'] != '') ? $request->input('removeData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('purchaseData')['username'] != '') ? $request->input('purchaseData')['username'] : 'admin' . " has removed an purchase header with id : " . $request->input('purchaseData')['purch_header_id'];
+                $log->message =($request->input('removeData')['username'] != '') ? $request->input('removeData')['username'] : 'admin' . " has removed an purchase header with id : " . $request->input('removeData')['purch_header_id'];
                 $log->save();
         }
 
