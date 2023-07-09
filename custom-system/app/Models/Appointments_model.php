@@ -16,7 +16,7 @@ class Appointments_model extends Model
      */
     protected $fillable = [     
         'user_id',
-        'customer_id',
+        'patient_id',
         'from_datetime',
         'to_datetime',
         'purpose'

@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Appointments_model;
+use App\Models\Patients_model;
 use App\Models\Logs_model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon; // setting Datetime
 
-class Patients extends Controller
+class Appointments extends Controller
 {
     public function index()
     {
@@ -19,7 +20,9 @@ class Patients extends Controller
 
     public function get_all_appointments(Request $request){
 
-        $appointments = Appointments_model::where('removed', 0)->orderByDesc('id')->get();
+        $appointments = Appointments_model::join('patients', 'appointments.patient_id', '=', 'patients.id')
+                        ->selectRaw("CONCAT(patients.first_name, ' ', patients.last_name) AS full_name, patients.first_name, patients.last_name, appointments.*")
+                        ->where('appointments.removed', 0)->orderByDesc('appointments.id')->get();
 
         return response()->json($appointments);
     }
@@ -55,74 +58,75 @@ class Patients extends Controller
     //     return response()->json($history);
     // }
 
-    // public function insert_patient(Request $request)
-    // {
-    //     var_dump($request->input('patientData'));
-    //     $patient = new Patients_model;
-    //     $patient->user_id= $request->input('patientData')['user_id'];
-    //     $patient->first_name = $request->input('patientData')['first_name'];
-    //     $patient->last_name = $request->input('patientData')['last_name'];
-    //     $patient->age = $request->input('patientData')['age'];
-    //     $patient->weight = $request->input('patientData')['weight'];
-    //     $patient->height= $request->input('patientData')['height'];
-    //     $patient->date_created = now()->toDateTimeString();
-    //     $patient->removed = 0;
+    public function insert_appointment(Request $request)
+    {
+        // var_dump($request->input('addData'));
+        $appointment = new Appointments_model;
+        $appointment->user_id= $request->input('addData')['user_id'];
+        $appointment->patient_id = $request->input('addData')['patient_id'];
+        $appointment->from_datetime = $request->input('addData')['from_datetime'];
+        $appointment->to_datetime = $request->input('addData')['to_datetime'];
+        $appointment->purpose= $request->input('addData')['purpose'];
+        $appointment->date_created = now()->toDateTimeString();
+        $appointment->removed = 0;
 
-    //     $patient->save();
+        $appointment->save();
 
-    //     // Log
-    //     if($patient->save()){
-    //         $log = new Logs_model;
-    //             $log->user_id = ($request->input('patientData')['user_id'] != '') ? $request->input('patientData')['user_id'] : 3 ; // Change to default admin value
-    //             $log->date = now()->toDateTimeString();
-    //             $log->message =($request->input('patientData')['username'] != '') ? $request->input('patientData')['username'] : 'admin' . " has added patient: " . $request->input('itemData')['item_name'] . " successfully.";
-    //             $log->save();
-    //     }
+        // Get Appointment Id
+        $appointment_id = $appointment->id;
 
-    //     return response()->json(['success' => true , 'message' => 'Patient created successfully']);
-    // }
+        // Log
+        if($appointment->save()){
+            $log = new Logs_model;
+                $log->user_id = ($request->input('addData')['user_id'] != '') ? $request->input('addData')['user_id'] : 3 ; // Change to default admin value
+                $log->date = now()->toDateTimeString();
+                $log->message =($request->input('addData')['username'] != '') ? $request->input('addData')['username'] : 'admin' . " has added appointment: " . $appointment_id . " successfully.";
+                $log->save();
+        }
 
-    // public function update_patient(Request $request)
-    // {
-    //     // var_dump($request->input('itemData'));
-    //     $patient = Patients_model::find($request->input('patientData')['patient_id']);
-    //     $patient->first_name = $request->input('patientData')['first_name'];
-    //     $patient->last_name = $request->input('patientData')['last_name'];
-    //     $patient->age = $request->input('patientData')['age'];
-    //     $patient->weight = $request->input('patientData')['weight'];
-    //     $patient->height= $request->input('patientData')['height'];
+        return response()->json(['success' => true , 'message' => 'Appointment created successfully']);
+    }
 
-    //     $patient->save();
+    public function update_appointment(Request $request)
+    {
+        // var_dump($request->input('itemData'));
+        $appointment = Appointments_model::find($request->input('editData')['appointment_id']);
+        $appointment->patient_id = $request->input('editData')['patient_id'];
+        $appointment->from_datetime = $request->input('editData')['from_datetime'];
+        $appointment->to_datetime = $request->input('editData')['to_datetime'];
+        $appointment->purpose = $request->input('editData')['purpose'];
 
-    //     // Log
-    //     if($patient->save()){
-    //         $log = new Logs_model;
-    //             $log->user_id = ($request->input('patientData')['user_id'] != '') ? $request->input('patientData')['user_id'] : 3 ; // Change to default admin value
-    //             $log->date = now()->toDateTimeString();
-    //             $log->message =($request->input('patientData')['username'] != '') ? $request->input('patientData')['username'] : 'admin' . " has updated an patient with id : " . $request->input('patientData')['patient_id']. " successfully.";
-    //             $log->save();
-    //     }
+        $appointment->save();
 
-    //     return response()->json(['success' => true , 'message' => 'Item created successfully']);
-    // }
+        // Log
+        if($appointment->save()){
+            $log = new Logs_model;
+                $log->user_id = ($request->input('editData')['user_id'] != '') ? $request->input('editData')['user_id'] : 3 ; // Change to default admin value
+                $log->date = now()->toDateTimeString();
+                $log->message =($request->input('editData')['username'] != '') ? $request->input('editData')['username'] : 'admin' . " has updated an appointment with id : " . $request->input('editData')['appointment_id']. " successfully.";
+                $log->save();
+        }
 
-    // public function remove_patient(Request $request)
-    // {
-    //     $patient = Patients_model::find(($request->input('patientData')['patient_id']));
-    //     $patient->removed = 1;
-    //     $patient->save();
+        return response()->json(['success' => true , 'message' => 'Appointment updated successfully']);
+    }
 
-    //     // Log
-    //     if($patient->save()){
-    //         $log = new Logs_model;
-    //             $log->user_id = ($request->input('patientData')['user_id'] != '') ? $request->input('patientData')['user_id'] : 3 ; // Change to default admin value
-    //             $log->date = now()->toDateTimeString();
-    //             $log->message =($request->input('patientData')['username'] != '') ? $request->input('patientData')['username'] : 'admin' . " has removed an patient with id : " . $request->input('patientData')['patient_id'];
-    //             $log->save();
-    //     }
+    public function remove_appointment(Request $request)
+    {
+        $appointment = Appointments_model::find(($request->input('removeData')['appointment_id']));
+        $appointment->removed = 1;
+        $appointment->save();
 
-    //     return response()->json(['success' => true , 'message' => 'Item created successfully']);
-    // }
+        // Log
+        if($appointment->save()){
+            $log = new Logs_model;
+                $log->user_id = ($request->input('removeData')['user_id'] != '') ? $request->input('removeData')['user_id'] : 3 ; // Change to default admin value
+                $log->date = now()->toDateTimeString();
+                $log->message =($request->input('removeData')['username'] != '') ? $request->input('removeData')['username'] : 'admin' . " has removed an patient with id : " . $request->input('removeData')['appointment_id'];
+                $log->save();
+        }
+
+        return response()->json(['success' => true , 'message' => 'Appointment removed successfully']);
+    }
 
 
 }
