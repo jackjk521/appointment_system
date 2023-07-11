@@ -1,11 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const EditModal = ({ user, isOpen, onClose, editItem }) => {
-    const [value, setValue] = useState("");
+const EditModal = ({
+    user,
+    isOpen,
+    onClose,
+    editData,
+    setEditData,
+    handleEditSubmit,
+}) => {
 
-    const handleChange = (event) => {
-        setValue(event.target.value);
+    // Add Data
+    useEffect(() => {
+        setEditData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
+    }, []);
+
+    // HANDLE INPUT CHANGER FUNCTIONS START
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    // ONCHANGE FUNCTIONS END
+
+    // Clear Fields
+    const onCloseCleared = () => {
+        $(".clear-fields").val("");
+        onClose();
     };
 
     return (
@@ -14,7 +39,7 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                 id="editItem"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-warning text-white" closeButton>
@@ -25,8 +50,8 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                         type="hidden"
                         name="txtProductId"
                         id="txtProductId"
-                        value={editItem["product_id"]}
-                        className="form-control"
+                        value={editData.product_id || ""}
+                        className="form-control clear-fields"
                     />
 
                     <div className="row p-2">
@@ -39,8 +64,8 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                                     type="text"
                                     name="txtProductNumber"
                                     id="txtProductNumber"
-                                    value={editItem["product_number"]}
-                                    className="form-control"
+                                    value={editData.product_number || ""}
+                                    className="form-control clear-fields"
                                     disabled
                                 />
                             </div>
@@ -52,11 +77,11 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtItemName"
+                                    name="item_name"
                                     id="txtItemName"
-                                    defaultValue={editItem["item_name"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    value= {editData.item_name || ""}                           
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -69,11 +94,11 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                                 <label className="fw-bold py-3">Unit</label>
                                 <input
                                     type="text"
-                                    name="txtUnit"
+                                    name="unit"
                                     id="txtUnit"
-                                    defaultValue={editItem["unit"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    value={editData.unit || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -84,11 +109,11 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtUnitPrice"
+                                    name="unit_price"
                                     id="txtUnitPrice"
-                                    className="form-control"
-                                    onChange={handleChange}
-                                    defaultValue={editItem["unit_price"]}
+                                    value={editData.unit_price || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -99,18 +124,18 @@ const EditModal = ({ user, isOpen, onClose, editItem }) => {
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtTotalQty"
+                                    name="total_quantity"
                                     id="txtTotalQty"
-                                    className="form-control"
-                                    onChange={handleChange}
-                                    defaultValue={editItem["total_quantity"]}
+                                    value={editData.total_quantity || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" id="btnEditItem">
+                    <Button variant="secondary" id="btnEditItem" onClick={handleEditSubmit}>
                         Update
                     </Button>
                     {/* <Button variant="secondary" onClick={onClose}>

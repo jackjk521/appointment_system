@@ -41,7 +41,7 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
             user_id: user.user_id,
             username: user.username,
         }));
-    }, [addData]);
+    }, []);
 
 
     // ONCHANGE FUNCTIONS START

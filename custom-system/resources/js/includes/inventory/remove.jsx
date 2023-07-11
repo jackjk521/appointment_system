@@ -1,14 +1,29 @@
-import React from "react";
+import React , {useEffect} from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const RemoveModal = ({ user, isOpen, onClose, removeItem }) => {
+const RemoveModal = ({ user, isOpen, onClose, removeData, setRemoveData, handleRemoveSubmit }) => {
+    
+    useEffect(() => {
+        setRemoveData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
+    }, []);
+
+    // Clear Fields
+    const onCloseCleared = () => {
+        $(".clear-fields").val("");
+        onClose();
+    };
+
     return (
         <>
             <Modal
                 id="removeItem"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-danger text-white" closeButton>
@@ -22,15 +37,15 @@ const RemoveModal = ({ user, isOpen, onClose, removeItem }) => {
                                     type="hidden"
                                     name="txtProductId"
                                     id="txtProductId"
-                                    value={removeItem["product_id"]}
-                                    className="form-control"
+                                    value={removeData.product_id || ""}
+                                    className="form-control clear-fields"
                                 />
                                 <input
                                     type="hidden"
                                     name="txtProductNumber"
                                     id="txtProductNumber"
-                                    value={removeItem["product_number"]}
-                                    className="form-control"
+                                    value={removeData.product_number || ""}
+                                    className="form-control clear-fields"
                                 />
 
                                 <h5 className="text-center">
@@ -42,7 +57,7 @@ const RemoveModal = ({ user, isOpen, onClose, removeItem }) => {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" id="btnRemoveItem">
+                    <Button variant="success" id="btnRemoveItem" onClick={handleRemoveSubmit}>
                         Yes
                     </Button>
                     <Button variant="secondary" onClick={onClose}>

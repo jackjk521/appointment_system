@@ -20,17 +20,40 @@ const Inventory = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
 
+    // View , Add, Edit , Remove Data
+    const [viewData, setViewData] = useState({});
+    const [addData, setAddData] = useState({});
+    const [editData, setEditData] = useState({});
+    const [removeData, setRemoveData] = useState({});
+
     // Modals
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [removeModal, setRemoveModal] = useState(false);
 
     // Add Modal
-    const handleOpenAddModal = () => {
-        setAddModal(true);
+    const handleOpenAddModal = async () => {
+        try {
+            await axios
+                .get("/api/gen_prod_number")
+                .then((response) => {
+                    setAddData((prevData) => ({
+                        ...prevData,
+                        product_number: response.data,
+                    }));
+                    setAddModal(true);
+                })
+                .catch((error) => {
+                    // Handle the error
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
+        setAddData({});
     };
 
     // Edit Modal
@@ -39,6 +62,7 @@ const Inventory = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
+        setEditData({});
     };
 
     // Removal Modal
@@ -47,6 +71,7 @@ const Inventory = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
+        setRemoveData({});
     };
 
     // Edit Item Fields
@@ -65,7 +90,6 @@ const Inventory = ({ user }) => {
         product_number: "",
     });
 
-   
     // Populate Table Data
     const fetchData = async () => {
         try {
@@ -80,177 +104,115 @@ const Inventory = ({ user }) => {
         fetchData();
     }, []);
 
-    $(document).ready(function () {
-        // // Cleave JS Formatting and Validation
-        // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
-        //     numeral: true,
-        //     numeralPositiveOnly: true,
-        //     numeralThousandsGroupStyle: "thousand",
-        //     numeralDecimalMark: ".",
-        // });
+    // ADD ITEM FUNCTIONS START
 
-        // const addItemTotalQuantity = new Cleave("#addItem #txtTotalQty", {
-        //     numeral: true,
-        //     numeralPositiveOnly: true,
-        //     numeralThousandsGroupStyle: "thousand",
-        //     numeralDecimalMark: ".",
-        // });
-
-        // ADD ITEM FUNCTIONS START
-        $("#addItemBtn").on("click", async function () {
-            try {
-                await axios
-                    .get("/api/gen_prod_number")
-                    .then((response) => {
-                        $("#addItem #txtProductNumber").val(response.data);
-                        $("#addItem #txtProductNumber").prop("disabled", true);
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        console.error(error);
+    const handleAddSubmit = async () => {
+        // console.log(addData)
+        try {
+            await axios
+                .post("/api/add_item", { addData })
+                .then((response) => {
+                    handleCloseAddModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully added a new item!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
                     });
-            } catch (error) {
-                console.error(error);
-            }
-            handleOpenAddModal();
-        });
-
-        $("#btnAddItem").on("click", async function () {
-            let itemData = {
-                product_number: $("#addItem #txtProductNumber").val(),
-                item_name: $("#addItem #txtItemName").val(),
-                unit: $("#addItem #txtUnit").val(),
-                unit_price: $("#addItem #txtUnitPrice").val(),
-                total_quantity: $("#addItem #txtTotalQty").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-
-            try {
-                await axios
-                    .post("/api/add_item", { itemData })
-                    .then((response) => {
-                        handleCloseAddModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully added a new item!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
                     });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // ADD ITEM FUNCTIONS END
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // ADD ITEM FUNCTIONS END
 
-        // EDIT ITEM FUNCTIONS START
-        $("#btnEditItem").on("click", async function () {
-            let itemData = {
-                product_id: $("#editItem #txtProductId").val(),
-                product_number: $("#editItem #txtProductNumber").val(),
-                item_name: $("#editItem #txtItemName").val(),
-                unit: $("#editItem #txtUnit").val(),
-                unit_price: $("#editItem #txtUnitPrice").val(),
-                total_quantity: $("#editItem #txtTotalQty").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-
-            try {
-                await axios
-                    .post("/api/update_item", { itemData })
-                    .then((response) => {
-                        handleCloseEditModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully update an item!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
+    // EDIT ITEM FUNCTIONS START
+    const handleEditSubmit = async () => {
+        try {
+            await axios
+                .post("/api/update_item", { editData })
+                .then((response) => {
+                    handleCloseEditModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully update an item!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
                     });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // EDIT ITEM FUNCTIONS END
 
-        // REMOVE ITEM FUNCTIONS START
-        $("#btnRemoveItem").on("click", async function () {
-            let itemData = {
-                product_id: $("#removeItem #txtProductId").val(),
-                product_number: $("#removeItem #txtProductNumber").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-            try {
-                await axios
-                    .post("/api/remove_item", { itemData })
-                    .then((response) => {
-                        handleCloseRemoveModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully removed an item!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
                     });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // REMOVE ITEM FUNCTIONS END
-    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // EDIT ITEM FUNCTIONS END
+
+    // REMOVE ITEM FUNCTIONS START
+    const handleRemoveSubmit = async () => {
+    
+        try {
+            await axios
+                .post("/api/remove_item", { removeData })
+                .then((response) => {
+                    handleCloseRemoveModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully removed an item!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // REMOVE ITEM FUNCTIONS END
 
     // Filter Text and Numbers (Exact)
     const [searchText, setSearchText] = useState("");
@@ -318,8 +280,8 @@ const Inventory = ({ user }) => {
         {
             dataField: "actions",
             text: "Actions",
-            headerAlign: 'center', // Center-align the column header
-            align: 'center',
+            headerAlign: "center", // Center-align the column header
+            align: "center",
             formatter: (cell, row) => (
                 <div>
                     {/* <Button variant="info" size="md" onClick={() => handleView(row)}>
@@ -354,16 +316,15 @@ const Inventory = ({ user }) => {
         console.log("Edit", row);
 
         // Autofill Fields
-        setEditItem({
-            product_id: row["id"],
-            product_number: row["product_number"],
-            item_name: row["item_name"],
-            unit: row["unit"],
-            unit_price: row["unit_price"],
-            total_quantity: row["total_quantity"],
-        });
-
-        console.log(editItem);
+        setEditData((prevData) => ({
+            ...prevData,
+            product_id: row.id,
+            product_number: row.product_number,
+            item_name: row.item_name,
+            unit: row.unit,
+            unit_price: row.unit_price,
+            total_quantity: row.total_quantity,
+        }));
 
         // Open Edit Modal
         handleOpenEditModal();
@@ -376,9 +337,14 @@ const Inventory = ({ user }) => {
             product_id: row["id"],
             product_number: row["product_number"],
         });
+
+        setRemoveData((prevData) => ({
+            ...prevData,
+            product_id: row.id,
+            product_number: row.product_number,
+        }));
         handleOpenRemoveModal();
     };
-
 
     // Render Component START
     return (
@@ -393,9 +359,13 @@ const Inventory = ({ user }) => {
                     </div>
                     <div className="col-6"></div>
                     <div className="col-3 d-flex align-items-end justify-content-end ">
-                        <button className="btn btn-success my-3" id="addItemBtn">
+                        <button
+                            className="btn btn-success my-3"
+                            id="addItemBtn"
+                            onClick={handleOpenAddModal}
+                        >
                             {" "}
-                             <i className="fa fa-plus p-1"></i>
+                            <i className="fa fa-plus p-1"></i>
                             Add Item{" "}
                         </button>
                     </div>
@@ -406,18 +376,25 @@ const Inventory = ({ user }) => {
                     user={user}
                     isOpen={addModal}
                     onClose={handleCloseAddModal}
+                    addData={addData}
+                    setAddData={setAddData}
+                    handleAddSubmit={handleAddSubmit}
                 />
                 <EditModal
                     user={user}
                     isOpen={editModal}
                     onClose={handleCloseEditModal}
-                    editItem={editItem}
+                    editData={editData}
+                    setEditData={setEditData}
+                    handleEditSubmit={handleEditSubmit}
                 />
                 <RemoveModal
                     user={user}
                     isOpen={removeModal}
                     onClose={handleCloseRemoveModal}
-                    removeItem={removeItem}
+                    removeData={removeData}
+                    setRemoveData={setRemoveData}
+                    handleRemoveSubmit={handleRemoveSubmit}
                 />
 
                 <div className="container bg-white p-4">
@@ -444,6 +421,9 @@ const Inventory = ({ user }) => {
                         pagination={paginationFactory()}
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
+                        noDataIndication={() => (
+                            <div class="text-center">No records found.</div>
+                        )}
                     />
                 </div>
             </div>

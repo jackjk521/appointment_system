@@ -1,14 +1,44 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const AddModal = ({ user, isOpen, onClose }) => {
+const AddModal = ({
+    user,
+    isOpen,
+    onClose,
+    addData,
+    setAddData,
+    handleAddSubmit,
+}) => {
+    // Add Data
+    useEffect(() => {
+        setAddData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
+    }, []);
+
+    // HANDLE INPUT CHANGER FUNCTIONS START
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setAddData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    // ONCHANGE FUNCTIONS END
+
+    // Clear Fields
+    const onCloseCleared = () => {
+        $(".clear-fields").val("");
+        onClose();
+    };
+
     return (
         <>
             <Modal
                 id="addItem"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-success text-white" closeButton>
@@ -23,10 +53,12 @@ const AddModal = ({ user, isOpen, onClose }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtProductNumber"
+                                    name="product_number"
                                     id="txtProductNumber"
                                     placeholder="Product Number"
-                                    className="form-control"
+                                    className="form-control clear-fields"
+                                    value={addData.product_number}
+                                    disabled
                                 />
                             </div>
                         </div>
@@ -37,10 +69,11 @@ const AddModal = ({ user, isOpen, onClose }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtItemName"
+                                    name="item_name"
                                     id="txtItemName"
                                     placeholder="Item Name"
-                                    className="form-control"
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -53,10 +86,11 @@ const AddModal = ({ user, isOpen, onClose }) => {
                                 <label className="fw-bold py-3">Unit</label>
                                 <input
                                     type="text"
-                                    name="txtUnit"
+                                    name="unit"
                                     id="txtUnit"
                                     placeholder="PC, BOX"
-                                    className="form-control"
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -67,9 +101,10 @@ const AddModal = ({ user, isOpen, onClose }) => {
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtUnitPrice"
+                                    name="unit_price"
                                     id="txtUnitPrice"
-                                    className="form-control"
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -80,9 +115,10 @@ const AddModal = ({ user, isOpen, onClose }) => {
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtTotalQty"
+                                    name="total_quantity"
                                     id="txtTotalQty"
-                                    className="form-control"
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -92,7 +128,7 @@ const AddModal = ({ user, isOpen, onClose }) => {
                     {/* <Button variant="secondary" onClick={onClose}>
                     Close
                     </Button> */}
-                    <Button variant="secondary" id="btnAddItem">
+                    <Button variant="secondary" id="btnAddItem" onClick={handleAddSubmit}>
                         Add
                     </Button>
                 </Modal.Footer>
