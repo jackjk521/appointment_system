@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cleave from "cleave.js";
 import Swal from "sweetalert2";
-import moment from 'moment'
+import moment from "moment";
 
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -22,21 +22,28 @@ const Patients = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
 
-    // View 
+    // View
     const [purchaseHistory, setPurchaseHistory] = useState([]);
-    
+
+    // View , Add, Edit , Remove Data
+    const [viewData, setViewData] = useState({ purchaseHistory: [] });
+    const [addData, setAddData] = useState({});
+    const [editData, setEditData] = useState({});
+    const [removeData, setRemoveData] = useState({});
+
     // Modals
     const [viewModal, setViewModal] = useState(false);
     const [addModal, setAddModal] = useState(false);
     const [editModal, setEditModal] = useState(false);
     const [removeModal, setRemoveModal] = useState(false);
 
-     // View Modal
-     const handleOpenViewModal = () => {
+    // View Modal
+    const handleOpenViewModal = () => {
         setViewModal(true);
     };
     const handleCloseViewModal = () => {
         setViewModal(false);
+        setViewData({});
     };
 
     // Add Modal
@@ -45,6 +52,7 @@ const Patients = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
+        setAddData({});
     };
 
     // Edit Modal
@@ -53,6 +61,7 @@ const Patients = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
+        setEditData({});
     };
 
     // Removal Modal
@@ -61,32 +70,8 @@ const Patients = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
+        setRemoveData({});
     };
-
-    //VIew Patient Fields
-    const [viewPatient, setViewPatient] = useState({
-        patient_id: '',
-        first_name: '',
-        last_name: '',
-        age: '',
-        weight: '',
-        height: '',
-    });
-
-    // Edit Patient Fields
-    const [editPatient, setEditPatient] = useState({
-        patient_id: '',
-        first_name: '',
-        last_name: '',
-        age: '',
-        weight: '',
-        height: '',
-    });
-
-    // Remove Item Fields
-    const [removePatient, setRemovePatient] = useState({
-        patient_id: '',
-    });
 
     // Populate Table Data
     const fetchData = async () => {
@@ -102,165 +87,116 @@ const Patients = ({ user }) => {
         fetchData();
     }, []);
 
-    $(document).ready(function () {
-    // // Cleave JS Formatting and Validation
-        // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
-        //     numeral: true,
-        //     numeralPositiveOnly: true,
-        //     numeralThousandsGroupStyle: "thousand",
-        //     numeralDecimalMark: ".",
-        // });
-
-        // const addItemTotalQuantity = new Cleave("#addItem #txtTotalQty", {
-        //     numeral: true,
-        //     numeralPositiveOnly: true,
-        //     numeralThousandsGroupStyle: "thousand",
-        //     numeralDecimalMark: ".",
-        // });
-
-
-        // ADD PATIENT FUNCTIONS START
-        $("#addPatientBtn").on("click", async function () {
-            handleOpenAddModal();
-        });
-
-        $("#btnAddPatient").on("click", async function () {
-            let patientData = {
-                first_name: $("#addPatient #txtFirstName").val(),
-                last_name: $("#addPatient #txtLastName").val(),
-                age: $("#addPatient #txtAge").val(),
-                weight: $("#addPatient #txtWeight").val(),
-                height: $("#addPatient #txtHeight").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-
-            try {
-                await axios
-                    .post("/api/add_patient", { patientData })
-                    .then((response) => {
-                        handleCloseAddModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully added a new patient!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // ADD PATIENT FUNCTIONS END
-
-        // EDIT PATIENT FUNCTIONS START
-        $("#btnEditPatient").on("click", async function () {
-            let patientData = {
-                patient_id: $("#editPatient #txtPatientId").val(),
-                first_name: $("#editPatient #txtFirstName").val(),
-                last_name: $("#editPatient #txtLastName").val(),
-                age: $("#editPatient #txtAge").val(),
-                weight: $("#editPatient #txtWeight").val(),
-                height: $("#editPatient #txtHeight").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-
-            try {
-                await axios
-                    .post("/api/update_patient", { patientData })
-                    .then((response) => {
-                        handleCloseEditModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully update an patient!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // EDIT PATIENT FUNCTIONS END
-
-        // REMOVE ITEM FUNCTIONS START
-        $("#btnRemovePatient").on("click", async function () {
-            let patientData = {
-                patient_id: $("#removePatient #txtPatientId").val(),
-                //To get the User ID for Logs
-                user_id: user.user_id,
-                username: user.username,
-            };
-            try {
-                await axios
-                    .post("/api/remove_patient", { patientData })
-                    .then((response) => {
-                        handleCloseRemoveModal();
-                        new Swal({
-                            title: "Success",
-                            text: "Successfully removed an patient!",
-                            icon: "success",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-
-                        fetchData();
-                    })
-                    .catch((error) => {
-                        // Handle the error
-                        new Swal({
-                            title: "Error",
-                            text: error,
-                            icon: "error",
-                            timer: 1500, // Set the timer duration in milliseconds
-                            showCancelButton: false,
-                            showConfirmButton: false,
-                        });
-                        console.error(error);
-                    });
-            } catch (error) {
-                console.error(error);
-            }
-        });
-        // REMOVE ITEM FUNCTIONS END
-    });
-
+    // ADD PATIENT FUNCTIONS START
+    const handleAddSubmit = async () => {
  
+        try {
+            await axios
+                .post("/api/add_patient", { addData })
+                .then((response) => {
+                    handleCloseAddModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully added a new patient!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // ADD PATIENT FUNCTIONS END
+
+    // EDIT PATIENT FUNCTIONS START
+    const handleEditSubmit = async () => {
+
+        try {
+            await axios
+                .post("/api/update_patient", { editData })
+                .then((response) => {
+                    handleCloseEditModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully update an patient!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // EDIT PATIENT FUNCTIONS END
+
+    // REMOVE ITEM FUNCTIONS START
+    const handleRemoveSubmit = async () => {
+        try {
+            await axios
+                .post("/api/remove_patient", { removeData })
+                .then((response) => {
+                    handleCloseRemoveModal();
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully removed an patient!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+
+                    fetchData();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
+                    console.error(error);
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+    // REMOVE ITEM FUNCTIONS END
+
+
 
     // Filter Text and Numbers (Exact)
     const [searchText, setSearchText] = useState("");
@@ -269,7 +205,7 @@ const Patients = ({ user }) => {
     };
 
     const filteredData = data.filter((patient) => {
-        const { first_name, last_name, age, height, weight} = patient;
+        const { first_name, last_name, age, height, weight } = patient;
         const searchValue = searchText.toLowerCase();
         return (
             first_name.toLowerCase().includes(searchValue) ||
@@ -349,51 +285,54 @@ const Patients = ({ user }) => {
     const handleView = async (row) => {
         console.log("View", row);
         // Add your view logic here
-        let patient_id = row.id
         try {
             const response = await axios.get("/api/get_patient", {
                 params: {
-                    patient_id: patient_id
-                }
+                    patient_id: row.id,
+                },
             });
             const patientData = response.data;
 
             if (patientData) {
-
-                setViewPatient({
-                    patient_id: patientData[0].patient_id,
+                setViewData((prevData) =>({
+                    ...prevData, 
+                    patient_id: patientData[0].id,
                     first_name: patientData[0].first_name,
                     last_name: patientData[0].last_name,
                     age: patientData[0].age,
                     weight: patientData[0].weight,
                     height: patientData[0].height,
-                })
-                
-                    try {
-                        const res = await axios.get("/api/get_patient_history", {
-                            params: {
-                                  patient_id: patient_id
-                            }
-                        });
+                }))
 
-                        // console.log(res.data)
-                        const purchase_lines = res.data.map((val) => ({
-                           item_id: val.item_id,
-                            date_created: moment(val.date_created).format("YYYY-MM-DD"),
-                            item_name: val.item_name,
-                            item_price: val.item_price,
-                            purchased_quantity: val.purchased_quantity,
-                            purchase_sub_total: val.purchase_sub_total
-                        }));
+                try {
+                    const res = await axios.get("/api/get_patient_history", {
+                        params: {
+                            patient_id: row.id,
+                        },
+                    });
 
-                        setPurchaseHistory(purchase_lines)
-                        // console.log(purchaseHistory)
-                        handleOpenViewModal();
-                    } catch (error) {
-                        console.error(error);
-                    }
-        
+                    // console.log(res.data)
+                    const purchase_lines = res.data.map((val) => ({
+                        item_id: val.item_id,
+                        date_created: moment(val.date_created).format(
+                            "YYYY-MM-DD"
+                        ),
+                        item_name: val.item_name,
+                        item_price: val.item_price,
+                        purchased_quantity: val.purchased_quantity,
+                        purchase_sub_total: val.purchase_sub_total,
+                    }));
+
+                    setViewData((prevData) =>({
+                        ...prevData, 
+                        purchaseHistory: purchase_lines
+                    }))
+                    // console.log(purchaseHistory)
+                    handleOpenViewModal();
+                } catch (error) {
+                    console.error(error);
                 }
+            }
         } catch (error) {
             console.error(error);
         }
@@ -403,16 +342,15 @@ const Patients = ({ user }) => {
         console.log("Edit", row);
 
         // Autofill Fields
-        setEditPatient({
-            patient_id: row["id"],
-            first_name: row["first_name"],
-            last_name: row["last_name"],
-            age: row["age"],
-            weight: row["weight"],
-            height: row["height"],
-        });
-
-        console.log(editPatient);
+        setEditData((prevData) => ({
+            ...prevData,
+            patient_id: row.id,
+            first_name: row.first_name,
+            last_name: row.last_name,
+            age: row.age,
+            weight: row.weight,
+            height: row.height,
+        }));
 
         // Open Edit Modal
         handleOpenEditModal();
@@ -421,9 +359,10 @@ const Patients = ({ user }) => {
     const handleRemove = (row) => {
         console.log("Remove", row);
         // Add your remove logic here
-        setRemovePatient({
-            patient_id: row["id"],
-        });
+        setRemoveData((prevData) => ({
+            ...prevData,
+            patient_id: row.id
+        }))
         handleOpenRemoveModal();
     };
 
@@ -443,10 +382,9 @@ const Patients = ({ user }) => {
                         <button
                             className="btn btn-success my-3"
                             id="addPatientBtn"
+                            onClick={handleOpenAddModal}
                         >
-                            <i className="fa fa-plus p-1"></i>
-                            {" "}
-                            Add Patient{" "}
+                            <i className="fa fa-plus p-1"></i> Add Patient{" "}
                         </button>
                     </div>
                 </div>
@@ -456,25 +394,32 @@ const Patients = ({ user }) => {
                     user={user}
                     isOpen={viewModal}
                     onClose={handleCloseViewModal}
-                    viewPatient={viewPatient}
-                    purchaseHistory={purchaseHistory}
+                    viewData={viewData}
                 />
                 <AddModal
                     user={user}
                     isOpen={addModal}
                     onClose={handleCloseAddModal}
+                    addData={addData}
+                    setAddData={setAddData}
+                    handleAddSubmit={handleAddSubmit}
+                    
                 />
                 <EditModal
                     user={user}
                     isOpen={editModal}
                     onClose={handleCloseEditModal}
-                    editPatient={editPatient}
+                    editData={editData}
+                    setEditData={setEditData}
+                    handleEditSubmit={handleEditSubmit}
                 />
                 <RemoveModal
                     user={user}
                     isOpen={removeModal}
                     onClose={handleCloseRemoveModal}
-                    removePatient={removePatient}
+                    removeData={removeData}
+                    setRemoveData={setRemoveData}
+                    handleRemoveSubmit={handleRemoveSubmit}
                 />
 
                 <div className="container bg-white p-4">
@@ -501,7 +446,9 @@ const Patients = ({ user }) => {
                         pagination={paginationFactory()}
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
-                        noDataIndication={() => <div class="text-center">No records found.</div>}
+                        noDataIndication={() => (
+                            <div class="text-center">No records found.</div>
+                        )}
                     />
                 </div>
             </div>

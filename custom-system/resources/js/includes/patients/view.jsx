@@ -4,9 +4,8 @@ import BootstrapTable from "react-bootstrap-table-next";
 import filterFactory, { textFilter, dateFilter, Comparator } from 'react-bootstrap-table2-filter';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
 
-const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
-    // console.log(viewPatient)
-    console.log(purchaseHistory)
+const ViewModal = ({ user, isOpen, onClose, viewData }) => {
+
         // BOOTSTRAP TABLE INITIALIZATION
         const columns = [
             { dataField: "item_id", text: "Item ID", hidden: true }, //works
@@ -91,7 +90,7 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
     return (
         <>
             <Modal
-                id="viewPatient"
+                id="viewData"
                 size="lg"
                 show={isOpen}
                 onHide={onClose}
@@ -111,7 +110,7 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
                                     name="txtFirstName"
                                     id="txtFirstName"
                                     className="form-control"
-                                >{viewPatient.first_name}</span>
+                                >{viewData.first_name}</span>
                             </div>
                         </div>
                         <div className="col-3">
@@ -122,7 +121,7 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
                                     name="txtLastName"
                                     id="txtLastName"
                                     className="form-control"
-                                >{viewPatient.last_name}</span>
+                                >{viewData.last_name}</span>
                             </div>
                         </div>
                         <div className="col-2">
@@ -133,7 +132,7 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
                                     name="txtAge"
                                     id="txtAge"
                                     className="form-control"
-                                >{viewPatient.age}</span>
+                                >{viewData.age}</span>
                             </div>
                         </div>
                         <div className="col-2">
@@ -144,7 +143,7 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
                                     name="txtHeight"
                                     id="txtHeight"
                                     className="form-control"
-                                >{viewPatient.height}</span>
+                                >{viewData.height}</span>
                             </div>
                         </div>
                         <div className="col-2">
@@ -155,23 +154,28 @@ const ViewModal = ({ user, isOpen, onClose, viewPatient, purchaseHistory }) => {
                                     name="txtWeight"
                                     id="txtWeight"
                                     className="form-control"
-                                >{viewPatient.weight}</span>
+                                >{viewData.weight}</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Display all purchases under that purchase header */}
-                    <BootstrapTable
-                        keyField="item_id"
-                        data={purchaseHistory}
-                        columns={columns}
-                        filter={filterFactory()}
-                        // pagination={paginationFactory()}
-                        noDataIndication={() => (
-                            <div class="text-center">No records found.</div>
+                    {Array.isArray(viewData.purchaseHistory) &&
+                        viewData.purchaseHistory.length > 0 ? (
+                            <BootstrapTable
+                                keyField="item_id"
+                                data={viewData.purchaseHistory}
+                                columns={columns}
+                                filter={filterFactory()}
+                                noDataIndication={() => (
+                                    <div className="text-center">
+                                        No records found.
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <div className="text-center">No records found.</div>
                         )}
-                    />
-
                 </Modal.Body>
                 <Modal.Footer></Modal.Footer>
             </Modal>

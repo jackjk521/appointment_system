@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const EditModal = ({ user, isOpen, onClose, editPatient }) => {
-    const [value, setValue] = useState("");
+const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSubmit}) => {
+   
+    useEffect(() => {
+        setEditData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
+    }, []);
 
-    const handleChange = (event) => {
-        setValue(event.target.value);
+    // HANDLE INPUT CHANGER FUNCTIONS START
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    // ONCHANGE FUNCTIONS END
+
+    // Clear Fields
+    const onCloseCleared = () => {
+        $(".clear-fields").val("");
+        onClose();
     };
 
     return (
@@ -14,7 +31,7 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                 id="editPatient"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-warning text-white" closeButton>
@@ -23,10 +40,10 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                 <Modal.Body>
                     <input
                         type="hidden"
-                        name="txtPatientId"
+                        name="patient_id"
                         id="txtPatientId"
-                        value={editPatient["patient_id"]}
-                        className="form-control"
+                        value={editData.patient_id || ""}
+                        className="form-control clear-fields"
                     />
 
                     <div className="row p-2">
@@ -37,12 +54,12 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtFirstName"
+                                    name="first_name"
                                     id="txtFirstName"
                                     placeholder="John"
-                                    defaultValue={editPatient["first_name"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    defaultValue={editData.first_name || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -53,12 +70,12 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                                 </label>
                                 <input
                                     type="text"
-                                    name="txtLastName"
+                                    name="last_name"
                                     id="txtLastName"
                                     placeholder="Doe"
-                                    defaultValue={editPatient["last_name"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    defaultValue={editData.last_name || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -70,11 +87,11 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                                 <label className="fw-bold py-3">Age</label>
                                 <input
                                     type="number"
-                                    name="txtAge"
+                                    name="age"
                                     id="txtAge"
-                                    defaultValue={editPatient["age"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    defaultValue={editData.age || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -85,11 +102,11 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtHeight"
+                                    name="height"
                                     id="txtHeight"
-                                    defaultValue={editPatient["height"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    defaultValue={editData.height || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -100,18 +117,18 @@ const EditModal = ({ user, isOpen, onClose, editPatient }) => {
                                 </label>
                                 <input
                                     type="number"
-                                    name="txtWeight"
+                                    name="weight"
                                     id="txtWeight"
-                                    defaultValue={editPatient["weight"]}
-                                    className="form-control"
-                                    onChange={handleChange}
+                                    defaultValue={editData.weight || ""}
+                                    className="form-control clear-fields"
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" id="btnEditPatient">
+                    <Button variant="secondary" id="btnEditPatient" onClick={handleEditSubmit}>
                         Update
                     </Button>
                     {/* <Button variant="secondary" onClick={onClose}>
