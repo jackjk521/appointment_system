@@ -3,13 +3,20 @@ import { Modal, Button } from "react-bootstrap";
 
 const RemoveModal = ({ user, isOpen, onClose, removeData, handleRemoveSubmit}) => {
     
+    // Clear Fields
+    const onCloseCleared = () => {
+        $("#txtPurchHeaderId").val('')
+        onClose();
+    };
+
+
     return (
         <>
             <Modal
                 id="removePurchase"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-danger text-white" closeButton>

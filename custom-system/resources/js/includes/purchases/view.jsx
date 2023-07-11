@@ -9,7 +9,7 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 
 const ViewModal = ({ user, isOpen, onClose, viewData }) => {
-    // console.log(purchaseList)
+
     // BOOTSTRAP TABLE INITIALIZATION
     const columns = [
         { dataField: "item_id", text: "Item ID", hidden: true }, //works

@@ -109,45 +109,60 @@ class Purchases extends Controller
     // TO EDIT 
     public function update_purchase(Request $request)
     {
-        // var_dump($request->input('itemData'));
-            // Insert Purchase Header > return the inserted Id
-            $purchase = new Purchase_header_model;
-            $purchase->purchase_number = $request->input('addData')['purchase_number'];
-            $purchase->user_id= $request->input('addData')['user_id'];
-            $purchase->patient_id = $request->input('addData')['patient_id'];
-            $purchase->total_amount = $request->input('addData')['total_amount'];
-            $purchase->date_created = now()->toDateTimeString();
-            $purchase->removed = 0;
+     
+        // Update Purchase Header
+            $purchaseHeaderId = $request->input('editData')['purchase_header_id'];
+            $purchaseData = [
+                'purchase_number' => $request->input('editData')['purchase_number'],
+                'user_id' => $request->input('editData')['user_id'],
+                'patient_id' => $request->input('editData')['patient_id'],
+                'total_amount' => $request->input('editData')['total_amount'],
+            ];
 
-            $purchase->save();
+            Purchase_header_model::where('id', $purchaseHeaderId)->update($purchaseData);
 
-        //     // Get Purchase Header Id
-            $purch_header_id = $purchase->id;
+            // Update Purchase Line Items
+            $purchaseLineData = $request->input('editData')['purchLineData'];
+            $purchaseLineIds = array_column($purchaseLineData, 'purchase_line_id');
+        
+            echo json_encode($purchaseLineIds);
 
-        //     // Save the purchase line items
-            $purchase_line = $request->input('addData')['purchLineData'];
-        // // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
-            foreach ($purchase_line as $data){
-                $purch_line = new Purchase_line_model;
-                $purch_line->purchase_header_id = $purch_header_id;
-                $purch_line->item_id = $data['item_id'];
-                $purch_line->item_price = $data['item_price'];
-                $purch_line->purchased_quantity = $data['purchased_quantity'];
-                $purch_line->purchase_sub_total = floatval($data['purchase_sub_total']);
-                $purch_line->save();
+            // // Delete existing records not present in purchLineData array
+            // Purchase_line_model::where('purchase_header_id', $purchaseHeaderId)
+            //     ->whereNotIn('id', $purchaseLineIds)
+            //     ->update(['removed' => 1]);
+
+            foreach ($purchaseLineData as $data) {
+                $purchLineId = $data['purchase_line_id'];
+
+                $purchLineData = [
+                    'item_id' => $data['item_id'],
+                    'item_price' => $data['item_price'],
+                    'purchased_quantity' => $data['purchased_quantity'],
+                    'purchase_sub_total' => floatval($data['purchase_sub_total'])
+                ];
+        
+                if ($purchLineId) {
+                    // Update existing record
+                    Purchase_line_model::where('id', $purchLineId)
+                        ->where('purchase_header_id', $purchaseHeaderId)
+                        ->update($purchLineData);
+                } else {
+                    // Insert new record
+                    Purchase_line_model::create($purchLineData);
+                }
             }
+        
 
-
-        // // Log
-        if($purchase->save()){
+        // Log
             $log = new Logs_model;
-                $log->user_id = ($request->input('addData')['user_id'] != '') ? $request->input('addData')['user_id'] : 3 ; // Change to default admin value
-                $log->date = now()->toDateTimeString();
-                $log->message =($request->input('addData')['username'] != '') ? $request->input('addData')['username'] : 'admin' . " has create a new purchase header with ID : " . $request->input('addData')['purchase_number'] . " successfully.";
-                $log->save();
-        }
+            $log->user_id = ($request->input('editData')['user_id'] != '') ? $request->input('editData')['user_id'] : 3 ; // Change to default admin value
+            $log->date = now()->toDateTimeString();
+            $log->message =($request->input('editData')['username'] != '') ? $request->input('editData')['username'] : 'admin' . " has updated a purchase header with ID : " . $request->input('editData')['purchase_number'] . " successfully.";
+            $log->save();
+    
 
-        return response()->json(['success' => true , 'message' => 'Purchase created successfully']);
+        return response()->json(['success' => true , 'message' => 'Purchase updated successfully']);
     }
 
     public function remove_purchase(Request $request)

@@ -69,11 +69,13 @@ const AddModal = ({
     // Add Data
     useEffect(() => {
         setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
+          ...prevData,
+          purchLineData: [ ], // Initialize purchLineData as an empty array
+          user_id: user.user_id,
+          username: user.username,
         }));
-    }, []);
+      }, []);
+    
 
     // HANDLE TOTAL AMOUNT
     const handleTotalAmount = () => {
@@ -93,7 +95,7 @@ const AddModal = ({
 
     // Clear Fields
     const onCloseCleared = () => {
-        setAddData({});
+        setSelectedOption(null);
         onClose();
     };
     // Purchase Line Table START
@@ -121,8 +123,10 @@ const AddModal = ({
         };
         setAddData((prevState) => ({
             ...prevState,
-            purchLineData: [...prevState.purchLineData, newRow],
-        }));
+            purchLineData: prevState.purchLineData
+              ? [...prevState.purchLineData, newRow]
+              : [newRow],
+          }));
     };
 
     // Selectpicker for the Items dropdowm
@@ -407,7 +411,7 @@ const AddModal = ({
                                         />
                                     ) : (
                                         <div className="text-center">
-                                            No records found.
+                                            No products added
                                         </div>
                                     )}
                                 </div>

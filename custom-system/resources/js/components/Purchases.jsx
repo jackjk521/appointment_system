@@ -24,12 +24,6 @@ const Purchases = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
 
-    // Add Modal Data
-    const [purchLineData, setPurchLineData] = useState([]);
-
-    // View Modal Data
-    // const [purchaseList, setPurchaseList] = useState([]);
-
     // Add, Edit , Remove Data
     const [viewData, setViewData] = useState({ purchLineData: [] });
     const [addData, setAddData] = useState({ purchLineData: [] });
@@ -95,23 +89,6 @@ const Purchases = ({ user }) => {
     };
     // MODAL FUNCTIONS END
 
-    // View Purchase Fields
-    const [viewPurchase, setViewPurchase] = useState({
-        purchase_number: "",
-        patient_name: "",
-        total_amount: "",
-        created_by: "",
-    });
-
-    // Edit Item Fields
-    const [editPatient, setEditPatient] = useState({
-        patient_id: "",
-        first_name: "",
-        last_name: "",
-        age: "",
-        weight: "",
-        height: "",
-    });
 
     // Populate Table Data
     const fetchData = async () => {
@@ -201,44 +178,33 @@ const Purchases = ({ user }) => {
 
     // EDIT PATIENT FUNCTIONS START
     const handleEditSubmit =  async ()  => {
-        let patientData = {
-            patient_id: $("#editPatient #txtPatientId").val(),
-            first_name: $("#editPatient #txtFirstName").val(),
-            last_name: $("#editPatient #txtLastName").val(),
-            age: $("#editPatient #txtAge").val(),
-            weight: $("#editPatient #txtWeight").val(),
-            height: $("#editPatient #txtHeight").val(),
-            //To get the User ID for Logs
-            user_id: user.user_id,
-            username: user.username,
-        };
-
+        console.log(editData)
         try {
             await axios
-                .post("/api/update_patient", { patientData })
+                .post("/api/update_purchase", { editData })
                 .then((response) => {
                     handleCloseEditModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully update an patient!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
+                    // new Swal({
+                    //     title: "Success",
+                    //     text: "Successfully update an patient!",
+                    //     icon: "success",
+                    //     timer: 1500, // Set the timer duration in milliseconds
+                    //     showCancelButton: false,
+                    //     showConfirmButton: false,
+                    // });
 
                     fetchData();
                 })
                 .catch((error) => {
                     // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
+                    // new Swal({
+                    //     title: "Error",
+                    //     text: error,
+                    //     icon: "error",
+                    //     timer: 1500, // Set the timer duration in milliseconds
+                    //     showCancelButton: false,
+                    //     showConfirmButton: false,
+                    // });
                     console.error(error);
                 });
         } catch (error) {
@@ -385,6 +351,7 @@ const Purchases = ({ user }) => {
             if (purchaseHeader) {
                 setEditData((prevData) => ({
                     ...prevData,
+                    purchase_header_id: row.id,
                     patient_id: purchaseHeader[0].patient_id,
                     purchase_number: purchaseHeader[0].purchase_number,
                     full_name: purchaseHeader[0].patient_name,
@@ -399,6 +366,7 @@ const Purchases = ({ user }) => {
                         },
                     });
                     const purchase_lines = res.data.map((val) => ({
+                        purchase_line_id: val.id,
                         item_id: val.item_id,
                         item_name: val.item_name,
                         item_price: val.item_price,
@@ -475,7 +443,6 @@ const Purchases = ({ user }) => {
                     user={user}
                     isOpen={editModal}
                     onClose={handleCloseEditModal}
-                    editPatient={editPatient}
                     editData={editData}
                     setEditData={setEditData}
                     handleEditSubmit={handleEditSubmit}

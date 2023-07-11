@@ -84,7 +84,7 @@ const EditModal = ({
             user_id: user.user_id,
             username: user.username,
         }));
-    }, [editData]);
+    }, []);
 
     // console.log(selectedOption)
 
@@ -206,6 +206,7 @@ const EditModal = ({
                     const subTotal = quantity > 0 ? quantity * unitPrice : 0;
                     updatedRow = {
                         ...updatedRow,
+                        purchased_quantity: parseFloat(newValue),
                         purchase_sub_total: subTotal.toFixed(2), // Update the sub total
                     };
                 }
