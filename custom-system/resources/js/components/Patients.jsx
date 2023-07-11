@@ -89,7 +89,6 @@ const Patients = ({ user }) => {
 
     // ADD PATIENT FUNCTIONS START
     const handleAddSubmit = async () => {
- 
         try {
             await axios
                 .post("/api/add_patient", { addData })
@@ -125,7 +124,6 @@ const Patients = ({ user }) => {
 
     // EDIT PATIENT FUNCTIONS START
     const handleEditSubmit = async () => {
-
         try {
             await axios
                 .post("/api/update_patient", { editData })
@@ -195,8 +193,6 @@ const Patients = ({ user }) => {
         }
     };
     // REMOVE ITEM FUNCTIONS END
-
-
 
     // Filter Text and Numbers (Exact)
     const [searchText, setSearchText] = useState("");
@@ -294,15 +290,15 @@ const Patients = ({ user }) => {
             const patientData = response.data;
 
             if (patientData) {
-                setViewData((prevData) =>({
-                    ...prevData, 
+                setViewData((prevData) => ({
+                    ...prevData,
                     patient_id: patientData[0].id,
                     first_name: patientData[0].first_name,
                     last_name: patientData[0].last_name,
                     age: patientData[0].age,
                     weight: patientData[0].weight,
                     height: patientData[0].height,
-                }))
+                }));
 
                 try {
                     const res = await axios.get("/api/get_patient_history", {
@@ -323,10 +319,10 @@ const Patients = ({ user }) => {
                         purchase_sub_total: val.purchase_sub_total,
                     }));
 
-                    setViewData((prevData) =>({
-                        ...prevData, 
-                        purchaseHistory: purchase_lines
-                    }))
+                    setViewData((prevData) => ({
+                        ...prevData,
+                        purchaseHistory: purchase_lines,
+                    }));
                     // console.log(purchaseHistory)
                     handleOpenViewModal();
                 } catch (error) {
@@ -361,8 +357,8 @@ const Patients = ({ user }) => {
         // Add your remove logic here
         setRemoveData((prevData) => ({
             ...prevData,
-            patient_id: row.id
-        }))
+            patient_id: row.id,
+        }));
         handleOpenRemoveModal();
     };
 
@@ -403,7 +399,6 @@ const Patients = ({ user }) => {
                     addData={addData}
                     setAddData={setAddData}
                     handleAddSubmit={handleAddSubmit}
-                    
                 />
                 <EditModal
                     user={user}
@@ -447,7 +442,7 @@ const Patients = ({ user }) => {
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
                         noDataIndication={() => (
-                            <div class="text-center">No records found.</div>
+                            <div className="text-center">No records found.</div>
                         )}
                     />
                 </div>

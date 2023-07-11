@@ -179,7 +179,6 @@ const Inventory = ({ user }) => {
 
     // REMOVE ITEM FUNCTIONS START
     const handleRemoveSubmit = async () => {
-    
         try {
             await axios
                 .post("/api/remove_item", { removeData })
@@ -422,7 +421,7 @@ const Inventory = ({ user }) => {
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
                         noDataIndication={() => (
-                            <div class="text-center">No records found.</div>
+                            <div className="text-center">No records found.</div>
                         )}
                     />
                 </div>

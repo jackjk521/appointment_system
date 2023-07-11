@@ -89,7 +89,6 @@ const Purchases = ({ user }) => {
     };
     // MODAL FUNCTIONS END
 
-
     // Populate Table Data
     const fetchData = async () => {
         try {
@@ -177,8 +176,8 @@ const Purchases = ({ user }) => {
     // REMOVE ITEM FUNCTIONS END
 
     // EDIT PATIENT FUNCTIONS START
-    const handleEditSubmit =  async ()  => {
-        console.log(editData)
+    const handleEditSubmit = async () => {
+        console.log(editData);
         try {
             await axios
                 .post("/api/update_purchase", { editData })
@@ -452,6 +451,7 @@ const Purchases = ({ user }) => {
                     isOpen={removeModal}
                     onClose={handleCloseRemoveModal}
                     removeData={removeData}
+                    setRemoveData={setRemoveData}
                     handleRemoveSubmit={handleRemoveSubmit}
                 />
 
@@ -482,7 +482,7 @@ const Purchases = ({ user }) => {
                         wrapperClasses="table-responsive" // Add this class to make the table responsive
                         classes="table-bordered table-hover" // Add other classes for styling if needed
                         noDataIndication={() => (
-                            <div class="text-center">No records found.</div>
+                            <div className="text-center">No records found.</div>
                         )}
                     />
                 </div>

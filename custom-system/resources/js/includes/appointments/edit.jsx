@@ -67,7 +67,7 @@ const EditModal = ({
             user_id: user.user_id,
             username: user.username,
         }));
-    }, [editData]);
+    }, []);
 
 
     // ONCHANGE FUNCTIONS START

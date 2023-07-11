@@ -9,7 +9,6 @@ import filterFactory, {
 } from "react-bootstrap-table2-filter";
 
 const ViewModal = ({ user, isOpen, onClose, viewData }) => {
-
     // BOOTSTRAP TABLE INITIALIZATION
     const columns = [
         { dataField: "item_id", text: "Item ID", hidden: true }, //works
@@ -138,7 +137,7 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
 
                     {/* Display all purchases under that purchase header */}
 
-                    <div class="row">
+                    <div className="row">
                         {Array.isArray(viewData.purchLineData) &&
                         viewData.purchLineData.length > 0 ? (
                             <BootstrapTable

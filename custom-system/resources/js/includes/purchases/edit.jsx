@@ -334,18 +334,18 @@ const EditModal = ({
                 </Modal.Header>
                 <Modal.Body>
                     {/* Total Amount for Purchase  */}
-                    <div class="row pb-3">
+                    <div className="row pb-3">
                         <div
-                            class="pull-right"
+                            className="pull-right"
                             style={{ display: "inline-block" }}
                         >
                             <div>
-                                <span class="pull-right fw-bold">
+                                <span className="pull-right fw-bold">
                                     {" "}
                                     TOTAL AMOUNT{" "}
                                 </span>
                                 <br></br>
-                                <span class="pull-right">
+                                <span className="pull-right">
                                     {" "}
                                     PHP{" "}
                                     <span id="txtTotalAmount">
@@ -394,8 +394,8 @@ const EditModal = ({
                     </div>
 
                     {/* Purchase Line jsGrid  */}
-                    <div class="col-md-12">
-                        <div class="row ">
+                    <div className="col-md-12">
+                        <div className="row ">
                             <div className="d-flex align-items-end justify-content-end my-3">
                                 <button
                                     className="btn btn-success"
@@ -408,7 +408,7 @@ const EditModal = ({
                                 </button>
                             </div>
 
-                            <div class="container">
+                            <div className="container">
                                 {Array.isArray(editData.purchLineData) &&
                                 editData.purchLineData.length > 0 ? (
                                     <BootstrapTable

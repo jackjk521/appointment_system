@@ -21,7 +21,6 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
 const Appointments = ({ user }) => {
-
     // Table Data
     const [data, setData] = useState([]);
 
@@ -59,7 +58,7 @@ const Appointments = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
-        setEditData({})
+        setEditData({});
     };
 
     // Removal Modal
@@ -68,22 +67,21 @@ const Appointments = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
-        setRemoveData({})
+        setRemoveData({});
     };
 
     // MODAL FUNCTIONS END
 
-
-     // Populate Table Data
-     const fetchData = async () => {
+    // Populate Table Data
+    const fetchData = async () => {
         try {
             const response = await axios.get("/api/appointments", {}); // works
             setData(response.data);
-            
+
             const events = response.data.map((val) => ({
-                title:  val.full_name,
+                title: val.full_name,
                 start: val.from_datetime,
-                end: val.to_datetime
+                end: val.to_datetime,
             }));
             setAppointments(events);
         } catch (error) {
@@ -98,8 +96,7 @@ const Appointments = ({ user }) => {
     // SHOW DIV TOGGLE
     const toggleDiv = () => {
         setShowDiv(!showDiv);
-      };
-   
+    };
 
     // // Cleave JS Formatting and Validation
     // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
@@ -117,7 +114,7 @@ const Appointments = ({ user }) => {
     // });
 
     // ADD APPOINTMENTS FUNCTIONS START
-    const handleAddSubmit  = async () => {
+    const handleAddSubmit = async () => {
         try {
             await axios
                 .post("/api/add_appointment", { addData })
@@ -148,11 +145,11 @@ const Appointments = ({ user }) => {
         } catch (error) {
             console.error(error);
         }
-    }
+    };
     // ADD APPOINTMENTS FUNCTIONS END
 
     // EDIT APPOINTMENTS FUNCTIONS START
-    const handleEditSubmit  = async () => {
+    const handleEditSubmit = async () => {
         try {
             await axios
                 .post("/api/update_appointment", { editData })
@@ -187,7 +184,7 @@ const Appointments = ({ user }) => {
     // EDIT APPOINTMENTS FUNCTIONS END
 
     // REMOVE APPOINTMENTS FUNCTIONS START
-    const handleRemoveSubmit  = async () => {
+    const handleRemoveSubmit = async () => {
         try {
             await axios
                 .post("/api/remove_appointment", { removeData })
@@ -230,7 +227,8 @@ const Appointments = ({ user }) => {
     };
 
     const filteredData = data.filter((patient) => {
-        const { first_name, last_name, from_datetime, to_datetime, purpose } = patient;
+        const { first_name, last_name, from_datetime, to_datetime, purpose } =
+            patient;
         const searchValue = searchText.toLowerCase();
         return (
             first_name.toLowerCase().includes(searchValue) ||
@@ -340,9 +338,9 @@ const Appointments = ({ user }) => {
         console.log("Remove", row);
         // Add your remove logic here
         setRemoveData({
-           appointment_id: row.id,
-           user_id: user.user_id,
-           username: user.username,
+            appointment_id: row.id,
+            user_id: user.user_id,
+            username: user.username,
         });
         handleOpenRemoveModal();
     };
@@ -364,51 +362,55 @@ const Appointments = ({ user }) => {
                             id="addAppointmentBtn"
                             onClick={handleOpenAddModal}
                         >
-                            <i className="fa fa-plus p-1"></i> Create Appointment{" "}
+                            <i className="fa fa-plus p-1"></i> Create
+                            Appointment{" "}
                         </button>
                         <button
                             className="btn btn-secondary my-3"
                             onClick={toggleDiv}
                         >
-                            <i className="fa fa-eye p-1"></i> View Appointments Table{" "}
+                            <i className="fa fa-eye p-1"></i> View Appointments
+                            Table{" "}
                         </button>
                     </div>
                 </div>
 
-                {showDiv && <div className="container bg-white p-4">
-                    {/* Search Bar  */}
-                    <div className="row">
-                        <div className="col-9"></div>
-                        <div className="col-3 d-flex align-items-end justify-content-end ">
-                            <input
-                                type="text"
-                                value={searchText}
-                                onChange={handleSearch}
-                                className="form-control my-3"
-                                placeholder="Search for Patients"
-                            />
+                {showDiv && (
+                    <div className="container bg-white p-4">
+                        {/* Search Bar  */}
+                        <div className="row">
+                            <div className="col-9"></div>
+                            <div className="col-3 d-flex align-items-end justify-content-end ">
+                                <input
+                                    type="text"
+                                    value={searchText}
+                                    onChange={handleSearch}
+                                    className="form-control my-3"
+                                    placeholder="Search for Patients"
+                                />
+                            </div>
                         </div>
+
+                        <BootstrapTable
+                            keyField="id"
+                            // data={data}
+                            data={filteredData}
+                            columns={columns}
+                            filter={filterFactory()}
+                            pagination={paginationFactory()}
+                            wrapperClasses="table-responsive" // Add this class to make the table responsive
+                            classes="table-bordered table-hover" // Add other classes for styling if needed
+                            noDataIndication={() => (
+                                <div className="text-center">
+                                    No records found.
+                                </div>
+                            )}
+                        />
                     </div>
-
-
-                    <BootstrapTable
-                        keyField="id"
-                        // data={data}
-                        data={filteredData}
-                        columns={columns}
-                        filter={filterFactory()}
-                        pagination={paginationFactory()}
-                        wrapperClasses="table-responsive" // Add this class to make the table responsive
-                        classes="table-bordered table-hover" // Add other classes for styling if needed
-                        noDataIndication={() => (
-                            <div class="text-center">No records found.</div>
-                        )}
-                    />
-                </div> }
-
+                )}
 
                 {/* FULL CALENDAR  */}
-                <div class="container py-3">
+                <div className="container py-3">
                     {/* <h1>Appointments Calendar</h1> */}
                     <FullCalendar
                         plugins={[timeGridPlugin]}
@@ -453,8 +455,6 @@ const Appointments = ({ user }) => {
                     removeData={removeData}
                     handleRemoveSubmit={handleRemoveSubmit}
                 />
-
-              
             </div>
         </>
     );

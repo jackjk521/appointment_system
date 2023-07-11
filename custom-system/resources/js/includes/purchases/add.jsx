@@ -69,13 +69,12 @@ const AddModal = ({
     // Add Data
     useEffect(() => {
         setAddData((prevData) => ({
-          ...prevData,
-          purchLineData: [ ], // Initialize purchLineData as an empty array
-          user_id: user.user_id,
-          username: user.username,
+            ...prevData,
+            purchLineData: [], // Initialize purchLineData as an empty array
+            user_id: user.user_id,
+            username: user.username,
         }));
-      }, []);
-    
+    }, []);
 
     // HANDLE TOTAL AMOUNT
     const handleTotalAmount = () => {
@@ -124,9 +123,9 @@ const AddModal = ({
         setAddData((prevState) => ({
             ...prevState,
             purchLineData: prevState.purchLineData
-              ? [...prevState.purchLineData, newRow]
-              : [newRow],
-          }));
+                ? [...prevState.purchLineData, newRow]
+                : [newRow],
+        }));
     };
 
     // Selectpicker for the Items dropdowm
@@ -320,18 +319,18 @@ const AddModal = ({
                 </Modal.Header>
                 <Modal.Body>
                     {/* Total Amount for Purchase  */}
-                    <div class="row pb-3">
+                    <div className="row pb-3">
                         <div
-                            class="pull-right"
+                            className="pull-right"
                             style={{ display: "inline-block" }}
                         >
                             <div>
-                                <span class="pull-right fw-bold">
+                                <span className="pull-right fw-bold">
                                     {" "}
                                     TOTAL AMOUNT{" "}
                                 </span>
                                 <br></br>
-                                <span class="pull-right">
+                                <span className="pull-right">
                                     {" "}
                                     PHP{" "}
                                     <span id="txtTotalAmount">
@@ -379,42 +378,43 @@ const AddModal = ({
                     </div>
 
                     {/* Purchase Line jsGrid  */}
-                    <div class="col-md-12">
-                        <div class="row ">
+                    <div className="col-md-12">
+                        <div className="row ">
                             <div className="d-flex align-items-end justify-content-end my-3">
                                 <button
                                     className="btn btn-success"
                                     onClick={handleInsertRow}
                                 >
-                                    <i className="fa fa-plus p-1"> Add Product </i> 
-                                   
+                                    <i className="fa fa-plus p-1">
+                                        {" "}
+                                        Add Product{" "}
+                                    </i>
                                 </button>
-
                             </div>
 
-                            <div class="container">
-                                    {Array.isArray(addData.purchLineData) &&
-                                    addData.purchLineData.length > 0 ? (
-                                        <BootstrapTable
-                                            keyField="id"
-                                            data={addData.purchLineData}
-                                            columns={columns}
-                                            cellEdit={cellEditFactory({
-                                                mode: "click",
-                                                blurToSave: true,
-                                            })}
-                                            noDataIndication={() => (
-                                                <div className="text-center">
-                                                    No records found.
-                                                </div>
-                                            )}
-                                        />
-                                    ) : (
-                                        <div className="text-center">
-                                            No products added
-                                        </div>
-                                    )}
-                                </div>
+                            <div className="container">
+                                {Array.isArray(addData.purchLineData) &&
+                                addData.purchLineData.length > 0 ? (
+                                    <BootstrapTable
+                                        keyField="id"
+                                        data={addData.purchLineData}
+                                        columns={columns}
+                                        cellEdit={cellEditFactory({
+                                            mode: "click",
+                                            blurToSave: true,
+                                        })}
+                                        noDataIndication={() => (
+                                            <div className="text-center">
+                                                No records found.
+                                            </div>
+                                        )}
+                                    />
+                                ) : (
+                                    <div className="text-center">
+                                        No products added
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </Modal.Body>
