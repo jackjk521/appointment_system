@@ -267,21 +267,21 @@ const Purchases = ({ user }) => {
                         size="md"
                         onClick={() => handleView(row)}
                     >
-                        <i className="px-1 fa fa-info-circle"> View </i>
+                        <i className="p-1 fa fa-info-circle"></i>
                     </Button>{" "}
                     <Button
                         variant="warning"
                         size="md"
                         onClick={() => handleEdit(row)}
                     >
-                        <i className="px-2 fa fa-edit"> Edit</i>
+                        <i className="p-1 fa fa-edit"></i>
                     </Button>{" "}
                     <Button
                         variant="danger"
                         size="md"
                         onClick={() => handleRemove(row)}
                     >
-                        <i className="px-2 fa fa-trash"> Remove</i>
+                        <i className="p-1 fa fa-trash"></i>
                     </Button>
                 </div>
             ),

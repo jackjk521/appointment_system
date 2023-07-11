@@ -298,14 +298,14 @@ const Appointments = ({ user }) => {
                         size="md"
                         onClick={() => handleEdit(row)}
                     >
-                        <i className="px-2 fa fa-edit"> Edit</i>
+                        <i className="p-1 fa fa-edit"></i>
                     </Button>{" "}
                     <Button
                         variant="danger"
                         size="md"
                         onClick={() => handleRemove(row)}
                     >
-                        <i className="px-2 fa fa-trash"> Remove</i>
+                        <i className="p-1 fa fa-trash"></i>
                     </Button>
                 </div>
             ),
@@ -406,7 +406,6 @@ const Appointments = ({ user }) => {
                     />
                 </div> }
 
-                
 
                 {/* FULL CALENDAR  */}
                 <div class="container py-3">
