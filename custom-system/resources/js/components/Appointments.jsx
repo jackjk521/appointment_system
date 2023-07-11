@@ -19,6 +19,33 @@ import RemoveModal from "../includes/appointments/remove";
 
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import daygridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+
+import CustomDatePicker from "./utility/CustomDatePicker";
+
+const EventItem = ({ info }) => {
+    const { event } = info;
+    const start = moment(event.start).format("hh:mm");
+    const end = moment(event.end).format("h:mm");
+
+    return (
+        <button className="btn btn-primary h-100 w-100">
+            <div className="d-flex justify-content-center h-100">
+                <div className="row">
+                    <div className="col-12"></div>
+                    <div className="col-12">
+                        <p className="w-100">
+                            {" "}
+                            {start} - {end}{" "}
+                        </p>
+                        <p className="fw-bold w-100"> {event.title}</p>
+                    </div>
+                </div>
+            </div>
+        </button>
+    );
+};
 
 const Appointments = ({ user }) => {
     // Table Data
@@ -53,8 +80,35 @@ const Appointments = ({ user }) => {
     };
 
     // Edit Modal
-    const handleOpenEditModal = () => {
-        setEditModal(true);
+    const handleOpenEditModal = async (event) => {
+        console.log(event.event._def);
+        const $id = event.event._def.extendedProps.appointment_id;
+        // console.log(event.event._def.extendedProps.appointment_id)
+
+        try {
+            const response = await axios.get("/api/get_appointment", {
+                params: {
+                    appointment_id: $id,
+                },
+            });
+            const appointmentData = response.data;
+            if (appointmentData) {
+                setEditData((prevData) => ({
+                    ...prevData,
+                    appointment_id: $id,
+                    full_name: appointmentData.full_name,
+                    patient_id: appointmentData.patient_id,
+                    from_datetime: appointmentData.from_datetime,
+                    to_datetime: appointmentData.to_datetime,
+                    purpose: appointmentData.purpose,
+                }));
+
+                // Handle open edit modal here
+                setEditModal(true);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
@@ -79,6 +133,7 @@ const Appointments = ({ user }) => {
             setData(response.data);
 
             const events = response.data.map((val) => ({
+                appointment_id: val.id,
                 title: val.full_name,
                 start: val.from_datetime,
                 end: val.to_datetime,
@@ -291,13 +346,13 @@ const Appointments = ({ user }) => {
                     >
                         <i className="px-1 fa fa-info-circle"> View </i>
                     </Button>{" "} */}
-                    <Button
+                    {/* <Button
                         variant="warning"
                         size="md"
                         onClick={() => handleEdit(row)}
                     >
                         <i className="p-1 fa fa-edit"></i>
-                    </Button>{" "}
+                    </Button>{" "} */}
                     <Button
                         variant="danger"
                         size="md"
@@ -411,23 +466,35 @@ const Appointments = ({ user }) => {
 
                 {/* FULL CALENDAR  */}
                 <div className="container py-3">
-                    {/* <h1>Appointments Calendar</h1> */}
                     <FullCalendar
-                        plugins={[timeGridPlugin]}
+                        plugins={[
+                            timeGridPlugin,
+                            daygridPlugin,
+                            interactionPlugin,
+                        ]}
                         initialView="timeGridWeek"
                         events={appointments}
                         headerToolbar={{
-                            left: "prev,next today",
+                            left: "prev today next",
                             center: "title",
-                            right: "timeGridWeek,timeGridDay",
+                            right: "dayGridMonth timeGridWeek timeGridDay",
                         }}
                         slotDuration="00:15:00"
                         editable={true} // Make the events editable
-                        selectable={true} // Enable event selection
+                        // selectable={true} // Enable event selection
                         selectMirror={true}
+                        eventClick={handleOpenEditModal}
+                        eventContent={(info) => <EventItem info={info} />}
                         slotMinTime="10:00:00" // Set the minimum time to 10:00 AM
                         slotMaxTime="19:00:00" // Set the maximum time to 7:00 PM
                         eventChange={handleEventChange} // Handle event changes
+                        dayHeaderContent={(args) => {
+                            return (
+                                <h5 className="text-dark">
+                                    {moment(args.date).format("ddd Do")}{" "}
+                                </h5>
+                            );
+                        }}
                     />
                 </div>
 
@@ -455,6 +522,7 @@ const Appointments = ({ user }) => {
                     removeData={removeData}
                     handleRemoveSubmit={handleRemoveSubmit}
                 />
+                {/* MODALS END  */}
             </div>
         </>
     );

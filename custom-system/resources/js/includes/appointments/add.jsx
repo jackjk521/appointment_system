@@ -86,6 +86,7 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
         onClose();
     };
 
+    
     return (
         <>
             <Modal
@@ -143,8 +144,8 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
                                     selected={selectedFromDateTime}
                                     onChange={handleFromDateTimeChange}
                                     showTimeSelect
-                                    dateFormat="yyyy-MM-dd HH:mm:ss"
-                                    timeFormat="HH:mm:ss"
+                                    dateFormat="yyyy-MM-dd HH:mm"
+                                    timeFormat="h:mm"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"
@@ -160,8 +161,8 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
                                     selected={selectedToDateTime}
                                     onChange={handleToDateTimeChange}
                                     showTimeSelect
-                                    dateFormat="yyyy-MM-dd HH:mm:ss"
-                                    timeFormat="HH:mm:ss"
+                                    dateFormat="yyyy-MM-dd HH:mm"
+                                    timeFormat="h:mm"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"

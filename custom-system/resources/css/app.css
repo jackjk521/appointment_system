@@ -1,4 +1,9 @@
 
+a {
+    text-decoration: none;
+}
+
+
 /* Full screen DIV  */
 .full-screen {
     height: 100vh; /* Set height to 100% of the viewport height */

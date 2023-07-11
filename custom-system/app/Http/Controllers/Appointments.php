@@ -27,13 +27,16 @@ class Appointments extends Controller
         return response()->json($appointments);
     }
 
-    // public function get_patient(Request $request){
+    public function get_appointment_by_id (Request $request){
 
-    //     $id = $request->input('patient_id');
-    //     $patient = Patients_model::selectRaw("CONCAT(first_name, ' ', last_name) AS full_name,  patients.* ")->where('removed', 0)->where('id', $id)->get();
+        $id = $request->input('appointment_id');
+        $appointment = Appointments_model::where('appointments.id', $id)
+            ->join('patients', 'appointments.patient_id', '=', 'patients.id')
+            ->selectRaw("CONCAT(patients.first_name, ' ', patients.last_name) AS full_name, patients.first_name, patients.last_name, appointments.*")
+            ->get();
 
-    //     return response()->json($patient);
-    // }
+        return response()->json($appointment->first());
+    }
 
     // public function get_patient_purchase_history(Request $request){
 

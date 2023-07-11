@@ -51,7 +51,7 @@ Route::post('/remove_purchase', [Purchases::class, 'remove_purchase']);
 
 // Appointments
 Route::get('/appointments', [Appointments::class, 'get_all_appointments']);
-// Route::get('/get_purchase', [Appointments::class, 'get_purchase_header_by_id']);
+Route::get('/get_appointment', [Appointments::class, 'get_appointment_by_id']);
 // Route::get('/get_purchase_line', [Appointments::class, 'get_purchase_line_by_id']);
 Route::post('/add_appointment', [Appointments::class, 'insert_appointment']);
 Route::post('/update_appointment', [Appointments::class, 'update_appointment']);

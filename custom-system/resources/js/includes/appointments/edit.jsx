@@ -49,7 +49,7 @@ const EditModal = ({
                       value: editData.patient_id,
                       label: editData.full_name,
                   }
-                : null
+                : ''
         );
 
         // AUTO FILL FROM DATETIME
@@ -67,7 +67,7 @@ const EditModal = ({
             user_id: user.user_id,
             username: user.username,
         }));
-    }, []);
+    }, [editData]);
 
 
     // ONCHANGE FUNCTIONS START
@@ -84,7 +84,7 @@ const EditModal = ({
     // HANDLE THE FOR DATE TIME CHANGE
     const handleFromDateTimeChange = (date) => {
         setSelectedFromDateTime(date);
-        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm:ss");
+        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm");
         setEditData((prevData) => ({
             ...prevData,
             from_datetime: formattedDate,
@@ -94,7 +94,7 @@ const EditModal = ({
     // HANDLE THE FOR DATE TIME CHANGE
     const handleToDateTimeChange = (date) => {
         setSelectedToDateTime(date);
-        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm:ss");
+        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm");
         setEditData((prevData) => ({
             ...prevData,
             to_datetime: formattedDate,
@@ -175,8 +175,8 @@ const EditModal = ({
                                     selected={selectedFromDateTime}
                                     onChange={handleFromDateTimeChange}
                                     showTimeSelect
-                                    dateFormat="yyyy-MM-dd HH:mm:ss"
-                                    timeFormat="HH:mm:ss"
+                                    dateFormat="yyyy-MM-dd HH:mm"
+                                    timeFormat="h:mm"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"
@@ -192,8 +192,8 @@ const EditModal = ({
                                     selected={selectedToDateTime}
                                     onChange={handleToDateTimeChange}
                                     showTimeSelect
-                                    dateFormat="yyyy-MM-dd HH:mm:ss"
-                                    timeFormat="HH:mm:ss"
+                                    dateFormat="yyyy-MM-dd HH:mm"
+                                    timeFormat="h:mm"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"
