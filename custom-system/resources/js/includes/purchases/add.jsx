@@ -11,20 +11,14 @@ const AddModal = ({
     user,
     isOpen,
     onClose,
-    purchLineData,
-    setPurchLineData,
-    addModalData,
-    setAddModalData,
-    purchaseNumber,
+    addData,
+    setAddData,
+    handleAddSubmit,
 }) => {
-    // Get table reference
-    const tableRef = useRef(null);
-    
     // Selectpicker for Patients
     const [selectedOption, setSelectedOption] = useState(null);
     const [options, setOptions] = useState([]);
 
-    console.log(purchaseNumber);
     useEffect(() => {
         // Get all Patients
         const fetchPatients = async () => {
@@ -54,38 +48,56 @@ const AddModal = ({
             }
         };
 
-        // Calculate the new total amount based on the subtotals in the purchLineData array
-        const newTotalAmount = purchLineData.reduce(
-            (total, row) => total + parseFloat(row.purchase_sub_total),
-            0
-        );
-
         fetchPatients();
         fetchItems();
 
-        // Update the total amount state variable
-        setAddModalData({ ...addModalData, totalAmount: newTotalAmount });
-    }, [purchLineData]); // Run once
+        if (addData.purchLineData) {
+            // Calculate the new total amount based on the subtotals in the purchLineData array
+            const newTotalAmount = addData.purchLineData.reduce(
+                (total, row) => total + parseFloat(row.purchase_sub_total),
+                0
+            );
 
-    // Function to handle option selection
+            // Update the total amount state variable
+            setAddData((prevData) => ({
+                ...prevData,
+                total_amount: newTotalAmount,
+            }));
+        }
+    }, [addData.purchLineData]); // Run once
+
+    // Add Data
+    useEffect(() => {
+        setAddData((prevData) => ({
+          ...prevData,
+          purchLineData: [ ], // Initialize purchLineData as an empty array
+          user_id: user.user_id,
+          username: user.username,
+        }));
+      }, []);
+    
+
+    // HANDLE TOTAL AMOUNT
+    const handleTotalAmount = () => {
+        return (
+            addData.total_amount > 0 ? addData.total_amount : 0.0
+        ).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    };
+
+    // HANDLE OPTION SELECTION
     const handleSelectChange = (selected) => {
         setSelectedOption(selected);
-        $("#addPurchase").attr("data-patient-id", selected.value);
+        setAddData((prevData) => ({ ...prevData, patient_id: selected.value }));
     };
 
-    const handleModalClose = () => {
+    // Clear Fields
+    const onCloseCleared = () => {
+        setSelectedOption(null);
         onClose();
-        if (selectedOption) {
-            setSelectedOption(null); // Reset selectedOption state to null if it has a value
-            $("#addPurchase").attr("data-patient-id", null); // Clear the data-patient-id attribute using jQuery
-
-            // Empty Table after close
-            if (tableRef.current) {
-                tableRef.current.setState({ data: [] });
-            }
-        }
     };
-
     // Purchase Line Table START
 
     // Selectpicker for Items
@@ -109,19 +121,18 @@ const AddModal = ({
             purchased_quantity: 0, // user input allowed
             purchase_sub_total: 0.0,
         };
-        setPurchLineData([...purchLineData, newRow]);
+        setAddData((prevState) => ({
+            ...prevState,
+            purchLineData: prevState.purchLineData
+              ? [...prevState.purchLineData, newRow]
+              : [newRow],
+          }));
     };
-
-    // Function to retrieve table data
-    // const handleRetrieveData = () => {
-    //     setPurchLineData(purchLineData);
-    //     console.log(purchLineData);
-    // };
 
     // Selectpicker for the Items dropdowm
     const handleItemsEdit = (newValue, rowId, dataField) => {
         // Update the data with the new value
-        const updatedData = purchLineData.map((row) => {
+        const updatedData = addData.purchLineData.map((row) => {
             if (row.id === rowId) {
                 let updatedRow = { ...row, [dataField]: newValue };
 
@@ -145,10 +156,15 @@ const AddModal = ({
                             }
 
                             // Update the state with the modified row
-                            const updatedDataWithAutofill = purchLineData.map(
-                                (r) => (r.id === rowId ? updatedRow : r)
-                            );
-                            setPurchLineData(updatedDataWithAutofill);
+                            const updatedDataWithAutofill =
+                                addData.purchLineData.map((r) =>
+                                    r.id === rowId ? updatedRow : r
+                                );
+
+                            setAddData((prevState) => ({
+                                ...prevState,
+                                purchLineData: updatedDataWithAutofill,
+                            }));
                         })
                         .catch((error) => {
                             // Handle the error
@@ -159,12 +175,15 @@ const AddModal = ({
             }
             return row;
         });
-        setPurchLineData(updatedData);
+        setAddData((prevState) => ({
+            ...prevState,
+            purchLineData: updatedData,
+        }));
     };
 
     // Quantity Edit handler
     const handleQuantityEdit = (newValue, rowId, dataField) => {
-        const updatedData = purchLineData.map((row) => {
+        const updatedData = addData.purchLineData.map((row) => {
             if (row.id === rowId) {
                 let updatedRow = { ...row, [dataField]: newValue };
 
@@ -184,7 +203,10 @@ const AddModal = ({
             return row;
         });
 
-        setPurchLineData(updatedData);
+        setAddData((prevState) => ({
+            ...prevState,
+            purchLineData: updatedData,
+        }));
     };
 
     // TABLE START COLUMNS
@@ -290,7 +312,7 @@ const AddModal = ({
                 id="addPurchase"
                 size="lg"
                 show={isOpen}
-                onHide={handleModalClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-success text-white" closeButton>
@@ -313,13 +335,7 @@ const AddModal = ({
                                     {" "}
                                     PHP{" "}
                                     <span id="txtTotalAmount">
-                                        {addModalData.totalAmount.toLocaleString(
-                                            "en-US",
-                                            {
-                                                minimumFractionDigits: 2,
-                                                maximumFractionDigits: 2,
-                                            }
-                                        )}
+                                        {handleTotalAmount()}
                                     </span>
                                 </span>
                             </div>
@@ -338,7 +354,7 @@ const AddModal = ({
                                     id="txtPurchaseNumber"
                                     placeholder="Purchase Number"
                                     className="form-control"
-                                    value={purchaseNumber}
+                                    value={addData.purchase_number}
                                     disabled
                                 />
                             </div>
@@ -364,37 +380,41 @@ const AddModal = ({
 
                     {/* Purchase Line jsGrid  */}
                     <div class="col-md-12">
-                        <div class="row">
-                            <div>
+                        <div class="row ">
+                            <div className="d-flex align-items-end justify-content-end my-3">
                                 <button
-                                    className="btn btn-success me-auto"
+                                    className="btn btn-success"
                                     onClick={handleInsertRow}
                                 >
-                                    Insert Row
+                                    <i className="fa fa-plus p-1"> Add Product </i> 
+                                   
                                 </button>
-                                {/* <button
-                                    className="btn btn-primary"
-                                    onClick={handleRetrieveData}
-                                >
-                                    Retrieve Data
-                                </button> */}
-                                {/* <div>Total Amount: {calculateTotalAmount()}</div> */}
-                                <BootstrapTable
-                                    ref={tableRef}
-                                    keyField="id"
-                                    data={purchLineData}
-                                    columns={columns}
-                                    cellEdit={cellEditFactory({
-                                        mode: "click",
-                                        blurToSave: true,
-                                    })}
-                                    noDataIndication={() => (
-                                        <div class="text-center">
-                                            No records found.
+
+                            </div>
+
+                            <div class="container">
+                                    {Array.isArray(addData.purchLineData) &&
+                                    addData.purchLineData.length > 0 ? (
+                                        <BootstrapTable
+                                            keyField="id"
+                                            data={addData.purchLineData}
+                                            columns={columns}
+                                            cellEdit={cellEditFactory({
+                                                mode: "click",
+                                                blurToSave: true,
+                                            })}
+                                            noDataIndication={() => (
+                                                <div className="text-center">
+                                                    No records found.
+                                                </div>
+                                            )}
+                                        />
+                                    ) : (
+                                        <div className="text-center">
+                                            No products added
                                         </div>
                                     )}
-                                />
-                            </div>
+                                </div>
                         </div>
                     </div>
                 </Modal.Body>
@@ -402,8 +422,12 @@ const AddModal = ({
                     {/* <Button variant="secondary" onClick={onClose}>
                     Close
                     </Button> */}
-                    <Button variant="secondary" id="btnAddPurchase">
-                        Add
+                    <Button
+                        variant="secondary"
+                        id="btnAddPurchase"
+                        onClick={handleAddSubmit}
+                    >
+                        Create Purchase
                     </Button>
                 </Modal.Footer>
             </Modal>

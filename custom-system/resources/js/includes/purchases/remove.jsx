@@ -1,15 +1,22 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const RemoveModal = ({ user, isOpen, onClose, removePurchase}) => {
-    console.log(removePurchase["purch_header_id"]);
+const RemoveModal = ({ user, isOpen, onClose, removeData, handleRemoveSubmit}) => {
+    
+    // Clear Fields
+    const onCloseCleared = () => {
+        $("#txtPurchHeaderId").val('')
+        onClose();
+    };
+
+
     return (
         <>
             <Modal
                 id="removePurchase"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-danger text-white" closeButton>
@@ -23,7 +30,7 @@ const RemoveModal = ({ user, isOpen, onClose, removePurchase}) => {
                                     type="hidden"
                                     name="txtPurchHeaderId"
                                     id="txtPurchHeaderId"
-                                    value={removePurchase["purch_header_id"]}
+                                    value={removeData.purch_header_id}
                                     className="form-control"
                                 />
 
@@ -36,7 +43,7 @@ const RemoveModal = ({ user, isOpen, onClose, removePurchase}) => {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="success" id="btnRemovePurchase">
+                    <Button variant="success" id="btnRemovePurchase" onClick={handleRemoveSubmit}>
                         Yes
                     </Button>
                     <Button variant="secondary" onClick={onClose}>
