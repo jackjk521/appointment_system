@@ -44,6 +44,7 @@ Route::post('/remove_patient', [Patients::class, 'remove_patient']);
 Route::get('/purchases', [Purchases::class, 'get_all_purchase_header']);
 Route::get('/get_purchase', [Purchases::class, 'get_purchase_header_by_id']);
 Route::get('/get_purchase_line', [Purchases::class, 'get_purchase_line_by_id']);
+Route::get('/gen_purchase_line', [Purchases::class, 'gen_purchase_line_by_id']);
 Route::get('/gen_purchase_number', [Purchases::class, 'generate_purchase_number']);
 Route::post('/add_purchase', [Purchases::class, 'insert_purchase']);
 Route::post('/update_purchase', [Purchases::class, 'update_purchase']);

@@ -6,7 +6,7 @@ import axios from "axios";
 import Select from "react-select";
 
 import CustomSelectEditor from "../../components/utility/CustomSelectPicker";
-
+import CustomItemSelector from "../../components/utility/CustomItemSelector";
 const EditModal = ({
     user,
     isOpen,
@@ -79,6 +79,10 @@ const EditModal = ({
                 : null
         );
 
+    }, [editData]);
+
+
+    useEffect(() => {
         setEditData((prevData) => ({
             ...prevData,
             user_id: user.user_id,
@@ -110,7 +114,12 @@ const EditModal = ({
     // Clear Fields
     const onCloseCleared = () => {
         setSelectedOption(null);
-        setEditData({});
+        setEditData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+            total_amount: 0.00
+        }));
         onClose();
     };
     // Purchase Line Table START
@@ -119,23 +128,28 @@ const EditModal = ({
     const [itemOptions, setItemsOptions] = useState([]);
 
     // Generate a unique id for each new row
-    function generateUniqueId() {
-        const timestamp = new Date().getTime(); // Get current timestamp
-        const randomNum = Math.floor(Math.random() * 100); // Generate a random number between 0 and 999
-
-        return `${timestamp}-${randomNum}`; // Combine timestamp and random number
-    }
+    const generateUniqueId = async () => {
+        try {
+          const response = await axios.get("/api/gen_purchase_line", {});
+          return response.data; // Assuming the ID is in the response data
+        } catch (error) {
+          return null; // Handle any errors and return a default value
+        }
+      };
 
     // Function to handle row insertion
-    const handleInsertRow = () => {
+    const handleInsertRow = async () => {
         const newRow = {
-            id: generateUniqueId(),
+            id: await generateUniqueId(),
             item_id: 0,
             item_name: "Select a product", // user input allowed
             item_price: 0.0,
             purchased_quantity: 0, // user input allowed
             purchase_sub_total: 0.0,
         };
+
+        console.log(newRow);
+
         setEditData((prevState) => ({
             ...prevState,
             purchLineData: [...prevState.purchLineData, newRow],
@@ -240,7 +254,7 @@ const EditModal = ({
                 rowIndex,
                 columnIndex
             ) => (
-                <CustomSelectEditor
+                <CustomItemSelector
                     value={row.item_id}
                     onChange={(newValue) =>
                         // handleCellEdit(newValue, row.id, column.dataField)

@@ -38,6 +38,16 @@ class Purchases extends Controller
         return $uniqueId;
     }
 
+    public function gen_purchase_line_by_id()
+{
+    $latestId = DB::table('purchase_line')
+        ->select('id')
+        ->orderBy('id', 'desc')
+        ->value('id');
+
+    return $latestId + 1;
+}
+
     public function get_purchase_header_by_id(Request $request){
         
 
@@ -123,9 +133,6 @@ class Purchases extends Controller
 
             // Update Purchase Line Items
             $purchaseLineData = $request->input('editData')['purchLineData'];
-            $purchaseLineIds = array_column($purchaseLineData, 'purchase_line_id');
-        
-            echo json_encode($purchaseLineIds);
 
             // // Delete existing records not present in purchLineData array
             // Purchase_line_model::where('purchase_header_id', $purchaseHeaderId)
@@ -133,16 +140,18 @@ class Purchases extends Controller
             //     ->update(['removed' => 1]);
 
             foreach ($purchaseLineData as $data) {
-                $purchLineId = $data['purchase_line_id'];
+                $purchLineId = $data['id'];
 
                 $purchLineData = [
+                    'purchase_header_id' => $purchaseHeaderId,
                     'item_id' => $data['item_id'],
                     'item_price' => $data['item_price'],
                     'purchased_quantity' => $data['purchased_quantity'],
                     'purchase_sub_total' => floatval($data['purchase_sub_total'])
                 ];
+
         
-                if ($purchLineId) {
+                if (Purchase_line_model::find($purchLineId)) {
                     // Update existing record
                     Purchase_line_model::where('id', $purchLineId)
                         ->where('purchase_header_id', $purchaseHeaderId)

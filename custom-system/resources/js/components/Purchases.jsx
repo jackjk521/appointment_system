@@ -67,7 +67,10 @@ const Purchases = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
-        setAddData({});
+        setAddData({
+            user_id: user.user_id,
+            username: user.username,
+        });
     };
 
     // Edit Modal
@@ -76,7 +79,6 @@ const Purchases = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
-        setEditData({});
     };
 
     // Removal Modal
@@ -183,27 +185,27 @@ const Purchases = ({ user }) => {
                 .post("/api/update_purchase", { editData })
                 .then((response) => {
                     handleCloseEditModal();
-                    // new Swal({
-                    //     title: "Success",
-                    //     text: "Successfully update an patient!",
-                    //     icon: "success",
-                    //     timer: 1500, // Set the timer duration in milliseconds
-                    //     showCancelButton: false,
-                    //     showConfirmButton: false,
-                    // });
+                    new Swal({
+                        title: "Success",
+                        text: "Successfully update an patient!",
+                        icon: "success",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
 
                     fetchData();
                 })
                 .catch((error) => {
                     // Handle the error
-                    // new Swal({
-                    //     title: "Error",
-                    //     text: error,
-                    //     icon: "error",
-                    //     timer: 1500, // Set the timer duration in milliseconds
-                    //     showCancelButton: false,
-                    //     showConfirmButton: false,
-                    // });
+                    new Swal({
+                        title: "Error",
+                        text: error,
+                        icon: "error",
+                        timer: 1500, // Set the timer duration in milliseconds
+                        showCancelButton: false,
+                        showConfirmButton: false,
+                    });
                     console.error(error);
                 });
         } catch (error) {
@@ -365,7 +367,7 @@ const Purchases = ({ user }) => {
                         },
                     });
                     const purchase_lines = res.data.map((val) => ({
-                        purchase_line_id: val.id,
+                        id: val.id,
                         item_id: val.item_id,
                         item_name: val.item_name,
                         item_price: val.item_price,

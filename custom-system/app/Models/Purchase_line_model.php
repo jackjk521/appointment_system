@@ -18,7 +18,7 @@ class Purchase_line_model extends Model
         'purchase_header_id',
         'item_id',
         'item_price',
-        'purchase_quantity',
+        'purchased_quantity',
         'purchase_sub_total',
     ];
 }

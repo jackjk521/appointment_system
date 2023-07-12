@@ -76,12 +76,14 @@ const Appointments = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
-        setAddData({});
+        setAddData({
+            user_id: user.user_id,
+            username: user.username,
+        });
     };
 
     // Edit Modal
     const handleOpenEditModal = async (event) => {
-        console.log(event.event._def);
         const $id = event.event._def.extendedProps.appointment_id;
         // console.log(event.event._def.extendedProps.appointment_id)
 
