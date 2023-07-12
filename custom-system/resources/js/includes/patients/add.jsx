@@ -3,7 +3,7 @@ import { Modal, Button } from "react-bootstrap";
 
 const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit}) => {
     
-      // Add Data
+    // ADD DATA 
       useEffect(() => {
         setAddData((prevData) => ({
             ...prevData,

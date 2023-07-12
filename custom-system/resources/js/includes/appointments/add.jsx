@@ -6,7 +6,14 @@ import axios from "axios";
 import Select from "react-select";
 import moment from "moment";
 
-const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit }) => {
+const AddModal = ({
+    user,
+    isOpen,
+    onClose,
+    addData,
+    setAddData,
+    handleAddSubmit,
+}) => {
     // FROM DATE TIME
     const [selectedFromDateTime, setSelectedFromDateTime] = useState(null);
     // TO DATE TIME
@@ -43,7 +50,6 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
         }));
     }, []);
 
-
     // ONCHANGE FUNCTIONS START
 
     // HANDLE OPTION SELECTION
@@ -55,7 +61,7 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
     // HANDLE THE FOR DATE TIME CHANGE
     const handleFromDateTimeChange = (date) => {
         setSelectedFromDateTime(date);
-        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm:ss  ");
+        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm");
         setAddData((prevData) => ({
             ...prevData,
             from_datetime: formattedDate,
@@ -65,7 +71,7 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
     // HANDLE THE FOR DATE TIME CHANGE
     const handleToDateTimeChange = (date) => {
         setSelectedToDateTime(date);
-        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm:ss");
+        const formattedDate = moment(date).format("YYYY-MM-DD HH:mm");
         setAddData((prevData) => ({ ...prevData, to_datetime: formattedDate }));
     };
 
@@ -77,7 +83,6 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
 
     // ONCHANGE FUNCTIONS END
 
-
     // Clear Fields
     const onCloseCleared = () => {
         setSelectedFromDateTime(null);
@@ -86,7 +91,6 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
         onClose();
     };
 
-    
     return (
         <>
             <Modal
@@ -111,7 +115,7 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
                                 <Select
                                     id="addSelPatients"
                                     name="patient_id"
-                                    value={selectedOption}
+                                    value={selectedOption || ""}
                                     onChange={handleSelectChange}
                                     options={options}
                                     isSearchable
@@ -141,11 +145,11 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
                                     id="selFromDateTime"
                                     className="form-control"
                                     name="from_datetime"
-                                    selected={selectedFromDateTime}
+                                    selected={selectedFromDateTime || ""}
                                     onChange={handleFromDateTimeChange}
                                     showTimeSelect
                                     dateFormat="yyyy-MM-dd HH:mm"
-                                    timeFormat="h:mm"
+                                    timeFormat="h:mm aa"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"
@@ -158,11 +162,11 @@ const AddModal = ({ user, isOpen, onClose, addData, setAddData, handleAddSubmit 
                                     id="selToDateTime"
                                     className="form-control"
                                     name="to_datetime"
-                                    selected={selectedToDateTime}
+                                    selected={selectedToDateTime || ""}
                                     onChange={handleToDateTimeChange}
                                     showTimeSelect
                                     dateFormat="yyyy-MM-dd HH:mm"
-                                    timeFormat="h:mm"
+                                    timeFormat="h:mm aa"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"

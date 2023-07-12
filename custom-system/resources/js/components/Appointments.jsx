@@ -76,10 +76,17 @@ const Appointments = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
-        setAddData({
+        setAddData((prevData) => ({
+            ...prevData,
             user_id: user.user_id,
             username: user.username,
-        });
+        }));
+    };
+
+    const handleAddModalClose = () => {
+        setSelectedFromDateTime(null);
+        setSelectedToDateTime(null);
+        setSelectedOption(null);
     };
 
     // Edit Modal
@@ -114,7 +121,11 @@ const Appointments = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
-        setEditData({});
+        setEditData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // Removal Modal
@@ -123,7 +134,11 @@ const Appointments = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
-        setRemoveData({});
+        setRemoveData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // MODAL FUNCTIONS END
@@ -191,7 +206,7 @@ const Appointments = ({ user }) => {
                     // Handle the error
                     new Swal({
                         title: "Error",
-                        text: error,
+                        text: " Please fill up the required fields ",
                         icon: "error",
                         timer: 1500, // Set the timer duration in milliseconds
                         showCancelButton: false,
@@ -448,21 +463,24 @@ const Appointments = ({ user }) => {
                             </div>
                         </div>
 
-                        <BootstrapTable
-                            keyField="id"
-                            // data={data}
-                            data={filteredData}
-                            columns={columns}
-                            filter={filterFactory()}
-                            pagination={paginationFactory()}
-                            wrapperClasses="table-responsive" // Add this class to make the table responsive
-                            classes="table-bordered table-hover" // Add other classes for styling if needed
-                            noDataIndication={() => (
-                                <div className="text-center">
-                                    No records found.
-                                </div>
-                            )}
-                        />
+                        {filteredData ? (
+                            <BootstrapTable
+                                keyField="id"
+                                data={filteredData}
+                                columns={columns}
+                                filter={filterFactory()}
+                                pagination={paginationFactory()}
+                                wrapperClasses="table-responsive"
+                                classes="table-bordered table-hover"
+                                noDataIndication={() => (
+                                    <div className="text-center">
+                                        No records found.
+                                    </div>
+                                )}
+                            />
+                        ) : (
+                            <div className="text-center">Loading...</div>
+                        )}
                     </div>
                 )}
 

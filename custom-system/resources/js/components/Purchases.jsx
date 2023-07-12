@@ -67,10 +67,12 @@ const Purchases = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
-        setAddData({
+        setAddData((prevData) => ({
+            ...prevData,
+            purchLineData: [], // Initialize purchLineData as an empty array
             user_id: user.user_id,
             username: user.username,
-        });
+        }));
     };
 
     // Edit Modal
@@ -87,7 +89,11 @@ const Purchases = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
-        setRemoveData({});
+        setRemoveData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
     // MODAL FUNCTIONS END
 

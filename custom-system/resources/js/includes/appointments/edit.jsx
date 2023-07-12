@@ -49,7 +49,7 @@ const EditModal = ({
                       value: editData.patient_id,
                       label: editData.full_name,
                   }
-                : ''
+                : selectedOption
         );
 
         // AUTO FILL FROM DATETIME
@@ -62,13 +62,15 @@ const EditModal = ({
             editData.to_datetime ? new Date(editData.to_datetime) : null
         );
 
+    }, [editData]);
+
+    useEffect(() => {
         setEditData((prevData) => ({
             ...prevData,
             user_id: user.user_id,
             username: user.username,
         }));
-    }, [editData]);
-
+    }, []);
 
     // ONCHANGE FUNCTIONS START
 
@@ -146,6 +148,7 @@ const EditModal = ({
                                     options={options}
                                     isSearchable
                                     placeholder="Select an option"
+                                    isDisabled={true} 
                                 />
                             </div>
                         </div>
@@ -176,7 +179,7 @@ const EditModal = ({
                                     onChange={handleFromDateTimeChange}
                                     showTimeSelect
                                     dateFormat="yyyy-MM-dd HH:mm"
-                                    timeFormat="h:mm"
+                                    timeFormat="h:mm aa"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"
@@ -193,7 +196,7 @@ const EditModal = ({
                                     onChange={handleToDateTimeChange}
                                     showTimeSelect
                                     dateFormat="yyyy-MM-dd HH:mm"
-                                    timeFormat="h:mm"
+                                    timeFormat="h:mm aa"
                                     timeIntervals={30}
                                     timeCaption="Time"
                                     placeholderText="Select date and time"

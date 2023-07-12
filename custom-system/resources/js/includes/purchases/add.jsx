@@ -6,6 +6,7 @@ import axios from "axios";
 import Select from "react-select";
 
 import CustomSelectEditor from "../../components/utility/CustomSelectPicker";
+import CustomQuantityEditor from "../../components/utility/CustomQuantityEditor";
 
 const AddModal = ({
     user,
@@ -95,6 +96,12 @@ const AddModal = ({
     // Clear Fields
     const onCloseCleared = () => {
         setSelectedOption(null);
+        setAddData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+            total_amount: 0.0,
+        }));
         onClose();
     };
     // Purchase Line Table START
@@ -151,6 +158,8 @@ const AddModal = ({
                                     ...updatedRow,
                                     item_id: parsedData["id"],
                                     item_price: parsedData["unit_price"],
+                                    purchased_quantity: 0, // Clear the purchased_quantity
+                                    purchase_sub_total: 0.0, // Clear the purchase_sub_total
                                 };
                             }
 
@@ -187,12 +196,13 @@ const AddModal = ({
                 let updatedRow = { ...row, [dataField]: newValue };
 
                 if (dataField === "purchased_quantity") {
-                    const quantity = parseFloat(newValue);
+                    const quantity = newValue !== "" ? parseFloat(newValue) : 0;
                     const unitPrice = parseFloat(row.item_price);
                     const subTotal = quantity > 0 ? quantity * unitPrice : 0;
                     updatedRow = {
                         ...updatedRow,
-                        purchase_sub_total: subTotal.toFixed(2), // Update the sub total
+                        purchased_quantity: newValue,
+                        purchase_sub_total: subTotal.toFixed(2),
                     };
                 }
 
@@ -267,16 +277,10 @@ const AddModal = ({
                 rowIndex,
                 columnIndex
             ) => (
-                <input
-                    type="number"
+                <CustomQuantityEditor
                     value={value}
-                    className="form-control"
-                    onChange={(e) =>
-                        handleQuantityEdit(
-                            parseFloat(e.target.value),
-                            row.id,
-                            column.dataField
-                        )
+                    onValueChange={(newValue) =>
+                        handleQuantityEdit(newValue, row.id, column.dataField)
                     }
                 />
             ),

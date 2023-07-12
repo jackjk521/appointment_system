@@ -36,14 +36,6 @@ class Patients extends Controller
     public function get_patient_purchase_history(Request $request){
 
         $id = $request->input('patient_id');
-        // $history = Patients_model::join('purchase_header', 'purchase_header.patient_id', '=', 'patients.id')
-        //         ->join('purchase_line', 'purchase_line.purchase_header_id', '=', 'purchase_header.id')
-        //         // ->select('patients.*', 'purchase_header.*', 'purchase_line.*')
-        //         // ->where('patients.id', $id)
-        //         // ->where('patients.removed', 0)
-        //         ->orderByDesc('purchase_line.id')
-        //         ->get();
-
         $history = Purchase_line_model::join('purchase_header', 'purchase_header.id', '=', 'purchase_line.purchase_header_id')
             ->join('patients', 'patients.id', '=', 'purchase_header.patient_id')
             ->join('items', 'items.id', '=', 'purchase_line.item_id')

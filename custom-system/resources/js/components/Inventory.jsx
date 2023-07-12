@@ -53,7 +53,11 @@ const Inventory = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
-        setAddData({});
+        setAddData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // Edit Modal
@@ -62,7 +66,11 @@ const Inventory = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
-        setEditData({});
+        setEditData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // Removal Modal
@@ -71,24 +79,12 @@ const Inventory = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
-        setRemoveData({});
+        setRemoveData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
-
-    // Edit Item Fields
-    const [editItem, setEditItem] = useState({
-        product: "",
-        product_number: "",
-        item_name: "",
-        unit: "",
-        unit_price: "",
-        total_quantity: "",
-    });
-
-    // Remove Item Fields
-    const [removeItem, setRemoveItem] = useState({
-        product_id: "",
-        product_number: "",
-    });
 
     // Populate Table Data
     const fetchData = async () => {
@@ -105,9 +101,7 @@ const Inventory = ({ user }) => {
     }, []);
 
     // ADD ITEM FUNCTIONS START
-
     const handleAddSubmit = async () => {
-        // console.log(addData)
         try {
             await axios
                 .post("/api/add_item", { addData })
@@ -256,7 +250,7 @@ const Inventory = ({ user }) => {
             dataField: "unit_price",
             text: "Unit Price (in PHP)",
             headerAlign: "center", // Center-align the column header
-            align: "right",
+            align: "center",
             formatter: (cell, row) => {
                 return new Intl.NumberFormat("en-US", {
                     minimumFractionDigits: 2,
@@ -268,7 +262,7 @@ const Inventory = ({ user }) => {
             dataField: "total_quantity",
             text: "Total Quantity",
             headerAlign: "center", // Center-align the column header
-            align: "right",
+            align: "center",
             formatter: (cell, row) => {
                 return new Intl.NumberFormat("en-US", {
                     minimumFractionDigits: 2,
@@ -332,11 +326,6 @@ const Inventory = ({ user }) => {
     const handleRemove = (row) => {
         console.log("Remove", row);
         // Add your remove logic here
-        setRemoveItem({
-            product_id: row["id"],
-            product_number: row["product_number"],
-        });
-
         setRemoveData((prevData) => ({
             ...prevData,
             product_id: row.id,
@@ -411,19 +400,25 @@ const Inventory = ({ user }) => {
                         </div>
                     </div>
 
-                    <BootstrapTable
-                        keyField="product_number"
-                        // data={data}
-                        data={filteredData}
-                        columns={columns}
-                        filter={filterFactory()}
-                        pagination={paginationFactory()}
-                        wrapperClasses="table-responsive" // Add this class to make the table responsive
-                        classes="table-bordered table-hover" // Add other classes for styling if needed
-                        noDataIndication={() => (
-                            <div className="text-center">No records found.</div>
-                        )}
-                    />
+                    {filteredData ? (
+                        <BootstrapTable
+                            keyField="product_number"
+                            data={filteredData}
+                            columns={columns}
+                            filter={filterFactory()}
+                            pagination={paginationFactory()}
+                            wrapperClasses="table-responsive"
+                            classes="table-bordered table-hover"
+                            noDataIndication={() => (
+                                <div className="text-center">
+                                    No records found.
+                                </div>
+                            )}
+                        />
+                    ) : (
+                        <div className="text-center">Loading...</div>
+                    )}
+
                 </div>
             </div>
         </>

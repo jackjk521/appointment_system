@@ -107,7 +107,9 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                         </div>
                         <div className="col-3">
                             <div className="form-group">
-                                <label className="py-3">Total Amount</label>
+                                <label className="py-3">
+                                    Total Amount (in PHP){" "}
+                                </label>
                                 <span
                                     type="text"
                                     name="txtTotalAmount"
@@ -115,7 +117,10 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                                     placeholder="Total Amount"
                                     className="form-control"
                                 >
-                                    {viewData.total_amount}
+                                    {new Intl.NumberFormat("en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }).format(viewData.total_amount)}
                                 </span>
                             </div>
                         </div>

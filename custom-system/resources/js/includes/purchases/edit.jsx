@@ -7,6 +7,8 @@ import Select from "react-select";
 
 import CustomSelectEditor from "../../components/utility/CustomSelectPicker";
 import CustomItemSelector from "../../components/utility/CustomItemSelector";
+import CustomQuantityEditor from "../../components/utility/CustomQuantityEditor";
+
 const EditModal = ({
     user,
     isOpen,
@@ -78,9 +80,7 @@ const EditModal = ({
                   }
                 : null
         );
-
     }, [editData]);
-
 
     useEffect(() => {
         setEditData((prevData) => ({
@@ -118,7 +118,7 @@ const EditModal = ({
             ...prevData,
             user_id: user.user_id,
             username: user.username,
-            total_amount: 0.00
+            total_amount: 0.0,
         }));
         onClose();
     };
@@ -130,12 +130,12 @@ const EditModal = ({
     // Generate a unique id for each new row
     const generateUniqueId = async () => {
         try {
-          const response = await axios.get("/api/gen_purchase_line", {});
-          return response.data; // Assuming the ID is in the response data
+            const response = await axios.get("/api/gen_purchase_line", {});
+            return response.data; // Assuming the ID is in the response data
         } catch (error) {
-          return null; // Handle any errors and return a default value
+            return null; // Handle any errors and return a default value
         }
-      };
+    };
 
     // Function to handle row insertion
     const handleInsertRow = async () => {
@@ -179,6 +179,8 @@ const EditModal = ({
                                     ...updatedRow,
                                     item_id: parsedData["id"],
                                     item_price: parsedData["unit_price"],
+                                    purchased_quantity: 0, // Clear the purchased_quantity
+                                    purchase_sub_total: 0.0, // Clear the purchase_sub_total
                                 };
                             }
 
@@ -215,13 +217,13 @@ const EditModal = ({
                 let updatedRow = { ...row, [dataField]: newValue };
 
                 if (dataField === "purchased_quantity") {
-                    const quantity = parseFloat(newValue);
+                    const quantity = newValue !== "" ? parseFloat(newValue) : 0;
                     const unitPrice = parseFloat(row.item_price);
                     const subTotal = quantity > 0 ? quantity * unitPrice : 0;
                     updatedRow = {
                         ...updatedRow,
-                        purchased_quantity: parseFloat(newValue),
-                        purchase_sub_total: subTotal.toFixed(2), // Update the sub total
+                        purchased_quantity: newValue,
+                        purchase_sub_total: subTotal.toFixed(2),
                     };
                 }
 
@@ -295,20 +297,14 @@ const EditModal = ({
                 column,
                 rowIndex,
                 columnIndex
-            ) => (
-                <input
-                    type="number"
-                    value={value}
-                    className="form-control"
-                    onChange={(e) =>
-                        handleQuantityEdit(
-                            parseFloat(e.target.value),
-                            row.id,
-                            column.dataField
-                        )
-                    }
+              ) => (
+                <CustomQuantityEditor
+                  value={value}
+                  onValueChange={(newValue) =>
+                    handleQuantityEdit(newValue, row.id, column.dataField)
+                  }
                 />
-            ),
+              ),
             formatter: (cell, row) => {
                 return new Intl.NumberFormat("en-US", {
                     minimumFractionDigits: 2,
@@ -402,6 +398,7 @@ const EditModal = ({
                                     options={options}
                                     isSearchable
                                     placeholder="Select an option"
+                                    isDisabled={true}
                                 />
                             </div>
                         </div>
@@ -457,7 +454,7 @@ const EditModal = ({
                         id="btnAddPurchase"
                         onClick={handleEditSubmit}
                     >
-                        Create Purchase
+                        Update
                     </Button>
                 </Modal.Footer>
             </Modal>

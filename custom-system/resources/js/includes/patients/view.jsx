@@ -1,92 +1,129 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
-import filterFactory, { textFilter, dateFilter, Comparator } from 'react-bootstrap-table2-filter';
-import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
+import filterFactory, {
+    textFilter,
+    dateFilter,
+    Comparator,
+} from "react-bootstrap-table2-filter";
+import paginationFactory from "react-bootstrap-table2-paginator";
+import "react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css";
 
 const ViewModal = ({ user, isOpen, onClose, viewData }) => {
-
-        // BOOTSTRAP TABLE INITIALIZATION
-        const columns = [
-            { dataField: "item_id", text: "Item ID", hidden: true }, //works
-            {
-                dataField: "date_created",
-                text: "Date",
-                headerAlign: "center", // Center-align the column header
-                align: "center",
-                editable: false,
-                filter: dateFilter({
-                    comparatorClassName: 'form-select form-select-sm',
-                    comparatorStyle: { width: '60px', marginRight: '5px' },
-                    dateClassName: 'form-control form-control-sm',
-                    dateStyle: { width: '150px', marginRight: '5px' },
-                    defaultValue: { date_created: new Date(), comparator: Comparator.GE },
-                    withoutEmptyComparatorOption: true,
-                    onFilter: (filterValue, data) => {
-                      // Implement your custom filter logic here
-                      const filteredData = data.filter((row) => {
+    // BOOTSTRAP TABLE INITIALIZATION
+    const columns = [
+        { dataField: "item_id", text: "Item ID", hidden: true }, //works
+        {
+            dataField: "date_created",
+            text: "Date",
+            headerAlign: "center", // Center-align the column header
+            align: "center",
+            editable: false,
+            filter: dateFilter({
+                comparatorClassName: "form-select form-select-sm",
+                comparatorStyle: { width: "60px", marginRight: "5px" },
+                dateClassName: "form-control form-control-sm",
+                dateStyle: { width: "150px", marginRight: "5px" },
+                defaultValue: {
+                    date_created: new Date(),
+                    comparator: Comparator.GE,
+                },
+                withoutEmptyComparatorOption: true,
+                onFilter: (filterValue, data) => {
+                    // Implement your custom filter logic here
+                    const filteredData = data.filter((row) => {
                         const rowDate = new Date(row.date_created);
                         return rowDate >= filterValue.date;
-                      });
-                      return filteredData;
-                    },
-                  }),
-                  formatter: (cell) => {
-                    // Format the date display
-                    const formattedDate = new Date(cell).toLocaleDateString();
-                    return formattedDate;
-                  }
-            },
-            {
-                dataField: "item_name",
-                text: "Item Name",
-                headerAlign: "center", // Center-align the column header
-                align: "center",
-                editable: false,
-            },
-            {
-                dataField: "item_price",
-                text: "Unit Price",
-                headerAlign: "center", // Center-align the column header
-                align: "center",
-                editable: false,
-                formatter: (cell, row) => {
-                    return new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }).format(cell);
+                    });
+                    return filteredData;
                 },
+            }),
+            formatter: (cell) => {
+                // Format the date display
+                const formattedDate = new Date(cell).toLocaleDateString();
+                return formattedDate;
             },
-            {
-                dataField: "purchased_quantity",
-                text: "Quantity",
-                headerAlign: "center", // Center-align the column header
-                align: "center",
-                editable: false,
-                formatter: (cell, row) => {
-                    return new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }).format(cell);
-                },
+        },
+        {
+            dataField: "item_name",
+            text: "Item Name",
+            headerAlign: "center", // Center-align the column header
+            align: "center",
+            editable: false,
+        },
+        {
+            dataField: "item_price",
+            text: "Unit Price",
+            headerAlign: "center", // Center-align the column header
+            align: "center",
+            editable: false,
+            formatter: (cell, row) => {
+                return new Intl.NumberFormat("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }).format(cell);
             },
-            {
-                dataField: "purchase_sub_total",
-                text: "Sub Total",
-                headerAlign: "center", // Center-align the column header
-                align: "center",
-                editable: false,
-                formatter: (cell, row) => {
-                    const formattedSubTotal = parseFloat(cell).toFixed(2);
-                    return new Intl.NumberFormat("en-US", {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    }).format(formattedSubTotal);
-                },
+        },
+        {
+            dataField: "purchased_quantity",
+            text: "Quantity",
+            headerAlign: "center", // Center-align the column header
+            align: "center",
+            editable: false,
+            formatter: (cell, row) => {
+                return new Intl.NumberFormat("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }).format(cell);
             },
-        ];
+        },
+        {
+            dataField: "purchase_sub_total",
+            text: "Sub Total",
+            headerAlign: "center", // Center-align the column header
+            align: "center",
+            editable: false,
+            formatter: (cell, row) => {
+                const formattedSubTotal = parseFloat(cell).toFixed(2);
+                return new Intl.NumberFormat("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }).format(formattedSubTotal);
+            },
+        },
+    ];
 
-        
+    // Filter Text and Numbers (Exact)
+    const [searchText, setSearchText] = useState("");
+    const handleSearch = (event) => {
+        setSearchText(event.target.value);
+    };
+
+    const filteredData =
+        viewData.purchaseHistory &&
+        Array.isArray(viewData.purchaseHistory) &&
+        viewData.purchaseHistory.length > 0
+            ? viewData.purchaseHistory.filter((item) => {
+                  const {
+                      item_name,
+                      item_price,
+                      purchased_quantity,
+                      purchase_sub_total,
+                  } = item;
+                  const searchValue = searchText.toLowerCase();
+                  return (
+                      item_name.toLowerCase().includes(searchValue) ||
+                      parseFloat(item_price).toString().includes(searchValue) ||
+                      parseFloat(purchased_quantity)
+                          .toString()
+                          .includes(searchValue) ||
+                      parseFloat(purchase_sub_total)
+                          .toString()
+                          .includes(searchValue)
+                  );
+              })
+            : [];
+
     return (
         <>
             <Modal
@@ -110,7 +147,9 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                                     name="txtFirstName"
                                     id="txtFirstName"
                                     className="form-control"
-                                >{viewData.first_name}</span>
+                                >
+                                    {viewData.first_name}
+                                </span>
                             </div>
                         </div>
                         <div className="col-3">
@@ -121,7 +160,9 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                                     name="txtLastName"
                                     id="txtLastName"
                                     className="form-control"
-                                >{viewData.last_name}</span>
+                                >
+                                    {viewData.last_name}
+                                </span>
                             </div>
                         </div>
                         <div className="col-2">
@@ -132,7 +173,9 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                                     name="txtAge"
                                     id="txtAge"
                                     className="form-control"
-                                >{viewData.age}</span>
+                                >
+                                    {viewData.age}
+                                </span>
                             </div>
                         </div>
                         <div className="col-2">
@@ -143,7 +186,9 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                                     name="txtHeight"
                                     id="txtHeight"
                                     className="form-control"
-                                >{viewData.height}</span>
+                                >
+                                    {viewData.height}
+                                </span>
                             </div>
                         </div>
                         <div className="col-2">
@@ -154,28 +199,48 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                                     name="txtWeight"
                                     id="txtWeight"
                                     className="form-control"
-                                >{viewData.weight}</span>
+                                >
+                                    {viewData.weight}
+                                </span>
                             </div>
                         </div>
                     </div>
 
                     {/* Display all purchases under that purchase header */}
                     {Array.isArray(viewData.purchaseHistory) &&
-                        viewData.purchaseHistory.length > 0 ? (
+                    viewData.purchaseHistory.length > 0 ? (
+                        <div>
+                            <div className="row">
+                                <div className="col-9"></div>
+                                <div className="col-3 d-flex align-items-end justify-content-end ">
+                                    <input
+                                        type="text"
+                                        value={searchText}
+                                        onChange={handleSearch}
+                                        className="form-control my-3"
+                                        placeholder="Search for Items"
+                                    />
+                                </div>
+                            </div>
+
                             <BootstrapTable
-                                keyField="item_id"
-                                data={viewData.purchaseHistory}
+                                keyField="id"
+                                data={filteredData}
                                 columns={columns}
                                 filter={filterFactory()}
+                                pagination={paginationFactory()}
                                 noDataIndication={() => (
-                                    <div className="text-center">
-                                        No records found.
+                                    <div className="container py-4 text-center">
+                                        No patient history found.
                                     </div>
                                 )}
                             />
-                        ) : (
-                            <div className="text-center">No records found.</div>
-                        )}
+                        </div>
+                    ) : (
+                        <div className="container py-4 text-center">
+                            No patient history found.
+                        </div>
+                    )}
                 </Modal.Body>
                 <Modal.Footer></Modal.Footer>
             </Modal>

@@ -18,6 +18,8 @@ import AddModal from "../includes/patients/add";
 import EditModal from "../includes/patients/edit";
 import RemoveModal from "../includes/patients/remove";
 
+// import CustomPagination from "./utility/CustomPagination";
+
 const Patients = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
@@ -52,7 +54,11 @@ const Patients = ({ user }) => {
     };
     const handleCloseAddModal = () => {
         setAddModal(false);
-        setAddData({});
+        setAddData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // Edit Modal
@@ -61,7 +67,11 @@ const Patients = ({ user }) => {
     };
     const handleCloseEditModal = () => {
         setEditModal(false);
-        setEditData({});
+        setEditData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // Removal Modal
@@ -70,7 +80,11 @@ const Patients = ({ user }) => {
     };
     const handleCloseRemoveModal = () => {
         setRemoveModal(false);
-        setRemoveData({});
+        setRemoveData((prevData) => ({
+            ...prevData,
+            user_id: user.user_id,
+            username: user.username,
+        }));
     };
 
     // Populate Table Data
@@ -309,6 +323,7 @@ const Patients = ({ user }) => {
 
                     // console.log(res.data)
                     const purchase_lines = res.data.map((val) => ({
+                        id: val.id,
                         item_id: val.item_id,
                         date_created: moment(val.date_created).format(
                             "YYYY-MM-DD"
@@ -360,6 +375,71 @@ const Patients = ({ user }) => {
             patient_id: row.id,
         }));
         handleOpenRemoveModal();
+    };
+
+    const CustomPagination = ({ paginationProps }) => {
+        const {
+            currPage,
+            totalPages,
+            pageChange,
+            sizePerPage,
+            sizePerPageRenderer,
+        } = paginationProps;
+
+        return (
+            <div className="d-flex justify-content-end">
+                <div className="d-flex align-items-center mr-2">
+                    <span>Show:</span>
+                    {sizePerPageRenderer()}
+                </div>
+                <ul className="pagination">
+                    <li
+                        className={`page-item${
+                            currPage === 1 ? " disabled" : ""
+                        }`}
+                        onClick={() => pageChange(currPage - 1)}
+                    >
+                        <a className="page-link">Previous</a>
+                    </li>
+                    {Array.from({ length: totalPages }, (_, index) => (
+                        <li
+                            key={index + 1}
+                            className={`page-item${
+                                currPage === index + 1 ? " active" : ""
+                            }`}
+                            onClick={() => pageChange(index + 1)}
+                        >
+                            <a className="page-link">{index + 1}</a>
+                        </li>
+                    ))}
+                    <li
+                        className={`page-item${
+                            currPage === totalPages ? " disabled" : ""
+                        }`}
+                        onClick={() => pageChange(currPage + 1)}
+                    >
+                        <a className="page-link">Next</a>
+                    </li>
+                </ul>
+            </div>
+        );
+    };
+
+    //Pagination
+    const options = {
+        paginationSize: 5,
+        pageStartIndex: 1,
+        showTotal: true,
+        paginationTotalRenderer: (from, to, size) =>
+            `${from}-${to} of ${size} items`,
+        sizePerPageRenderer: ({ options, currSizePerPage }) => (
+            <span className="d-none">
+                {`Displaying ${currSizePerPage} ${options[0]} entries`}
+            </span>
+        ),
+        paginationComponent: (props) => (
+            <CustomPagination paginationProps={props} />
+          ),
     };
 
     // Render Component START
@@ -432,19 +512,24 @@ const Patients = ({ user }) => {
                         </div>
                     </div>
 
-                    <BootstrapTable
-                        keyField="id"
-                        // data={data}
-                        data={filteredData}
-                        columns={columns}
-                        filter={filterFactory()}
-                        pagination={paginationFactory()}
-                        wrapperClasses="table-responsive" // Add this class to make the table responsive
-                        classes="table-bordered table-hover" // Add other classes for styling if needed
-                        noDataIndication={() => (
-                            <div className="text-center">No records found.</div>
-                        )}
-                    />
+                    {filteredData ? (
+                        <BootstrapTable
+                            keyField="id"
+                            data={filteredData}
+                            columns={columns}
+                            filter={filterFactory()}
+                            pagination={paginationFactory(options)}
+                            wrapperClasses="table-responsive"
+                            classes="table-bordered table-hover"
+                            noDataIndication={() => (
+                                <div className="text-center">
+                                    No records found.
+                                </div>
+                            )}
+                        />
+                    ) : (
+                        <div className="text-center">Loading...</div>
+                    )}
                 </div>
             </div>
         </>
