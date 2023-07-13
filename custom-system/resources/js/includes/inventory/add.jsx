@@ -9,14 +9,6 @@ const AddModal = ({
     setAddData,
     handleAddSubmit,
 }) => {
-    // Add Data
-    useEffect(() => {
-        setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    }, []);
 
     // HANDLE INPUT CHANGER FUNCTIONS START
     const handleInputChange = (e) => {
@@ -24,9 +16,7 @@ const AddModal = ({
         setAddData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    // ONCHANGE FUNCTIONS END
-
-    // Clear Fields
+    // CLEAR FIELDS
     const onCloseCleared = () => {
         $(".clear-fields").val("");
         onClose();
@@ -74,6 +64,7 @@ const AddModal = ({
                                     placeholder="Item Name"
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -91,6 +82,7 @@ const AddModal = ({
                                     placeholder="PC, BOX"
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -105,6 +97,7 @@ const AddModal = ({
                                     id="txtUnitPrice"
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
@@ -119,15 +112,13 @@ const AddModal = ({
                                     id="txtTotalQty"
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
+                                    required
                                 />
                             </div>
                         </div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    {/* <Button variant="secondary" onClick={onClose}>
-                    Close
-                    </Button> */}
                     <Button variant="secondary" id="btnAddItem" onClick={handleAddSubmit}>
                         Add
                     </Button>

@@ -10,24 +10,13 @@ const EditModal = ({
     handleEditSubmit,
 }) => {
 
-    // Add Data
-    useEffect(() => {
-        setEditData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    }, []);
-
     // HANDLE INPUT CHANGER FUNCTIONS START
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setEditData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    // ONCHANGE FUNCTIONS END
-
-    // Clear Fields
+    // CLEAR FIELDS
     const onCloseCleared = () => {
         $(".clear-fields").val("");
         onClose();
@@ -138,9 +127,6 @@ const EditModal = ({
                     <Button variant="secondary" id="btnEditItem" onClick={handleEditSubmit}>
                         Update
                     </Button>
-                    {/* <Button variant="secondary" onClick={onClose}>
-                    Close
-                    </Button> */}
                 </Modal.Footer>
             </Modal>
         </>

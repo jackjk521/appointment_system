@@ -22,125 +22,46 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import daygridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 
-import CustomDatePicker from "./utility/CustomDatePicker";
-
-const EventItem = ({ info }) => {
-    const { event } = info;
-    const start = moment(event.start).format("hh:mm");
-    const end = moment(event.end).format("h:mm");
-
-    return (
-        <button className="btn btn-primary h-100 w-100">
-            <div className="d-flex justify-content-center h-100">
-                <div className="row">
-                    <div className="col-12"></div>
-                    <div className="col-12">
-                        <p className="w-100">
-                            {" "}
-                            {start} - {end}{" "}
-                        </p>
-                        <p className="fw-bold w-100"> {event.title}</p>
-                    </div>
-                </div>
-            </div>
-        </button>
-    );
-};
+import EventItem from "../components/utility/CustomEventItem";
+import { paginationOptions } from "./helper/paginationConfig";
 
 const Appointments = ({ user }) => {
-    // Table Data
-    const [data, setData] = useState([]);
-
     // Calendar Data
     const [appointments, setAppointments] = useState([]);
 
-    // Add, Edit , Remove Data
-    const [addData, setAddData] = useState({});
-    const [editData, setEditData] = useState({});
-    const [removeData, setRemoveData] = useState({});
+    // TABLE DATA
+    const [data, setData] = useState([]);
 
-    // Modals
-    const [addModal, setAddModal] = useState(false);
-    const [editModal, setEditModal] = useState(false);
-    const [removeModal, setRemoveModal] = useState(false);
-    // const [doneModal, setDoneModal] = useState(false);
+    // MODAL STATES INIT
+    const [modalType, setModalType] = useState(null);
+    const [modalData, setModalData] = useState({
+        user_id: user.user_id,
+        username: user.username,
+    });
+
+    // SEARCH BAR INIT
+    const [searchText, setSearchText] = useState("");
 
     // DIV STATE
     const [showDiv, setShowDiv] = useState(false);
 
     // MODAL FUNCTIONS START
 
-    // Add Modal
+    const handleModalClose = () => {
+        setModalType(null);
+        setModalData({
+            user_id: user.user_id,
+            username: user.username,
+        });
+    };
+
     const handleOpenAddModal = () => {
-        setAddModal(true);
-    };
-    const handleCloseAddModal = () => {
-        setAddModal(false);
-        setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
+        setModalType("add");
     };
 
-    const handleAddModalClose = () => {
-        setSelectedFromDateTime(null);
-        setSelectedToDateTime(null);
-        setSelectedOption(null);
+    const handleOpenEditModal = () => {
+        setModalType("edit");
     };
-
-    // Edit Modal
-    const handleOpenEditModal = async (event) => {
-        const $id = event.event._def.extendedProps.appointment_id;
-        // console.log(event.event._def.extendedProps.appointment_id)
-
-        try {
-            const response = await axios.get("/api/get_appointment", {
-                params: {
-                    appointment_id: $id,
-                },
-            });
-            const appointmentData = response.data;
-            if (appointmentData) {
-                setEditData((prevData) => ({
-                    ...prevData,
-                    appointment_id: $id,
-                    full_name: appointmentData.full_name,
-                    patient_id: appointmentData.patient_id,
-                    from_datetime: appointmentData.from_datetime,
-                    to_datetime: appointmentData.to_datetime,
-                    purpose: appointmentData.purpose,
-                }));
-
-                // Handle open edit modal here
-                setEditModal(true);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    const handleCloseEditModal = () => {
-        setEditModal(false);
-        setEditData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
-    // Removal Modal
-    const handleOpenRemoveModal = () => {
-        setRemoveModal(true);
-    };
-    const handleCloseRemoveModal = () => {
-        setRemoveModal(false);
-        setRemoveData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
     // MODAL FUNCTIONS END
 
     // Populate Table Data
@@ -170,130 +91,54 @@ const Appointments = ({ user }) => {
         setShowDiv(!showDiv);
     };
 
-    // // Cleave JS Formatting and Validation
-    // const addItemUnitPrice = new Cleave("#addItem #txtUnitPrice", {
-    //     numeral: true,
-    //     numeralPositiveOnly: true,
-    //     numeralThousandsGroupStyle: "thousand",
-    //     numeralDecimalMark: ".",
-    // });
-
-    // const addItemTotalQuantity = new Cleave("#addItem #txtTotalQty", {
-    //     numeral: true,
-    //     numeralPositiveOnly: true,
-    //     numeralThousandsGroupStyle: "thousand",
-    //     numeralDecimalMark: ".",
-    // });
-
-    // ADD APPOINTMENTS FUNCTIONS START
-    const handleAddSubmit = async () => {
+    // MODAL SUBMIT (SWTICH CASE)
+    const handleModalSubmit = async (actionType) => {
         try {
-            await axios
-                .post("/api/add_appointment", { addData })
-                .then((response) => {
-                    handleCloseAddModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully added a new appointment!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: " Please fill up the required fields ",
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
+            let url = "";
+            let successMessage = "";
+
+            if (actionType === "add") {
+                url = "/api/add_appointment";
+                successMessage = "Successfully added a new appointment!";
+            } else if (actionType === "edit") {
+                url = "/api/update_appointment";
+                successMessage = "Successfully updated a appointment!";
+            } else if (actionType === "remove") {
+                url = "/api/remove_appointment";
+                successMessage = "Successfully removed a appointment!";
+            }
+
+            const response = await axios.post(url, { modalData });
+
+            handleModalClose();
+
+            if (response.data.success) {
+                Swal.fire({
+                    title: "Success",
+                    text: successMessage,
+                    icon: "success",
+                    timer: 1500,
+                    showCancelButton: false,
+                    showConfirmButton: false,
                 });
+            }
+
+            fetchData();
         } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                timer: 1500,
+                showCancelButton: false,
+                showConfirmButton: false,
+            });
             console.error(error);
         }
     };
-    // ADD APPOINTMENTS FUNCTIONS END
-
-    // EDIT APPOINTMENTS FUNCTIONS START
-    const handleEditSubmit = async () => {
-        try {
-            await axios
-                .post("/api/update_appointment", { editData })
-                .then((response) => {
-                    handleCloseEditModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully updated an appointment!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
-                });
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    // EDIT APPOINTMENTS FUNCTIONS END
-
-    // REMOVE APPOINTMENTS FUNCTIONS START
-    const handleRemoveSubmit = async () => {
-        try {
-            await axios
-                .post("/api/remove_appointment", { removeData })
-                .then((response) => {
-                    handleCloseRemoveModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully removed an appointment!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
-                });
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    // REMOVE APPOINTMENTS FUNCTIONS END
 
     // BOOTSTRAP TABLE FILTERS START
-
-    // Filter Text and Numbers (Exact)
-    const [searchText, setSearchText] = useState("");
+    // FILTERED DATA FOR SEARCH BAR
     const handleSearch = (event) => {
         setSearchText(event.target.value);
     };
@@ -383,7 +228,7 @@ const Appointments = ({ user }) => {
     ];
     // BOOTSTRAP TABLE INITIALIZATION END
 
-    // View , Edit and Remove Functions
+    // HANDLE VIEW, EDIT AND REMOVE BUTTONS
     const handleView = async (row) => {
         console.log("View", row);
         // Add your view logic here
@@ -393,7 +238,7 @@ const Appointments = ({ user }) => {
         console.log("Edit", row);
 
         // Autofill Fields
-        setEditData({
+        setModalData({
             appointment_id: row.id,
             full_name: row.full_name,
             patient_id: row.patient_id,
@@ -401,22 +246,26 @@ const Appointments = ({ user }) => {
             to_datetime: row.to_datetime,
             purpose: row.purpose,
         });
-
         // Open Edit Modal
-        handleOpenEditModal();
+        setModalType("edit");
     };
 
     const handleRemove = (row) => {
         console.log("Remove", row);
         // Add your remove logic here
-        setRemoveData({
+        setModalData((prevData) => ({
+            ...prevData,
             appointment_id: row.id,
-            user_id: user.user_id,
-            username: user.username,
-        });
-        handleOpenRemoveModal();
+        }));
+
+        // Open Remove Modal
+        setModalType("remove");
     };
 
+    // PAGINATION
+    const options = paginationOptions;
+
+    // RENDER COMPONENT START
     return (
         <>
             <div className="container">
@@ -446,7 +295,6 @@ const Appointments = ({ user }) => {
                         </button>
                     </div>
                 </div>
-
                 {showDiv && (
                     <div className="container bg-white p-4">
                         {/* Search Bar  */}
@@ -469,7 +317,7 @@ const Appointments = ({ user }) => {
                                 data={filteredData}
                                 columns={columns}
                                 filter={filterFactory()}
-                                pagination={paginationFactory()}
+                                pagination={paginationFactory(options)}
                                 wrapperClasses="table-responsive"
                                 classes="table-bordered table-hover"
                                 noDataIndication={() => (
@@ -483,7 +331,6 @@ const Appointments = ({ user }) => {
                         )}
                     </div>
                 )}
-
                 {/* FULL CALENDAR  */}
                 <div className="container py-3">
                     <FullCalendar
@@ -517,31 +364,30 @@ const Appointments = ({ user }) => {
                         }}
                     />
                 </div>
-
-
                 {/* MODALS  */}
                 <AddModal
                     user={user}
-                    isOpen={addModal}
-                    onClose={handleCloseAddModal}
-                    addData={addData}
-                    setAddData={setAddData}
-                    handleAddSubmit={handleAddSubmit}
+                    isOpen={modalType === "add"}
+                    onClose={handleModalClose}
+                    addData={modalData}
+                    setAddData={setModalData}
+                    handleAddSubmit={() => handleModalSubmit("add")}
                 />
                 <EditModal
                     user={user}
-                    isOpen={editModal}
-                    onClose={handleCloseEditModal}
-                    editData={editData}
-                    setEditData={setEditData}
-                    handleEditSubmit={handleEditSubmit}
+                    isOpen={modalType === "edit"}
+                    onClose={handleModalClose}
+                    editData={modalData}
+                    setEditData={setModalData}
+                    handleEditSubmit={() => handleModalSubmit("edit")}
                 />
                 <RemoveModal
                     user={user}
-                    isOpen={removeModal}
-                    onClose={handleCloseRemoveModal}
-                    removeData={removeData}
-                    handleRemoveSubmit={handleRemoveSubmit}
+                    isOpen={modalType === "remove"}
+                    onClose={handleModalClose}
+                    removeData={modalData}
+                    setRemoveData={setModalData}
+                    handleRemoveSubmit={() => handleModalSubmit("remove")}
                 />
                 {/* MODALS END  */}
             </div>

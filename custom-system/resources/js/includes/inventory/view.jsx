@@ -1,11 +1,11 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 
-const AddModal = ({ user, isOpen, onClose }) => {
+const ViewModal = ({ user, isOpen, onClose }) => {
     return (
         <>
             <Modal
-                id="addItem"
+                id="viewItem"
                 size="lg"
                 show={isOpen}
                 onHide={onClose}
@@ -15,7 +15,7 @@ const AddModal = ({ user, isOpen, onClose }) => {
                     <Modal.Title>View Item</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {/* TO EDIT  */}
+
                     <div className="row">
                         <div className="col-6">
                             <div className="form-group">
@@ -87,4 +87,4 @@ const AddModal = ({ user, isOpen, onClose }) => {
     );
 };
 
-export default AddModal;
+export default ViewModal;

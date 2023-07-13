@@ -14,6 +14,7 @@ const AddModal = ({
     setAddData,
     handleAddSubmit,
 }) => {
+
     // FROM DATE TIME
     const [selectedFromDateTime, setSelectedFromDateTime] = useState(null);
     // TO DATE TIME
@@ -39,15 +40,6 @@ const AddModal = ({
         };
 
         fetchPatients();
-    }, []);
-
-    // Add Data
-    useEffect(() => {
-        setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
     }, []);
 
     // ONCHANGE FUNCTIONS START
@@ -80,8 +72,6 @@ const AddModal = ({
         const { name, value } = e.target;
         setAddData((prevData) => ({ ...prevData, [name]: value }));
     };
-
-    // ONCHANGE FUNCTIONS END
 
     // Clear Fields
     const onCloseCleared = () => {

@@ -64,13 +64,13 @@ const EditModal = ({
 
     }, [editData]);
 
-    useEffect(() => {
-        setEditData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    }, []);
+    // useEffect(() => {
+    //     setEditData((prevData) => ({
+    //         ...prevData,
+    //         user_id: user.user_id,
+    //         username: user.username,
+    //     }));
+    // }, []);
 
     // ONCHANGE FUNCTIONS START
 
@@ -122,7 +122,7 @@ const EditModal = ({
     return (
         <>
             <Modal
-                id="addAppointment"
+                id="editAppointment"
                 size="md"
                 show={isOpen}
                 onHide={onCloseCleared}
@@ -214,7 +214,7 @@ const EditModal = ({
                         id="btnEditAppointment"
                         onClick={handleEditSubmit}
                     >
-                        Edit
+                        Update
                     </Button>
                 </Modal.Footer>
             </Modal>

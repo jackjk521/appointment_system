@@ -18,7 +18,7 @@ import AddModal from "../includes/patients/add";
 import EditModal from "../includes/patients/edit";
 import RemoveModal from "../includes/patients/remove";
 
-import { paginationOptions } from "../components/utility/helper/paginationConfig";
+import { paginationOptions } from "./helper/paginationConfig";
 
 const Patients = ({ user }) => {
     // TABLE DATA
@@ -285,15 +285,6 @@ const Patients = ({ user }) => {
     };
 
     // PAGINATION
-    const paginationTotalRenderer = (from, to, size) => {
-        return (
-          <div className="pagination-total">
-            Showing {from}-{to} of {size} patients
-          </div>
-        );
-      };
-
-    //Pagination
     const options = paginationOptions;
 
     // RENDER COMPONENT START
