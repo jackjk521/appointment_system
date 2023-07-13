@@ -15,7 +15,6 @@ const EditModal = ({
     handleEditSubmit,
 }) => {
 
-    console.log(editData)
     // FROM DATE TIME
     const [selectedFromDateTime, setSelectedFromDateTime] = useState(null);
     // TO DATE TIME

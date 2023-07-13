@@ -16,75 +16,21 @@ import AddModal from "../includes/inventory/add";
 import EditModal from "../includes/inventory/edit";
 import RemoveModal from "../includes/inventory/remove";
 
+import { paginationOptions } from "./helper/paginationConfig";
+
 const Inventory = ({ user }) => {
-    // Table Data
+    // TABLE DATA
     const [data, setData] = useState([]);
 
-    // View , Add, Edit , Remove Data
-    const [viewData, setViewData] = useState({});
-    const [addData, setAddData] = useState({});
-    const [editData, setEditData] = useState({});
-    const [removeData, setRemoveData] = useState({});
+    // MODAL STATES INIT
+    const [modalType, setModalType] = useState(null);
+    const [modalData, setModalData] = useState({
+        user_id: user.user_id,
+        username: user.username,
+    });
 
-    // Modals
-    const [addModal, setAddModal] = useState(false);
-    const [editModal, setEditModal] = useState(false);
-    const [removeModal, setRemoveModal] = useState(false);
-
-    // Add Modal
-    const handleOpenAddModal = async () => {
-        try {
-            await axios
-                .get("/api/gen_prod_number")
-                .then((response) => {
-                    setAddData((prevData) => ({
-                        ...prevData,
-                        product_number: response.data,
-                    }));
-                    setAddModal(true);
-                })
-                .catch((error) => {
-                    // Handle the error
-                    console.error(error);
-                });
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    const handleCloseAddModal = () => {
-        setAddModal(false);
-        setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
-    // Edit Modal
-    const handleOpenEditModal = () => {
-        setEditModal(true);
-    };
-    const handleCloseEditModal = () => {
-        setEditModal(false);
-        setEditData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
-    // Removal Modal
-    const handleOpenRemoveModal = () => {
-        setRemoveModal(true);
-    };
-    const handleCloseRemoveModal = () => {
-        setRemoveModal(false);
-        setRemoveData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
+    // SEARCH BAR INIT
+    const [searchText, setSearchText] = useState("");
 
     // Populate Table Data
     const fetchData = async () => {
@@ -100,119 +46,87 @@ const Inventory = ({ user }) => {
         fetchData();
     }, []);
 
-    // ADD ITEM FUNCTIONS START
-    const handleAddSubmit = async () => {
+    const handleModalClose = () => {
+        setModalType(null);
+        setModalData({
+            purchaseHistory: [],
+            user_id: user.user_id,
+            username: user.username,
+        });
+    };
+
+    const handleOpenAddModal = async () => {
         try {
             await axios
-                .post("/api/add_item", { addData })
+                .get("/api/gen_prod_number")
                 .then((response) => {
-                    handleCloseAddModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully added a new item!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    fetchData();
+                    setModalData((prevData) => ({
+                        ...prevData,
+                        product_number: response.data,
+                    }));
+                    setModalType("add");
                 })
                 .catch((error) => {
                     // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
                     console.error(error);
                 });
         } catch (error) {
             console.error(error);
         }
     };
-    // ADD ITEM FUNCTIONS END
 
-    // EDIT ITEM FUNCTIONS START
-    const handleEditSubmit = async () => {
+    // MODAL SUBMIT (SWTICH CASE)
+    const handleModalSubmit = async (actionType) => {
         try {
-            await axios
-                .post("/api/update_item", { editData })
-                .then((response) => {
-                    handleCloseEditModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully update an item!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
+            let url = "";
+            let successMessage = "";
 
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
+            if (actionType === "add") {
+                url = "/api/add_item";
+                successMessage = "Successfully added a new item!";
+            } else if (actionType === "edit") {
+                url = "/api/update_item";
+                successMessage = "Successfully updated a item!";
+            } else if (actionType === "remove") {
+                url = "/api/remove_item";
+                successMessage = "Successfully removed a item!";
+            }
+
+            const response = await axios.post(url, { modalData });
+
+            handleModalClose();
+
+            if (response.data.success) {
+                Swal.fire({
+                    title: "Success",
+                    text: successMessage,
+                    icon: "success",
+                    timer: 1500,
+                    showCancelButton: false,
+                    showConfirmButton: false,
                 });
+            }
+
+            fetchData();
         } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                timer: 1500,
+                showCancelButton: false,
+                showConfirmButton: false,
+            });
             console.error(error);
         }
     };
-    // EDIT ITEM FUNCTIONS END
 
-    // REMOVE ITEM FUNCTIONS START
-    const handleRemoveSubmit = async () => {
-        try {
-            await axios
-                .post("/api/remove_item", { removeData })
-                .then((response) => {
-                    handleCloseRemoveModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully removed an item!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
-                });
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    // REMOVE ITEM FUNCTIONS END
-
-    // Filter Text and Numbers (Exact)
-    const [searchText, setSearchText] = useState("");
+    // FILTER TEXT AND NUMBER ON SEARCH BAR
     const handleSearch = (event) => {
         setSearchText(event.target.value);
     };
 
+    // FILTERED DATA FOR SEARCH BAR
     const filteredData = data.filter((item) => {
         const { product_number, item_name, unit, unit_price, total_quantity } =
             item;
@@ -265,8 +179,8 @@ const Inventory = ({ user }) => {
             align: "center",
             formatter: (cell, row) => {
                 return new Intl.NumberFormat("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
                 }).format(cell);
             },
         },
@@ -299,7 +213,7 @@ const Inventory = ({ user }) => {
         },
     ];
 
-    // View , Edit and Remove Functions
+    // HANDLE VIEW, EDIT AND REMOVE BUTTONS
     const handleView = (row) => {
         console.log("View", row);
         // Add your view logic here
@@ -309,7 +223,7 @@ const Inventory = ({ user }) => {
         console.log("Edit", row);
 
         // Autofill Fields
-        setEditData((prevData) => ({
+        setModalData((prevData) => ({
             ...prevData,
             product_id: row.id,
             product_number: row.product_number,
@@ -320,21 +234,26 @@ const Inventory = ({ user }) => {
         }));
 
         // Open Edit Modal
-        handleOpenEditModal();
+        setModalType("edit");
     };
 
     const handleRemove = (row) => {
         console.log("Remove", row);
         // Add your remove logic here
-        setRemoveData((prevData) => ({
+        setModalData((prevData) => ({
             ...prevData,
             product_id: row.id,
             product_number: row.product_number,
         }));
-        handleOpenRemoveModal();
+
+        // Open Remove Modal
+        setModalType("remove");
     };
 
-    // Render Component START
+    // PAGINATION
+    const options = paginationOptions;
+
+    // RENDER COMPONENT START
     return (
         <>
             <div className="container">
@@ -359,32 +278,6 @@ const Inventory = ({ user }) => {
                     </div>
                 </div>
 
-                {/* MODALS  */}
-                <AddModal
-                    user={user}
-                    isOpen={addModal}
-                    onClose={handleCloseAddModal}
-                    addData={addData}
-                    setAddData={setAddData}
-                    handleAddSubmit={handleAddSubmit}
-                />
-                <EditModal
-                    user={user}
-                    isOpen={editModal}
-                    onClose={handleCloseEditModal}
-                    editData={editData}
-                    setEditData={setEditData}
-                    handleEditSubmit={handleEditSubmit}
-                />
-                <RemoveModal
-                    user={user}
-                    isOpen={removeModal}
-                    onClose={handleCloseRemoveModal}
-                    removeData={removeData}
-                    setRemoveData={setRemoveData}
-                    handleRemoveSubmit={handleRemoveSubmit}
-                />
-
                 <div className="container bg-white p-4">
                     {/* Search Bar  */}
                     <div className="row">
@@ -406,7 +299,7 @@ const Inventory = ({ user }) => {
                             data={filteredData}
                             columns={columns}
                             filter={filterFactory()}
-                            pagination={paginationFactory()}
+                            pagination={paginationFactory(options)}
                             wrapperClasses="table-responsive"
                             classes="table-bordered table-hover"
                             noDataIndication={() => (
@@ -418,8 +311,33 @@ const Inventory = ({ user }) => {
                     ) : (
                         <div className="text-center">Loading...</div>
                     )}
-
                 </div>
+
+                {/* MODALS  */}
+                <AddModal
+                    user={user}
+                    isOpen={modalType === "add"}
+                    onClose={handleModalClose}
+                    addData={modalData}
+                    setAddData={setModalData}
+                    handleAddSubmit={() => handleModalSubmit("add")}
+                />
+                <EditModal
+                    user={user}
+                    isOpen={modalType === "edit"}
+                    onClose={handleModalClose}
+                    editData={modalData}
+                    setEditData={setModalData}
+                    handleEditSubmit={() => handleModalSubmit("edit")}
+                />
+                <RemoveModal
+                    user={user}
+                    isOpen={modalType === "remove"}
+                    onClose={handleModalClose}
+                    removeData={modalData}
+                    setRemoveData={setModalData}
+                    handleRemoveSubmit={() => handleModalSubmit("remove")}
+                />
             </div>
         </>
     );

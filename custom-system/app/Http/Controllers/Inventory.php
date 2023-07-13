@@ -42,11 +42,11 @@ class Inventory extends Controller
     {
         // var_dump($request->input('itemData'));
         $item = new Items_model;
-        $item->product_number = $request->input('addData')['product_number'];
-        $item->item_name = $request->input('addData')['item_name'];
-        $item->unit = $request->input('addData')['unit'];
-        $item->unit_price = $request->input('addData')['unit_price'];
-        $item->total_quantity= $request->input('addData')['total_quantity'];
+        $item->product_number = $request->input('modalData')['product_number'];
+        $item->item_name = $request->input('modalData')['item_name'];
+        $item->unit = $request->input('modalData')['unit'];
+        $item->unit_price = $request->input('modalData')['unit_price'];
+        $item->total_quantity= $request->input('modalData')['total_quantity'];
         $item->date_created = now()->toDateTimeString();
         $item->removed = 0;
 
@@ -55,9 +55,9 @@ class Inventory extends Controller
         // Log
         if($item->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('addData')['user_id'] != '') ? $request->input('addData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('modalData')['user_id'] != '') ? $request->input('modalData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('addData')['username'] != '') ? $request->input('addData')['username'] : 'admin' . " has added item: " . $request->input('addData')['item_name'] . " successfully.";
+                $log->message =($request->input('modalData')['username'] != '') ? $request->input('modalData')['username'] : 'admin' . " has added item: " . $request->input('modalData')['item_name'] . " successfully.";
                 $log->save();
         }
 
@@ -67,20 +67,20 @@ class Inventory extends Controller
     public function update_item(Request $request)
     {
         // var_dump($request->input('itemData'));
-        $item = Items_model::find($request->input('editData')['product_id']);
-        $item->item_name = $request->input('editData')['item_name'];
-        $item->unit = $request->input('editData')['unit'];
-        $item->unit_price = $request->input('editData')['unit_price'];
-        $item->total_quantity= $request->input('editData')['total_quantity'];
+        $item = Items_model::find($request->input('modalData')['product_id']);
+        $item->item_name = $request->input('modalData')['item_name'];
+        $item->unit = $request->input('modalData')['unit'];
+        $item->unit_price = $request->input('modalData')['unit_price'];
+        $item->total_quantity= $request->input('modalData')['total_quantity'];
 
         $item->save();
 
         // Log
         if($item->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('editData')['user_id'] != '') ? $request->input('editData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('modalData')['user_id'] != '') ? $request->input('modalData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('editData')['username'] != '') ? $request->input('editData')['username'] : 'admin' . " has update item with product number: " . $request->input('editData')['product_number'] . " successfully.";
+                $log->message =($request->input('modalData')['username'] != '') ? $request->input('modalData')['username'] : 'admin' . " has update item with product number: " . $request->input('modalData')['product_number'] . " successfully.";
                 $log->save();
         }
 
@@ -89,16 +89,16 @@ class Inventory extends Controller
 
     public function remove_item(Request $request)
     {
-        $item = Items_model::find(($request->input('removeData')['product_id']));
+        $item = Items_model::find(($request->input('modalData')['product_id']));
         $item->removed = 1;
         $item->save();
 
         // Log
         if($item->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('removeData')['user_id'] != '') ? $request->input('removeData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('modalData')['user_id'] != '') ? $request->input('modalData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('removeData')['username'] != '') ? $request->input('removeData')['username'] : 'admin' . " has removed an item with product number: " . $request->input('removeData')['product_number'];
+                $log->message =($request->input('modalData')['username'] != '') ? $request->input('modalData')['username'] : 'admin' . " has removed an item with product number: " . $request->input('modalData')['product_number'];
                 $log->save();
         }
 
