@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 import BootstrapTable from "react-bootstrap-table-next";
 import filterFactory, {
     textFilter,
@@ -20,7 +21,7 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
             align: "center",
             editable: false,
             filter: dateFilter({
-                className:"d-flex justify-content-center",
+                className: "d-flex justify-content-center",
                 dateClassName: "form-control form-control-sm w-100",
                 comparatorClassName: "d-none",
                 onFilter: (filterValue, data) => {
@@ -87,36 +88,31 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
         },
     ];
 
-    // Filter Text and Numbers (Exact)
+    // FILTER TEXT AND NUMBER IN SEARCH BAR
     const [searchText, setSearchText] = useState("");
     const handleSearch = (event) => {
         setSearchText(event.target.value);
     };
 
-    const filteredData =
-        viewData.purchaseHistory &&
-        Array.isArray(viewData.purchaseHistory) &&
-        viewData.purchaseHistory.length > 0
-            ? viewData.purchaseHistory.filter((item) => {
-                  const {
-                      item_name,
-                      item_price,
-                      purchased_quantity,
-                      purchase_sub_total,
-                  } = item;
-                  const searchValue = searchText.toLowerCase();
-                  return (
-                      item_name.toLowerCase().includes(searchValue) ||
-                      parseFloat(item_price).toString().includes(searchValue) ||
-                      parseFloat(purchased_quantity)
-                          .toString()
-                          .includes(searchValue) ||
-                      parseFloat(purchase_sub_total)
-                          .toString()
-                          .includes(searchValue)
-                  );
-              })
-            : [];
+    // CHECK IF VIEW DATA IS NOT EMPTY
+    if (!viewData || !viewData.purchaseHistory) {
+        return <div>Loading...</div>; // or any other suitable loading state
+    }
+
+    // FILTERED DATA FOR SEARCH BAR
+    const filteredData = viewData.purchaseHistory.filter(
+        ({ item_name, item_price, purchased_quantity, purchase_sub_total }) => {
+            const searchValue = searchText.toLowerCase();
+            return (
+                item_name.toLowerCase().includes(searchValue) ||
+                parseFloat(item_price).toString().includes(searchValue) ||
+                parseFloat(purchased_quantity)
+                    .toString()
+                    .includes(searchValue) ||
+                parseFloat(purchase_sub_total).toString().includes(searchValue)
+            );
+        }
+    );
 
     return (
         <>
@@ -136,66 +132,61 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                         <div className="col-3">
                             <div className="form-group">
                                 <label className="py-3">First Name</label>
-                                <span
+                                <input
                                     type="text"
                                     name="txtFirstName"
                                     id="txtFirstName"
                                     className="form-control"
-                                >
-                                    {viewData.first_name}
-                                </span>
+                                    value={viewData.first_name}
+                                />
                             </div>
                         </div>
                         <div className="col-3">
                             <div className="form-group">
                                 <label className="py-3">Last Name</label>
-                                <span
+                                <input
                                     type="text"
                                     name="txtLastName"
                                     id="txtLastName"
                                     className="form-control"
-                                >
-                                    {viewData.last_name}
-                                </span>
+                                    value={viewData.last_name}
+                                />
                             </div>
                         </div>
                         <div className="col-2">
                             <div className="form-group">
                                 <label className="py-3">Age</label>
-                                <span
+                                <input
                                     type="text"
                                     name="txtAge"
                                     id="txtAge"
                                     className="form-control"
-                                >
-                                    {viewData.age}
-                                </span>
+                                    value={viewData.age}
+                                />
                             </div>
                         </div>
                         <div className="col-2">
                             <div className="form-group">
                                 <label className="py-3">Height</label>
-                                <span
+                                <input
                                     type="text"
                                     name="txtHeight"
                                     id="txtHeight"
                                     className="form-control"
-                                >
-                                    {viewData.height}
-                                </span>
+                                    value={viewData.height}
+                                />
                             </div>
                         </div>
                         <div className="col-2">
                             <div className="form-group">
                                 <label className="py-3">Weight</label>
-                                <span
+                                <input
                                     type="text"
                                     name="txtWeight"
                                     id="txtWeight"
                                     className="form-control"
-                                >
-                                    {viewData.weight}
-                                </span>
+                                    value={viewData.weight}
+                                />
                             </div>
                         </div>
                     </div>

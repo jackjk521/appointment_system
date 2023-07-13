@@ -2,14 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 
 const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSubmit}) => {
-   
-    useEffect(() => {
-        setEditData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    }, []);
 
     // HANDLE INPUT CHANGER FUNCTIONS START
     const handleInputChange = (e) => {
@@ -17,9 +9,7 @@ const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSub
         setEditData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    // ONCHANGE FUNCTIONS END
-
-    // Clear Fields
+    // CLEAR FIELDS
     const onCloseCleared = () => {
         $(".clear-fields").val("");
         onClose();
@@ -57,7 +47,7 @@ const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSub
                                     name="first_name"
                                     id="txtFirstName"
                                     placeholder="John"
-                                    defaultValue={editData.first_name || ""}
+                                    value={editData.first_name || ""}
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
                                 />
@@ -73,7 +63,7 @@ const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSub
                                     name="last_name"
                                     id="txtLastName"
                                     placeholder="Doe"
-                                    defaultValue={editData.last_name || ""}
+                                    value={editData.last_name || ""}
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
                                 />
@@ -89,7 +79,7 @@ const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSub
                                     type="number"
                                     name="age"
                                     id="txtAge"
-                                    defaultValue={editData.age || ""}
+                                    value={editData.age || ""}
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
                                 />
@@ -104,7 +94,7 @@ const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSub
                                     type="number"
                                     name="height"
                                     id="txtHeight"
-                                    defaultValue={editData.height || ""}
+                                    value={editData.height || ""}
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
                                 />
@@ -119,7 +109,7 @@ const EditModal = ({ user, isOpen, onClose, editData, setEditData, handleEditSub
                                     type="number"
                                     name="weight"
                                     id="txtWeight"
-                                    defaultValue={editData.weight || ""}
+                                    value={editData.weight || ""}
                                     className="form-control clear-fields"
                                     onChange={handleInputChange}
                                 />

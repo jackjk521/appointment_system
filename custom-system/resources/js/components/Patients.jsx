@@ -21,73 +21,24 @@ import RemoveModal from "../includes/patients/remove";
 // import CustomPagination from "./utility/CustomPagination";
 
 const Patients = ({ user }) => {
-    // Table Data
+    // TABLE DATA
     const [data, setData] = useState([]);
 
-    // View , Add, Edit , Remove Data
-    const [viewData, setViewData] = useState({ purchaseHistory: [] });
-    const [addData, setAddData] = useState({});
-    const [editData, setEditData] = useState({});
-    const [removeData, setRemoveData] = useState({});
+    // MODAL STATES INIT
+    const [modalType, setModalType] = useState(null);
+    const [modalData, setModalData] = useState({
+        purchaseHistory: [],
+        user_id: user.user_id,
+        username: user.username,
+    });
 
-    // Modals
-    const [viewModal, setViewModal] = useState(false);
-    const [addModal, setAddModal] = useState(false);
-    const [editModal, setEditModal] = useState(false);
-    const [removeModal, setRemoveModal] = useState(false);
+    // SEARCH BAR INIT
+    const [searchText, setSearchText] = useState("");
 
-    // View Modal
-    const handleOpenViewModal = () => {
-        setViewModal(true);
-    };
-    const handleCloseViewModal = () => {
-        setViewModal(false);
-        setViewData({});
-    };
-
-    // Add Modal
-    const handleOpenAddModal = () => {
-        setAddModal(true);
-    };
-    const handleCloseAddModal = () => {
-        setAddModal(false);
-        setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
-    // Edit Modal
-    const handleOpenEditModal = () => {
-        setEditModal(true);
-    };
-    const handleCloseEditModal = () => {
-        setEditModal(false);
-        setEditData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
-    // Removal Modal
-    const handleOpenRemoveModal = () => {
-        setRemoveModal(true);
-    };
-    const handleCloseRemoveModal = () => {
-        setRemoveModal(false);
-        setRemoveData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    };
-
-    // Populate Table Data
-    const fetchData = async () => {
+    // FETCH TABLE DATA
+    const fetchPatients = async () => {
         try {
-            const response = await axios.get("/api/patients", {}); // works
+            const response = await axios.get("/api/patients");
             setData(response.data);
         } catch (error) {
             console.error(error);
@@ -95,122 +46,79 @@ const Patients = ({ user }) => {
     };
 
     useEffect(() => {
-        fetchData();
+        fetchPatients();
     }, []);
 
-    // ADD PATIENT FUNCTIONS START
-    const handleAddSubmit = async () => {
+    const handleModalOpen = (type, rowData = {}) => {
+        setModalType(type);
+        setModalData(rowData);
+    };
+
+    const handleModalClose = () => {
+        setModalType(null);
+        setModalData({
+            purchaseHistory: [],
+            user_id: user.user_id,
+            username: user.username,
+        });
+    };
+
+    const handleOpenAddModal = () => {
+        setModalType("add");
+    };
+
+    // MODAL SUBMIT (SWTICH CASE)
+    const handleModalSubmit = async (actionType) => {
         try {
-            await axios
-                .post("/api/add_patient", { addData })
-                .then((response) => {
-                    handleCloseAddModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully added a new patient!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
+            let url = "";
+            let successMessage = "";
+
+            if (actionType === "add") {
+                url = "/api/add_patient";
+                successMessage = "Successfully added a new patient!";
+            } else if (actionType === "edit") {
+                url = "/api/update_patient";
+                successMessage = "Successfully updated a patient!";
+            } else if (actionType === "remove") {
+                url = "/api/remove_patient";
+                successMessage = "Successfully removed a patient!";
+            }
+
+            const response = await axios.post(url, { modalData });
+
+            handleModalClose();
+
+            if (response.data.success) {
+                Swal.fire({
+                    title: "Success",
+                    text: successMessage,
+                    icon: "success",
+                    timer: 1500,
+                    showCancelButton: false,
+                    showConfirmButton: false,
                 });
+            }
+
+            fetchPatients();
         } catch (error) {
+            Swal.fire({
+                title: "Error",
+                text: error.message,
+                icon: "error",
+                timer: 1500,
+                showCancelButton: false,
+                showConfirmButton: false,
+            });
             console.error(error);
         }
     };
-    // ADD PATIENT FUNCTIONS END
 
-    // EDIT PATIENT FUNCTIONS START
-    const handleEditSubmit = async () => {
-        try {
-            await axios
-                .post("/api/update_patient", { editData })
-                .then((response) => {
-                    handleCloseEditModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully update an patient!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
-                });
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    // EDIT PATIENT FUNCTIONS END
-
-    // REMOVE ITEM FUNCTIONS START
-    const handleRemoveSubmit = async () => {
-        try {
-            await axios
-                .post("/api/remove_patient", { removeData })
-                .then((response) => {
-                    handleCloseRemoveModal();
-                    new Swal({
-                        title: "Success",
-                        text: "Successfully removed an patient!",
-                        icon: "success",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-
-                    fetchData();
-                })
-                .catch((error) => {
-                    // Handle the error
-                    new Swal({
-                        title: "Error",
-                        text: error,
-                        icon: "error",
-                        timer: 1500, // Set the timer duration in milliseconds
-                        showCancelButton: false,
-                        showConfirmButton: false,
-                    });
-                    console.error(error);
-                });
-        } catch (error) {
-            console.error(error);
-        }
-    };
-    // REMOVE ITEM FUNCTIONS END
-
-    // Filter Text and Numbers (Exact)
-    const [searchText, setSearchText] = useState("");
+    // FILTER TEXT AND NUMBER ON SEARCH BAR
     const handleSearch = (event) => {
         setSearchText(event.target.value);
     };
 
+    // FILTERED DATA FOR SEARCH BAR
     const filteredData = data.filter((patient) => {
         const { first_name, last_name, age, height, weight } = patient;
         const searchValue = searchText.toLowerCase();
@@ -288,7 +196,7 @@ const Patients = ({ user }) => {
         },
     ];
 
-    // View , Edit and Remove Functions
+    // HANDLE VIEW, EDIT AND REMOVE BUTTONS
     const handleView = async (row) => {
         console.log("View", row);
         // Add your view logic here
@@ -301,7 +209,7 @@ const Patients = ({ user }) => {
             const patientData = response.data;
 
             if (patientData) {
-                setViewData((prevData) => ({
+                setModalData((prevData) => ({
                     ...prevData,
                     patient_id: patientData[0].id,
                     first_name: patientData[0].first_name,
@@ -331,12 +239,12 @@ const Patients = ({ user }) => {
                         purchase_sub_total: val.purchase_sub_total,
                     }));
 
-                    setViewData((prevData) => ({
+                    setModalData((prevData) => ({
                         ...prevData,
                         purchaseHistory: purchase_lines,
                     }));
-                    // console.log(purchaseHistory)
-                    handleOpenViewModal();
+
+                    setModalType("view");
                 } catch (error) {
                     console.error(error);
                 }
@@ -350,7 +258,7 @@ const Patients = ({ user }) => {
         console.log("Edit", row);
 
         // Autofill Fields
-        setEditData((prevData) => ({
+        setModalData((prevData) => ({
             ...prevData,
             patient_id: row.id,
             first_name: row.first_name,
@@ -361,19 +269,22 @@ const Patients = ({ user }) => {
         }));
 
         // Open Edit Modal
-        handleOpenEditModal();
+        setModalType("edit");
     };
 
     const handleRemove = (row) => {
         console.log("Remove", row);
         // Add your remove logic here
-        setRemoveData((prevData) => ({
+        setModalData((prevData) => ({
             ...prevData,
             patient_id: row.id,
         }));
-        handleOpenRemoveModal();
+
+        // Open Remove  Modal
+        setModalType("remove");
     };
 
+    // PAGINATION
     const CustomPagination = ({ paginationProps }) => {
         const {
             currPage,
@@ -439,7 +350,7 @@ const Patients = ({ user }) => {
         ),
     };
 
-    // Render Component START
+    // RENDER COMPONENT START
     return (
         <>
             <div className="container">
@@ -500,33 +411,33 @@ const Patients = ({ user }) => {
                 {/* MODALS  */}
                 <ViewModal
                     user={user}
-                    isOpen={viewModal}
-                    onClose={handleCloseViewModal}
-                    viewData={viewData}
+                    isOpen={modalType === "view"}
+                    onClose={handleModalClose}
+                    viewData={modalData}
                 />
                 <AddModal
                     user={user}
-                    isOpen={addModal}
-                    onClose={handleCloseAddModal}
-                    addData={addData}
-                    setAddData={setAddData}
-                    handleAddSubmit={handleAddSubmit}
+                    isOpen={modalType === "add"}
+                    onClose={handleModalClose}
+                    addData={modalData}
+                    setAddData={setModalData}
+                    handleAddSubmit={() => handleModalSubmit("add")}
                 />
                 <EditModal
                     user={user}
-                    isOpen={editModal}
-                    onClose={handleCloseEditModal}
-                    editData={editData}
-                    setEditData={setEditData}
-                    handleEditSubmit={handleEditSubmit}
+                    isOpen={modalType === "edit"}
+                    onClose={handleModalClose}
+                    editData={modalData}
+                    setEditData={setModalData}
+                    handleEditSubmit={() => handleModalSubmit("edit")}
                 />
                 <RemoveModal
                     user={user}
-                    isOpen={removeModal}
-                    onClose={handleCloseRemoveModal}
-                    removeData={removeData}
-                    setRemoveData={setRemoveData}
-                    handleRemoveSubmit={handleRemoveSubmit}
+                    isOpen={modalType === "remove"}
+                    onClose={handleModalClose}
+                    removeData={modalData}
+                    setRemoveData={setModalData}
+                    handleRemoveSubmit={() => handleModalSubmit("remove")}
                 />
             </div>
         </>

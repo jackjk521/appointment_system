@@ -2,17 +2,8 @@ import React , {useEffect} from "react";
 import { Modal, Button } from "react-bootstrap";
 
 const RemoveModal = ({ user, isOpen, onClose, removeData, setRemoveData, handleRemoveSubmit}) => {
-    useEffect(() => {
-        setRemoveData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-        }));
-    }, []);
 
-    // ONCHANGE FUNCTIONS END
-
-    // Clear Fields
+    // CLEAR FIELDS
     const onCloseCleared = () => {
         $(".clear-fields").val("");
         onClose();
@@ -23,7 +14,7 @@ const RemoveModal = ({ user, isOpen, onClose, removeData, setRemoveData, handleR
                 id="removePatient"
                 size="md"
                 show={isOpen}
-                onHide={onClose}
+                onHide={onCloseCleared}
                 centered
             >
                 <Modal.Header className="bg-danger text-white" closeButton>
