@@ -1,8 +1,13 @@
-
 a {
     text-decoration: none;
 }
 
+/* React Bootstrap Table Pagination CSS  */
+.pagination{
+    /* Add your custom styles here */
+    justify-content: flex-end !important; /* Align contents to the right */
+    /* Add more styles as needed */
+}
 
 /* Full screen DIV  */
 .full-screen {
@@ -12,9 +17,8 @@ a {
 
 /* Add button  */
 
-
 /* Nav bar  */
-.tab-active{
+.tab-active {
     background-color: lightgray;
 }
 
@@ -23,6 +27,6 @@ a {
     /* Define your hover effect styles here */
     background-color: lightgray;
     /* Add any other styles you want for the hover effect */
-  }
+}
 
-  /* Items  */
+/* Items  */

@@ -18,7 +18,7 @@ import AddModal from "../includes/patients/add";
 import EditModal from "../includes/patients/edit";
 import RemoveModal from "../includes/patients/remove";
 
-// import CustomPagination from "./utility/CustomPagination";
+import { paginationOptions } from "../components/utility/helper/paginationConfig";
 
 const Patients = ({ user }) => {
     // TABLE DATA
@@ -285,70 +285,16 @@ const Patients = ({ user }) => {
     };
 
     // PAGINATION
-    const CustomPagination = ({ paginationProps }) => {
-        const {
-            currPage,
-            totalPages,
-            pageChange,
-            sizePerPage,
-            sizePerPageRenderer,
-        } = paginationProps;
-
+    const paginationTotalRenderer = (from, to, size) => {
         return (
-            <div className="d-flex justify-content-end">
-                <div className="d-flex align-items-center mr-2">
-                    <span>Show:</span>
-                    {sizePerPageRenderer()}
-                </div>
-                <ul className="pagination">
-                    <li
-                        className={`page-item${
-                            currPage === 1 ? " disabled" : ""
-                        }`}
-                        onClick={() => pageChange(currPage - 1)}
-                    >
-                        <a className="page-link">Previous</a>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <li
-                            key={index + 1}
-                            className={`page-item${
-                                currPage === index + 1 ? " active" : ""
-                            }`}
-                            onClick={() => pageChange(index + 1)}
-                        >
-                            <a className="page-link">{index + 1}</a>
-                        </li>
-                    ))}
-                    <li
-                        className={`page-item${
-                            currPage === totalPages ? " disabled" : ""
-                        }`}
-                        onClick={() => pageChange(currPage + 1)}
-                    >
-                        <a className="page-link">Next</a>
-                    </li>
-                </ul>
-            </div>
+          <div className="pagination-total">
+            Showing {from}-{to} of {size} patients
+          </div>
         );
-    };
+      };
 
     //Pagination
-    const options = {
-        paginationSize: 5,
-        pageStartIndex: 1,
-        showTotal: true,
-        paginationTotalRenderer: (from, to, size) =>
-            `${from}-${to} of ${size} items`,
-        sizePerPageRenderer: ({ options, currSizePerPage }) => (
-            <span className="d-none">
-                {`Displaying ${currSizePerPage} ${options[0]} entries`}
-            </span>
-        ),
-        paginationRenderer: (props) => (
-            <CustomPagination paginationProps={props} />
-        ),
-    };
+    const options = paginationOptions;
 
     // RENDER COMPONENT START
     return (
