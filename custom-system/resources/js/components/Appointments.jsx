@@ -59,8 +59,33 @@ const Appointments = ({ user }) => {
         setModalType("add");
     };
 
-    const handleOpenEditModal = () => {
-        setModalType("edit");
+    const handleOpenEditModal = async (event) => {
+        const $id = event.event._def.extendedProps.appointment_id;
+
+        try {
+            const response = await axios.get("/api/get_appointment", {
+                params: {
+                    appointment_id: $id,
+                },
+            });
+            const appointmentData = response.data;
+            if (appointmentData) {
+                setModalData((prevData) => ({
+                    ...prevData,
+                    appointment_id: $id,
+                    full_name: appointmentData.full_name,
+                    patient_id: appointmentData.patient_id,
+                    from_datetime: appointmentData.from_datetime,
+                    to_datetime: appointmentData.to_datetime,
+                    purpose: appointmentData.purpose,
+                }));
+
+                // Handle open edit modal here
+                setModalType('edit');
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
     // MODAL FUNCTIONS END
 
