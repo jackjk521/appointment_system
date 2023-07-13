@@ -39,14 +39,14 @@ class Purchases extends Controller
     }
 
     public function gen_purchase_line_by_id()
-{
-    $latestId = DB::table('purchase_line')
-        ->select('id')
-        ->orderBy('id', 'desc')
-        ->value('id');
+    {
+        $latestId = DB::table('purchase_line')
+            ->select('id')
+            ->orderBy('id', 'desc')
+            ->value('id');
 
-    return $latestId + 1;
-}
+        return $latestId;
+    }
 
     public function get_purchase_header_by_id(Request $request){
         

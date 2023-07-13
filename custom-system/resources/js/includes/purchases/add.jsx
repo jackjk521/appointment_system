@@ -20,6 +20,8 @@ const AddModal = ({
     const [selectedOption, setSelectedOption] = useState(null);
     const [options, setOptions] = useState([]);
 
+    const [counter, setCounter] = useState(0);
+
     useEffect(() => {
         // Get all Patients
         const fetchPatients = async () => {
@@ -67,6 +69,18 @@ const AddModal = ({
         }
     }, [addData.purchLineData]); // Run once
 
+    // Generate a unique id for each new row
+    const generateUniqueId = async () => {
+        try {
+            const response = await axios.get("/api/gen_purchase_line", {});
+            const latestId = parseInt(response.data) || 0;
+            setCounter(latestId);
+            return latestId;
+        } catch (error) {
+            return null; // Handle any errors and return a default value
+        }
+    };
+
     // Add Data
     useEffect(() => {
         setAddData((prevData) => ({
@@ -75,6 +89,7 @@ const AddModal = ({
             user_id: user.user_id,
             username: user.username,
         }));
+        generateUniqueId();
     }, []);
 
     // HANDLE TOTAL AMOUNT
@@ -103,38 +118,58 @@ const AddModal = ({
             total_amount: 0.0,
         }));
         onClose();
+
+        // Function to reset the counter and call generateUniqueId again
+        const resetCounter = async () => {
+            setCounter(0); // Reset the counter
+
+            // Call generateUniqueId to get the latest ID
+            const latestId = await generateUniqueId();
+
+            if (latestId) {
+                setCounter(parseInt(latestId)); // Set the counter to the latest ID
+            }
+        };
+
+        resetCounter();
     };
     // Purchase Line Table START
 
     // Selectpicker for Items
     const [itemOptions, setItemsOptions] = useState([]);
 
-    // Generate a unique id for each new row
-    function generateUniqueId() {
-        const timestamp = new Date().getTime(); // Get current timestamp
-        const randomNum = Math.floor(Math.random() * 100); // Generate a random number between 0 and 999
-
-        return `${timestamp}-${randomNum}`; // Combine timestamp and random number
-    }
-
     // Function to handle row insertion
-    const handleInsertRow = () => {
+    const handleInsertRow = async () => {
         const newRow = {
-            id: generateUniqueId(),
+            id: counter + 1,
             item_id: 0,
             item_name: "Select a product", // user input allowed
             item_price: 0.0,
             purchased_quantity: 0, // user input allowed
             purchase_sub_total: 0.0,
         };
+
+        console.log(newRow);
         setAddData((prevState) => ({
             ...prevState,
             purchLineData: prevState.purchLineData
                 ? [...prevState.purchLineData, newRow]
                 : [newRow],
         }));
+        setCounter((prevCounter) => prevCounter + 1);
     };
 
+    // Function to handle row deletion
+    const handleDeleteRow = (rowId) => {
+        const updatedData = addData.purchLineData.filter(
+            (row) => row.id !== rowId
+        );
+
+        setAddData((prevState) => ({
+            ...prevState,
+            purchLineData: updatedData,
+        }));
+    };
     // Selectpicker for the Items dropdowm
     const handleItemsEdit = (newValue, rowId, dataField) => {
         // Update the data with the new value
@@ -158,8 +193,6 @@ const AddModal = ({
                                     ...updatedRow,
                                     item_id: parsedData["id"],
                                     item_price: parsedData["unit_price"],
-                                    purchased_quantity: 0, // Clear the purchased_quantity
-                                    purchase_sub_total: 0.0, // Clear the purchase_sub_total
                                 };
                             }
 
@@ -305,6 +338,21 @@ const AddModal = ({
                 }).format(formattedSubTotal);
             },
         },
+        {
+            dataField: "actions",
+            text: "Actions",
+            headerAlign: "center",
+            align: "center",
+            editable: false,
+            formatter: (cell, row) => (
+                <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => handleDeleteRow(row.id)}
+                >
+                    <i className="p-1 fa fa-trash"></i>
+                </button>
+            ),
+        },
     ];
 
     // Purchase Line END
@@ -395,8 +443,13 @@ const AddModal = ({
                                     </i>
                                 </button>
                             </div>
+                            <br></br>
+                            <span className="d-flex align-items-end justify-content-end text-danger">
+                                Note: Add all products first before inputting
+                                the quantity
+                            </span>
 
-                            <div className="container">
+                            <div className="container p-4">
                                 {Array.isArray(addData.purchLineData) &&
                                 addData.purchLineData.length > 0 ? (
                                     <BootstrapTable

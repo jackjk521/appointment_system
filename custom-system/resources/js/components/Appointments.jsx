@@ -518,6 +518,7 @@ const Appointments = ({ user }) => {
                     />
                 </div>
 
+
                 {/* MODALS  */}
                 <AddModal
                     user={user}

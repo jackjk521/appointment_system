@@ -20,15 +20,9 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
             align: "center",
             editable: false,
             filter: dateFilter({
-                comparatorClassName: "form-select form-select-sm",
-                comparatorStyle: { width: "60px", marginRight: "5px" },
-                dateClassName: "form-control form-control-sm",
-                dateStyle: { width: "150px", marginRight: "5px" },
-                defaultValue: {
-                    date_created: new Date(),
-                    comparator: Comparator.GE,
-                },
-                withoutEmptyComparatorOption: true,
+                className:"d-flex justify-content-center",
+                dateClassName: "form-control form-control-sm w-100",
+                comparatorClassName: "d-none",
                 onFilter: (filterValue, data) => {
                     // Implement your custom filter logic here
                     const filteredData = data.filter((row) => {
@@ -211,8 +205,8 @@ const ViewModal = ({ user, isOpen, onClose, viewData }) => {
                     viewData.purchaseHistory.length > 0 ? (
                         <div>
                             <div className="row">
-                                <div className="col-9"></div>
-                                <div className="col-3 d-flex align-items-end justify-content-end ">
+                                <div className="col-7"></div>
+                                <div className="col-5 d-flex align-items-end justify-content-end ">
                                     <input
                                         type="text"
                                         value={searchText}

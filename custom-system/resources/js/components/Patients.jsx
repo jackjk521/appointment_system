@@ -24,9 +24,6 @@ const Patients = ({ user }) => {
     // Table Data
     const [data, setData] = useState([]);
 
-    // View
-    const [purchaseHistory, setPurchaseHistory] = useState([]);
-
     // View , Add, Edit , Remove Data
     const [viewData, setViewData] = useState({ purchaseHistory: [] });
     const [addData, setAddData] = useState({});
@@ -437,16 +434,16 @@ const Patients = ({ user }) => {
                 {`Displaying ${currSizePerPage} ${options[0]} entries`}
             </span>
         ),
-        paginationComponent: (props) => (
+        paginationRenderer: (props) => (
             <CustomPagination paginationProps={props} />
-          ),
+        ),
     };
 
     // Render Component START
     return (
         <>
             <div className="container">
-                <div className="row">
+                <div className="row px-3">
                     <div className="col-3">
                         <h1>
                             <i className="fa fa-users fa-lg p-2 pt-3 m-2"></i>
@@ -454,7 +451,7 @@ const Patients = ({ user }) => {
                         </h1>
                     </div>
                     <div className="col-6"></div>
-                    <div className="col-3 d-flex align-items-end justify-content-end ">
+                    <div className="col-3 d-flex align-items-end justify-content-end">
                         <button
                             className="btn btn-success my-3"
                             id="addPatientBtn"
@@ -464,38 +461,6 @@ const Patients = ({ user }) => {
                         </button>
                     </div>
                 </div>
-
-                {/* MODALS  */}
-                <ViewModal
-                    user={user}
-                    isOpen={viewModal}
-                    onClose={handleCloseViewModal}
-                    viewData={viewData}
-                />
-                <AddModal
-                    user={user}
-                    isOpen={addModal}
-                    onClose={handleCloseAddModal}
-                    addData={addData}
-                    setAddData={setAddData}
-                    handleAddSubmit={handleAddSubmit}
-                />
-                <EditModal
-                    user={user}
-                    isOpen={editModal}
-                    onClose={handleCloseEditModal}
-                    editData={editData}
-                    setEditData={setEditData}
-                    handleEditSubmit={handleEditSubmit}
-                />
-                <RemoveModal
-                    user={user}
-                    isOpen={removeModal}
-                    onClose={handleCloseRemoveModal}
-                    removeData={removeData}
-                    setRemoveData={setRemoveData}
-                    handleRemoveSubmit={handleRemoveSubmit}
-                />
 
                 <div className="container bg-white p-4">
                     {/* Search Bar  */}
@@ -531,6 +496,38 @@ const Patients = ({ user }) => {
                         <div className="text-center">Loading...</div>
                     )}
                 </div>
+
+                {/* MODALS  */}
+                <ViewModal
+                    user={user}
+                    isOpen={viewModal}
+                    onClose={handleCloseViewModal}
+                    viewData={viewData}
+                />
+                <AddModal
+                    user={user}
+                    isOpen={addModal}
+                    onClose={handleCloseAddModal}
+                    addData={addData}
+                    setAddData={setAddData}
+                    handleAddSubmit={handleAddSubmit}
+                />
+                <EditModal
+                    user={user}
+                    isOpen={editModal}
+                    onClose={handleCloseEditModal}
+                    editData={editData}
+                    setEditData={setEditData}
+                    handleEditSubmit={handleEditSubmit}
+                />
+                <RemoveModal
+                    user={user}
+                    isOpen={removeModal}
+                    onClose={handleCloseRemoveModal}
+                    removeData={removeData}
+                    setRemoveData={setRemoveData}
+                    handleRemoveSubmit={handleRemoveSubmit}
+                />
             </div>
         </>
     );

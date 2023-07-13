@@ -7,6 +7,7 @@ import Inventory from "./Inventory"
 import Purchases from "./Purchases"
 import Appointments from "./Appointments"
 
+import ScrollToTopArrow from "./utility/CustomArrowUp";
 
 const Dashboard = ({ user, setUser}) => {
     
@@ -27,6 +28,8 @@ const Dashboard = ({ user, setUser}) => {
                  {selectedNavItem == 'inventory' && <Inventory user={user}/>}
                  {selectedNavItem == 'appointments' && <Appointments user={user}/>}
                  {selectedNavItem == 'purchases' && <Purchases user={user}/>}
+                 
+                 <ScrollToTopArrow />
 
             </div>
         </>
