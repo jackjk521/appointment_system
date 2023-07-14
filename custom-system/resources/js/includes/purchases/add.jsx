@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import cellEditFactory from "react-bootstrap-table2-editor";
@@ -22,6 +22,20 @@ const AddModal = ({
 
     const [counter, setCounter] = useState(0);
 
+    // Selectpicker for Items
+    const [itemOptions, setItemsOptions] = useState([]);
+
+    // Generate a unique id for each new row
+    const generateUniqueId = async () => {
+        try {
+            const response = await axios.get("/api/gen_purchase_line", {});
+            const latestId = parseInt(response.data) || 0;
+            setCounter(latestId);
+            return latestId;
+        } catch (error) {
+            return null; // Handle any errors and return a default value
+        }
+    };
     useEffect(() => {
         // Get all Patients
         const fetchPatients = async () => {
@@ -67,39 +81,14 @@ const AddModal = ({
                 total_amount: newTotalAmount,
             }));
         }
-    }, [addData.purchLineData]); // Run once
-
-    // Generate a unique id for each new row
-    const generateUniqueId = async () => {
-        try {
-            const response = await axios.get("/api/gen_purchase_line", {});
-            const latestId = parseInt(response.data) || 0;
-            setCounter(latestId);
-            return latestId;
-        } catch (error) {
-            return null; // Handle any errors and return a default value
-        }
-    };
-
-    // Add Data
-    useEffect(() => {
-        setAddData((prevData) => ({
-            ...prevData,
-            purchLineData: [], // Initialize purchLineData as an empty array
-            user_id: user.user_id,
-            username: user.username,
-        }));
         generateUniqueId();
-    }, []);
+    }, [addData.purchLineData]); // Run once
 
     // HANDLE TOTAL AMOUNT
     const handleTotalAmount = () => {
-        return (
-            addData.total_amount > 0 ? addData.total_amount : 0.0
-        ).toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
+        return addData.total_amount > 0
+            ? addData.total_amount.toFixed(2)
+            : "0.00";
     };
 
     // HANDLE OPTION SELECTION
@@ -111,35 +100,26 @@ const AddModal = ({
     // Clear Fields
     const onCloseCleared = () => {
         setSelectedOption(null);
-        setAddData((prevData) => ({
-            ...prevData,
-            user_id: user.user_id,
-            username: user.username,
-            total_amount: 0.0,
-        }));
         onClose();
-
-        // Function to reset the counter and call generateUniqueId again
-        const resetCounter = async () => {
-            setCounter(0); // Reset the counter
-
-            // Call generateUniqueId to get the latest ID
-            const latestId = await generateUniqueId();
-
-            if (latestId) {
-                setCounter(parseInt(latestId)); // Set the counter to the latest ID
-            }
-        };
-
         resetCounter();
     };
+
+    // Function to reset the counter and call generateUniqueId again
+    const resetCounter = async () => {
+        setCounter(0); // Reset the counter
+
+        // Call generateUniqueId to get the latest ID
+        const latestId = await generateUniqueId();
+
+        if (latestId) {
+            setCounter(parseInt(latestId)); // Set the counter to the latest ID
+        }
+    };
+
     // Purchase Line Table START
 
-    // Selectpicker for Items
-    const [itemOptions, setItemsOptions] = useState([]);
-
     // Function to handle row insertion
-    const handleInsertRow = async () => {
+    const handleInsertRow = () => {
         const newRow = {
             id: counter + 1,
             item_id: 0,
@@ -149,7 +129,7 @@ const AddModal = ({
             purchase_sub_total: 0.0,
         };
 
-        console.log(newRow);
+        // console.log(newRow);
         setAddData((prevState) => ({
             ...prevState,
             purchLineData: prevState.purchLineData
@@ -164,12 +144,12 @@ const AddModal = ({
         const updatedData = addData.purchLineData.filter(
             (row) => row.id !== rowId
         );
-
         setAddData((prevState) => ({
             ...prevState,
             purchLineData: updatedData,
         }));
     };
+
     // Selectpicker for the Items dropdowm
     const handleItemsEdit = (newValue, rowId, dataField) => {
         // Update the data with the new value

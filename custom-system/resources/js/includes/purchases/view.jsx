@@ -1,12 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
-import cellEditFactory from "react-bootstrap-table2-editor";
-import paginationFactory from "react-bootstrap-table2-paginator";
-import filterFactory, {
-    textFilter,
-    defaultFilter,
-} from "react-bootstrap-table2-filter";
 
 const ViewModal = ({ user, isOpen, onClose, viewData }) => {
     // BOOTSTRAP TABLE INITIALIZATION

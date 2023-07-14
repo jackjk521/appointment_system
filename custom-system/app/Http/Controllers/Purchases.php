@@ -78,10 +78,10 @@ class Purchases extends Controller
     {
         // Insert Purchase Header > return the inserted Id
             $purchase = new Purchase_header_model;
-            $purchase->purchase_number = $request->input('addData')['purchase_number'];
-            $purchase->user_id= $request->input('addData')['user_id'];
-            $purchase->patient_id = $request->input('addData')['patient_id'];
-            $purchase->total_amount = $request->input('addData')['total_amount'];
+            $purchase->purchase_number = $request->input('modalData')['purchase_number'];
+            $purchase->user_id= $request->input('modalData')['user_id'];
+            $purchase->patient_id = $request->input('modalData')['patient_id'];
+            $purchase->total_amount = $request->input('modalData')['total_amount'];
             $purchase->date_created = now()->toDateTimeString();
             $purchase->removed = 0;
 
@@ -91,7 +91,7 @@ class Purchases extends Controller
             $purch_header_id = $purchase->id;
 
         //     // Save the purchase line items
-            $purchase_line = $request->input('addData')['purchLineData'];
+            $purchase_line = $request->input('modalData')['purchLineData'];
         // // Loop through all the purchases and insert them 1 by 1 with the purchase_header_id
             foreach ($purchase_line as $data){
                 $purch_line = new Purchase_line_model;
@@ -107,9 +107,9 @@ class Purchases extends Controller
         // // Log
         if($purchase->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('addData')['user_id'] != '') ? $request->input('addData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('modalData')['user_id'] != '') ? $request->input('modalData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('addData')['username'] != '') ? $request->input('addData')['username'] : 'admin' . " has create a new purchase header with ID : " . $request->input('addData')['purchase_number'] . " successfully.";
+                $log->message =($request->input('modalData')['username'] != '') ? $request->input('modalData')['username'] : 'admin' . " has create a new purchase header with ID : " . $request->input('modalData')['purchase_number'] . " successfully.";
                 $log->save();
         }
 
@@ -121,18 +121,18 @@ class Purchases extends Controller
     {
      
         // Update Purchase Header
-            $purchaseHeaderId = $request->input('editData')['purchase_header_id'];
+            $purchaseHeaderId = $request->input('modalData')['purchase_header_id'];
             $purchaseData = [
-                'purchase_number' => $request->input('editData')['purchase_number'],
-                'user_id' => $request->input('editData')['user_id'],
-                'patient_id' => $request->input('editData')['patient_id'],
-                'total_amount' => $request->input('editData')['total_amount'],
+                'purchase_number' => $request->input('modalData')['purchase_number'],
+                'user_id' => $request->input('modalData')['user_id'],
+                'patient_id' => $request->input('modalData')['patient_id'],
+                'total_amount' => $request->input('modalData')['total_amount'],
             ];
 
             Purchase_header_model::where('id', $purchaseHeaderId)->update($purchaseData);
 
             // Update Purchase Line Items
-            $purchaseLineData = $request->input('editData')['purchLineData'];
+            $purchaseLineData = $request->input('modalData')['purchLineData'];
 
             // // Delete existing records not present in purchLineData array
             // Purchase_line_model::where('purchase_header_id', $purchaseHeaderId)
@@ -165,9 +165,9 @@ class Purchases extends Controller
 
         // Log
             $log = new Logs_model;
-            $log->user_id = ($request->input('editData')['user_id'] != '') ? $request->input('editData')['user_id'] : 3 ; // Change to default admin value
+            $log->user_id = ($request->input('modalData')['user_id'] != '') ? $request->input('modalData')['user_id'] : 3 ; // Change to default admin value
             $log->date = now()->toDateTimeString();
-            $log->message =($request->input('editData')['username'] != '') ? $request->input('editData')['username'] : 'admin' . " has updated a purchase header with ID : " . $request->input('editData')['purchase_number'] . " successfully.";
+            $log->message =($request->input('modalData')['username'] != '') ? $request->input('modalData')['username'] : 'admin' . " has updated a purchase header with ID : " . $request->input('modalData')['purchase_number'] . " successfully.";
             $log->save();
     
 
@@ -176,16 +176,16 @@ class Purchases extends Controller
 
     public function remove_purchase(Request $request)
     {
-        $purchase = Purchase_header_model::find(($request->input('removeData')['purch_header_id']));
+        $purchase = Purchase_header_model::find(($request->input('modalData')['purch_header_id']));
         $purchase->removed = 1;
         $purchase->save();
 
         // Log
         if($purchase->save()){
             $log = new Logs_model;
-                $log->user_id = ($request->input('removeData')['user_id'] != '') ? $request->input('removeData')['user_id'] : 3 ; // Change to default admin value
+                $log->user_id = ($request->input('modalData')['user_id'] != '') ? $request->input('modalData')['user_id'] : 3 ; // Change to default admin value
                 $log->date = now()->toDateTimeString();
-                $log->message =($request->input('removeData')['username'] != '') ? $request->input('removeData')['username'] : 'admin' . " has removed an purchase header with id : " . $request->input('removeData')['purch_header_id'];
+                $log->message =($request->input('modalData')['username'] != '') ? $request->input('modalData')['username'] : 'admin' . " has removed an purchase header with id : " . $request->input('modalData')['purch_header_id'];
                 $log->save();
         }
 
