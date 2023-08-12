@@ -59,6 +59,10 @@ Route::post('/update_appointment', [Appointments::class, 'update_appointment']);
 Route::post('/remove_appointment', [Appointments::class, 'remove_appointment']);
 
 
+// Upload
+Route::post('/import-excel', [ExcelController::class, 'import']);
+
+
 
 // Route::post('/signUp', [LoginController::class, 'register']); // route for registration form
 // Route::post('/login', [LoginController::class, 'login']); // route for login form

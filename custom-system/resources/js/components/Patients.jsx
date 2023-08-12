@@ -19,6 +19,7 @@ import EditModal from "../includes/patients/edit";
 import RemoveModal from "../includes/patients/remove";
 
 import { paginationOptions } from "./helper/paginationConfig";
+import ExportButton from "./utility/ExportButton"
 
 const Patients = ({ user }) => {
     // TABLE DATA
@@ -298,7 +299,9 @@ const Patients = ({ user }) => {
                             Patients
                         </h1>
                     </div>
-                    <div className="col-6"></div>
+                    <div className="col-6">
+                        <ExportButton data={data}/>
+                    </div>
                     <div className="col-3 d-flex align-items-end justify-content-end">
                         <button
                             className="btn btn-success my-3"
