@@ -21,9 +21,9 @@ import RemoveModal from "../includes/patients/remove";
 import { paginationOptions } from "./helper/paginationConfig";
 import ExportButton from "./utility/ExportButton";
 
-const API_BASE_URL = "https://localhost:8000/api"; // Update with your backend URL
+// const API_BASE_URL = "https://localhost:8000/api"; // Update with your backend URL
 
-axios.defaults.baseURL = API_BASE_URL;
+// axios.defaults.baseURL = API_BASE_URL;
 
 const Patients = ({ user }) => {
     // TABLE DATA
