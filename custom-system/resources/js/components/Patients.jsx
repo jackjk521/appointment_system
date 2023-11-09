@@ -19,7 +19,11 @@ import EditModal from "../includes/patients/edit";
 import RemoveModal from "../includes/patients/remove";
 
 import { paginationOptions } from "./helper/paginationConfig";
-import ExportButton from "./utility/ExportButton"
+import ExportButton from "./utility/ExportButton";
+
+const API_BASE_URL = "https://localhost:8000/api"; // Update with your backend URL
+
+axios.defaults.baseURL = API_BASE_URL;
 
 const Patients = ({ user }) => {
     // TABLE DATA
@@ -39,8 +43,16 @@ const Patients = ({ user }) => {
     // FETCH TABLE DATA
     const fetchPatients = async () => {
         try {
-            const response = await axios.get("/api/patients");
-            setData(response.data);
+            await axios
+                .get("/api/patients")
+                .then((response) => {
+                    // Handle the response
+                    setData(response.data);
+                })
+                .catch((error) => {
+                    // Handle the error
+                    console.error(error);
+                });
         } catch (error) {
             console.error(error);
         }
@@ -85,22 +97,29 @@ const Patients = ({ user }) => {
                 successMessage = "Successfully removed a patient!";
             }
 
-            const response = await axios.post(url, { modalData });
+            const response = await axios
+                .post(url, { modalData })
+                .then((response) => {
+                    // Handle the response
+                    handleModalClose();
 
-            handleModalClose();
+                    if (response.data.success) {
+                        Swal.fire({
+                            title: "Success",
+                            text: successMessage,
+                            icon: "success",
+                            timer: 1500,
+                            showCancelButton: false,
+                            showConfirmButton: false,
+                        });
+                    }
 
-            if (response.data.success) {
-                Swal.fire({
-                    title: "Success",
-                    text: successMessage,
-                    icon: "success",
-                    timer: 1500,
-                    showCancelButton: false,
-                    showConfirmButton: false,
+                    fetchPatients();
+                })
+                .catch((error) => {
+                    // Handle the error
+                    console.error(error);
                 });
-            }
-
-            fetchPatients();
         } catch (error) {
             Swal.fire({
                 title: "Error",
@@ -202,54 +221,65 @@ const Patients = ({ user }) => {
         console.log("View", row);
         // Add your view logic here
         try {
-            const response = await axios.get("/api/get_patient", {
-                params: {
-                    patient_id: row.id,
-                },
-            });
-            const patientData = response.data;
+            await axios
+                .get("/api/get_patient", {
+                    params: {
+                        patient_id: row.id,
+                    },
+                })
+                .then(async (response) => {
+                    // Handle the response
+                    const patientData = response.data;
 
-            if (patientData) {
-                setModalData((prevData) => ({
-                    ...prevData,
-                    patient_id: patientData[0].id,
-                    first_name: patientData[0].first_name,
-                    last_name: patientData[0].last_name,
-                    age: patientData[0].age,
-                    weight: patientData[0].weight,
-                    height: patientData[0].height,
-                }));
+                    if (patientData) {
+                        setModalData((prevData) => ({
+                            ...prevData,
+                            patient_id: patientData[0].id,
+                            first_name: patientData[0].first_name,
+                            last_name: patientData[0].last_name,
+                            age: patientData[0].age,
+                            weight: patientData[0].weight,
+                            height: patientData[0].height,
+                        }));
+        
+                        try {
+                            const res = await axios.get("/api/get_patient_history", {
+                                params: {
+                                    patient_id: row.id,
+                                },
+                            });
+        
+                            // console.log(res.data)
+                            const purchase_lines = res.data.map((val) => ({
+                                id: val.id,
+                                item_id: val.item_id,
+                                date_created: moment(val.date_created).format(
+                                    "YYYY-MM-DD"
+                                ),
+                                item_name: val.item_name,
+                                item_price: val.item_price,
+                                purchased_quantity: val.purchased_quantity,
+                                purchase_sub_total: val.purchase_sub_total,
+                            }));
+        
+                            setModalData((prevData) => ({
+                                ...prevData,
+                                purchaseHistory: purchase_lines,
+                            }));
+        
+                            setModalType("view");
+                        } catch (error) {
+                            console.error(error);
+                        }
+                                
+                    }
+                })
+                .catch((error) => {
+                    // Handle the error
+                console.error(error);
 
-                try {
-                    const res = await axios.get("/api/get_patient_history", {
-                        params: {
-                            patient_id: row.id,
-                        },
-                    });
-
-                    // console.log(res.data)
-                    const purchase_lines = res.data.map((val) => ({
-                        id: val.id,
-                        item_id: val.item_id,
-                        date_created: moment(val.date_created).format(
-                            "YYYY-MM-DD"
-                        ),
-                        item_name: val.item_name,
-                        item_price: val.item_price,
-                        purchased_quantity: val.purchased_quantity,
-                        purchase_sub_total: val.purchase_sub_total,
-                    }));
-
-                    setModalData((prevData) => ({
-                        ...prevData,
-                        purchaseHistory: purchase_lines,
-                    }));
-
-                    setModalType("view");
-                } catch (error) {
-                    console.error(error);
-                }
-            }
+                });
+   
         } catch (error) {
             console.error(error);
         }
@@ -300,7 +330,7 @@ const Patients = ({ user }) => {
                         </h1>
                     </div>
                     <div className="col-6">
-                        <ExportButton data={data}/>
+                        <ExportButton data={data} />
                     </div>
                     <div className="col-3 d-flex align-items-end justify-content-end">
                         <button

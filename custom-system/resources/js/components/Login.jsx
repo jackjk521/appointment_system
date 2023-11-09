@@ -53,6 +53,8 @@ const Login = ({ setUser }) => {
                 userData,
             });
 
+            console.log(response)
+
             userData.user_id = response.data.user_id;
 
             if (response.data.success) {
